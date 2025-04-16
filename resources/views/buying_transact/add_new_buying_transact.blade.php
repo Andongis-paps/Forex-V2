@@ -101,7 +101,7 @@
                                                 <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.transact_type') }}</th>
                                                 <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.transact_curr') }}</th>
                                                 <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.transact_curr_amnt') }}</th>
-                                                {{-- <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Rate</th> --}}
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Rate</th>
                                                 <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.transact_amnt') }}</th>
                                                 {{-- <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap @if (session('time_toggle_status') == 1) d-none @else @endif">{{ trans('labels.transact_rset') }}</th> --}}
                                                 @can('edit-permission', $menu_id)
@@ -159,8 +159,6 @@
                                                             }
                                                         @endphp
 
-                                                        
-
                                                         @if (session('time_toggle_status') == 1)
                                                             <tr class="transact-details-list-table @if($transact_details->Voided == 1) !bg-red-100 @endif" id="tranact-details-list-table">
                                                                 <td class="text-center text-xs p-1">
@@ -173,7 +171,7 @@
                                                                     @if ($transact_details->Rset == 'O')
                                                                         {{ $transact_details->ORNo }}
                                                                     @else
-                                                                        0
+                                                                        -
                                                                     @endif
                                                                 </td>
                                                                 <td class="text-center text-xs p-1">
@@ -260,7 +258,7 @@
                                                                     @if ($transact_details->Rset == 'O')
                                                                         {{ $transact_details->ORNo }}
                                                                     @else
-                                                                        0
+                                                                        -
                                                                     @endif
                                                                 </td>
                                                                 <td class="text-center text-xs p-1">

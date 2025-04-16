@@ -232,17 +232,16 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="row align-items-center px-3 mt-2">
+                                                    {{-- <div class="row align-items-center px-3 mt-2">
                                                         <div class="col-3">
                                                             <strong>
                                                                 Rate: &nbsp;
                                                             </strong>
                                                         </div>
                                                         <div class="col-9">
-                                                            
                                                             <input type="text" class="form-control" id="buying-receipt-rate" name="transact-rate" value="{{ $formatted_rate }}" readonly>
                                                         </div>
-                                                    </div>
+                                                    </div> --}}
 
                                                     <div class="row align-items-center px-3 mt-2">
                                                         <div class="col-3">
@@ -262,7 +261,7 @@
                                                         <div class="row align-items-center px-3 mt-2">
                                                             <div class="col-3">
                                                                 <strong>
-                                                                    Print Count&nbsp; : &nbsp;
+                                                                    Print Count: &nbsp;
                                                                 </strong>
                                                             </div>
                                                             <div class="col-9">
