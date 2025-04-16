@@ -1,0 +1,273 @@
+@extends('template.layout')
+@section('content')
+   <div class="layout-page">
+        <div class="content-wrapper">
+            @include('template.menu')
+            <div class="container-fluid flex-grow-1 container-p-y m-0 pt-0">
+                <div class="row">
+                    <div class="col-lg-12 mb-4">
+                        <div class="row justify-content-center">
+                            <div class="col-12">
+                                <hr>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="col-12 p-2 border border-gray-300 rounded-tl rounded-tr">
+                                        <div class="row align-items-center">
+                                            <div class="col-6">
+                                                <span class="text-lg font-bold p-2 text-black">
+                                                    <i class='bx bxs-badge-dollar' ></i>&nbsp;{{ trans('labels.selling_transact') }}
+                                                </span>
+                                            </div>
+
+                                            <div class="col-6 text-end">
+                                                @can('add-permission', $menu_id)
+                                                    <a class="btn btn-primary btn-sm text-white" href="{{ route('admin_transactions.admin_s_transaction.add') }}">
+                                                        {{ trans('labels.add_new_selling_trans_title') }} <i class='menu-icon tf-icons bx bx-plus text-white ms-1 me-0'></i>
+                                                    </a>
+                                                @endcan
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.add_selling_trans_date') }}</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.add_selling_trans_selling_no') }}</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Invoice No.</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.add_selling_customer_name') }}</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.add_selling_trans_currency') }}</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.add_selling_trans_curr_amnt') }}</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.add_selling_trans_rate_used') }}</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.add_selling_trans_total_amount') }}</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Remarks</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap @if(session('time_toggle_status') == 1) d-none @else @endif">{{ trans('labels.add_selling_trans_rset') }}</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Status</th>
+                                                @can('access-permission', $menu_id)
+                                                    <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap"></th>
+                                                @endcan
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <div id="transaction-details">
+                                                @if (count($result['selling_transact_details']) > 0)
+                                                    @if(session('time_toggle_status') == 1)
+                                                        @foreach ($result['selling_transact_details'] as $selling_transact_details)
+                                                            <tr class="selling-transact-details-list-table @if($selling_transact_details->Voided == 1) !bg-red-100 @endif" id="selling-transact-details-list-table">
+                                                                <td class="text-center text-sm p-1">
+                                                                    {{ $selling_transact_details->DateSold }}
+                                                                </td>
+                                                                <td class="text-center text-sm p-1">
+                                                                    {{ $selling_transact_details->SellingNo }}
+                                                                </td>
+                                                                <td class="text-center text-sm p-1">
+                                                                    @if ($selling_transact_details->Rset == 'O')
+                                                                        {{ $selling_transact_details->ORNo }}
+                                                                    @else
+                                                                        0
+                                                                    @endif
+                                                                </td>
+                                                                <td class="text-center text-sm p-1 whitespace-nowrap">
+                                                                    {{ $selling_transact_details->FullName }}
+                                                                </td>
+                                                                <td class="text-center text-sm p-1">
+                                                                    {{ $selling_transact_details->Currency }}
+                                                                </td>
+                                                                <td class="text-right text-sm py-1 px-3">
+                                                                    {{ number_format($selling_transact_details->CurrAmount, 2, '.', ',') }}
+                                                                </td>
+                                                                <td class="text-right text-sm py-1 px-3">
+                                                                    {{ $selling_transact_details->RateUsed }}
+                                                                </td>
+                                                                <td class="text-right text-sm py-1 px-3">
+                                                                    {{ number_format($selling_transact_details->AmountPaid, 2, '.', ',') }}
+                                                                    @if ($selling_transact_details->Voided == 0)
+                                                                        <input type="hidden" class="total-amountpaid-selling" id="total-amountpaid-selling" value="{{ $selling_transact_details->AmountPaid }}">
+                                                                    @else
+                                                                        <input type="hidden" class="total-amountpaid-selling" id="total-amountpaid-selling" value="0">
+                                                                    @endif
+                                                                </td>
+                                                                <td class="text-center text-sm p-1 " data-bs-toggle="popover" data-bs-content="{!! $selling_transact_details->Remarks == null ? 'No remarks.' : $selling_transact_details->Remarks !!}" data-bs-placement="bottom" data-bs-custom-class="popover-dark" tabindex="0">
+                                                                    @if ($selling_transact_details->Remarks == null)
+                                                                        -
+                                                                    @else
+                                                                        {{ \Illuminate\Support\Str::limit($selling_transact_details->Remarks, 14, '...') }}
+                                                                    @endif
+                                                                </td>
+                                                                <td class="text-center text-sm p-1">
+                                                                    @if ($selling_transact_details->Voided == 1)
+                                                                        <span class="badge bg-label-danger text-sm font-bold">
+                                                                            Void
+                                                                        </span>
+                                                                    @else
+                                                                        <span class="badge bg-label-success font-bold">
+                                                                            <i class='bx bx-check-double'></i>
+                                                                        </span>
+                                                                    @endif
+                                                                </td>
+                                                                @can('access-permission', $menu_id)
+                                                                    <td class="text-center text-sm p-1">
+                                                                        @if ($selling_transact_details->Voided == 0)
+                                                                            @can('access-permission', $menu_id)
+                                                                                <a class="btn btn-primary button-edit button-edit-trans-details text-white pe-2" href="{{ route('admin_transactions.admin_s_transaction.details', ['id' => $selling_transact_details->ASCID]) }}">
+                                                                                    <i class='bx bx-detail'></i>
+                                                                                </a>
+                                                                            @endcan
+                                                                        @endif
+                                                                        {{-- <a class="btn btn-primary button-edit button-edit-selling-trans-details" id="button-trans-details" href="{{ route('editsellingtransact', ['id' => $selling_transact_details->ASCID]) }}">
+                                                                            <i class='menu-icon tf-icons bx bx-edit-alt text-white'></i>
+                                                                        </a> --}}
+                                                                        @if ($selling_transact_details->Voided == 0)
+                                                                            @can('delete-permission', $menu_id)
+                                                                                <a class="btn btn-primary button-delete button-delete-selling-trans-details pe-2" data-bs-toggle="modal" data-bs-target="#deleteSellingTransactModal" data-sellingtransdetailsid="{{ $selling_transact_details->ASCID }}">
+                                                                                    <i class='bx bx-trash text-white'></i>
+                                                                                </a>
+                                                                            @endcan
+                                                                        @endif
+                                                                    </td>
+                                                                @endcan
+                                                            </tr>
+                                                        @endforeach
+                                                    @else
+                                                        @foreach ($result['selling_transact_details'] as $selling_transact_details)
+                                                            <tr class="selling-transact-details-list-table @if($selling_transact_details->Voided == 1) !bg-red-100 @endif" id="selling-transact-details-list-table">
+                                                                <td class="text-center text-sm p-1">
+                                                                    {{ $selling_transact_details->DateSold }}
+                                                                </td>
+                                                                <td class="text-center text-sm p-1">
+                                                                    {{ $selling_transact_details->SellingNo }}
+                                                                </td>
+                                                                <td class="text-center text-sm p-1">
+                                                                    @if ($selling_transact_details->Rset == 'O')
+                                                                        {{ $selling_transact_details->ORNo }}
+                                                                    @else
+                                                                        0
+                                                                    @endif
+                                                                </td>
+                                                                <td class="text-center text-sm p-1">
+                                                                    {{ $selling_transact_details->FullName }}
+                                                                </td>
+                                                                <td class="text-center text-sm p-1">
+                                                                    {{ $selling_transact_details->Currency }}
+                                                                </td>
+                                                                <td class="text-right text-sm py-1 px-3">
+                                                                    {{ number_format($selling_transact_details->CurrAmount, 2, '.', ',') }}
+                                                                </td>
+                                                                <td class="text-right text-sm py-1 px-3">
+                                                                    {{ $selling_transact_details->RateUsed }}
+                                                                </td>
+                                                                <td class="text-right text-sm py-1 px-3">
+                                                                    {{ number_format($selling_transact_details->AmountPaid, 2, '.', ',') }}
+                                                                    @if ($selling_transact_details->Voided == 0)
+                                                                        <input type="hidden" class="total-amountpaid-selling" id="total-amountpaid-selling" value="{{ $selling_transact_details->AmountPaid }}">
+                                                                    @else
+                                                                        <input type="hidden" class="total-amountpaid-selling" id="total-amountpaid-selling" value="0">
+                                                                    @endif
+                                                                </td>
+                                                                <td class="text-center text-sm p-1 " data-bs-toggle="popover" data-bs-content="{!! $selling_transact_details->Remarks == null ? 'No remarks.' : $selling_transact_details->Remarks !!}" data-bs-placement="bottom" data-bs-custom-class="popover-dark" tabindex="0">
+                                                                    @if ($selling_transact_details->Remarks == null)
+                                                                        -
+                                                                    @else
+                                                                        {{ \Illuminate\Support\Str::limit($selling_transact_details->Remarks, 14, '...') }}
+                                                                    @endif
+                                                                </td>
+                                                                <td class="text-center text-sm p-1">
+                                                                    {{ $selling_transact_details->Rset }}
+                                                                </td>
+                                                                <td class="text-center text-sm p-1">
+                                                                    @if ($selling_transact_details->Voided == 1)
+                                                                        <span class="badge bg-label-danger text-sm font-bold">
+                                                                            Void
+                                                                        </span>
+                                                                    @else
+                                                                        <span class="badge bg-label-success font-bold">
+                                                                            <i class='bx bx-check-double'></i>
+                                                                        </span>
+                                                                    @endif
+                                                                </td>
+                                                                @can('access-permission', $menu_id)
+                                                                    <td class="text-center text-sm p-1">
+                                                                        @if ($selling_transact_details->Voided == 0)
+                                                                            @can('access-permission', $menu_id)
+                                                                                <a class="btn btn-primary button-edit button-edit-trans-details text-white pe-2" href="{{ route('admin_transactions.admin_s_transaction.details', ['id' => $selling_transact_details->ASCID]) }}">
+                                                                                    <i class='bx bx-detail'></i>
+                                                                                </a>
+                                                                            @endcan
+                                                                        @endif
+                                                                        {{-- <a class="btn btn-primary button-edit button-edit-selling-trans-details" id="button-trans-details" href="{{ route('editsellingtransact', ['id' => $selling_transact_details->ASCID]) }}">
+                                                                            <i class='menu-icon tf-icons bx bx-edit-alt text-white'></i>
+                                                                        </a> --}}
+                                                                        @if ($selling_transact_details->Voided == 0)
+                                                                            @can('delete-permission', $menu_id)
+                                                                                <a class="btn btn-primary button-delete button-delete-selling-trans-details pe-2" data-bs-toggle="modal" data-bs-target="#deleteSellingTransactModal" data-sellingtransdetailsid="{{ $selling_transact_details->ASCID }}">
+                                                                                    <i class='bx bx-trash text-white'></i>
+                                                                                </a>
+                                                                            @endcan
+                                                                        @endif
+                                                                </td>
+                                                                @endcan
+                                                            </tr>
+                                                        @endforeach
+                                                    @endif
+                                                @else
+                                                    <tr>
+                                                        <td class="text-center text-td-buying text-sm py-3" colspan="12">
+                                                            <span class="buying-no-transactions text-lg">
+                                                                <strong>NO AVAILABLE TRANSACTIONS FOR TODAY</strong>
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                @endif
+
+                                                @if (count($result['selling_transact_details']) > 0)
+                                                    <input type="hidden" id="user-security-code-selling" value="{{ $selling_transact_details->SecurityCode }}">
+                                                @endif
+                                            </div>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td class="text-center text-sm py-1 whitespace-nowrap" colspan="1">
+                                                    <span class="transaction-count" id="transaction-count">
+                                                        {{ trans('labels.add_selling_trans_count') }}: <span class="table-footer-texts font-bold" id="selling-trans-count">{{ count($result['selling_transact_details']) }}</span>
+                                                    </span>
+                                                </td>
+                                                <td class="text-center" colspan="6">
+                                                </td>
+                                                <td class="text-right text-sm py-1 px-3 whitespace-nowrap" colspan="1">
+                                                    <span class="transaction-total-amount" id="transaction-total-amount">
+                                                        Total: <strong><span class="text-sm">PHP</span></strong> &nbsp; <span class="table-footer-texts font-bold" id="selling-trans-amount"></span>
+                                                    </span>
+                                                </td>
+                                                <td colspan="3"></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+
+                                    <div class="col-12 py-1 px-3 border border-gray-300 rounded-bl rounded-br">
+                                        <div class="row align-items-center">
+                                            <div class="col-12">
+                                                {{ $result['selling_transact_details']->links() }}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    @include('UI.UX.security_code')
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+@endsection
+
+@section('admin_selling_scripts')
+    @include('script.admin_add_s_transact')
+@endsection
+
+<link href="{{ asset('css/app.css') }}" rel="stylesheet">
+<script defer src="{{asset('js/app.js')}}"></script>

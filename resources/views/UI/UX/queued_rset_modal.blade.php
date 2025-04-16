@@ -1,0 +1,34 @@
+{{-- Modal - Confirm using security code --}}
+<div class="modal fade" id="queued-by-rset-modal" tabindex="-1" aria-labelledby="buying-transact" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header px-4 py-2">
+                <strong>
+                    <span class="text-lg font-bold">{{ trans('labels.enter_security_code') }}</span>
+                </strong>
+            </div>
+            <div class="modal-body">
+                <div class="row px-2">
+                    <div class="col-12 m-2">
+                       
+                    </div>
+                    <div class="col-12 mb-3">
+                        <input class="form-control password" id="queued-print-security-code" name="security-code" type="password">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="halt-transaction" data-bs-dismiss="modal">{{ trans('labels.cancel_action') }}</button>
+                <button type="button" class="btn btn-primary" id="print-q-proceed-transaction">{{ trans('labels.proceed_action') }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#queued-by-rset-modal').on('shown.bs.modal', function () {
+            $('#queued-print-security-code').focus();
+        });
+    });
+</script>
