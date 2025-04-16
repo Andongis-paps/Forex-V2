@@ -276,8 +276,13 @@
                                                                 {{-- <td class="text-right text-xs py-1 px-3">
                                                                     {{ $formatted_rate }}
                                                                 </td> --}}
-                                                                <td class="text-right text-xs py-1 px-3" data-bs-toggle="popover" @if (count($formatted_rates_arr) > 1) data-bs-content="{!! $transact_details->breakdown !!}" @endif data-bs-placement="bottom" data-bs-custom-class="popover-dark" tabindex="0">
+                                                                {{-- <td class="text-right text-xs py-1 px-3" data-bs-toggle="popover" @if (count($formatted_rates_arr) > 1) data-bs-content="{!! $transact_details->breakdown !!}" @endif data-bs-placement="bottom" data-bs-custom-class="popover-dark" tabindex="0">
                                                                     {{ \Illuminate\Support\Str::limit(implode(', ',$formatted_rates_arr), 10, '...') }}
+                                                                </td> --}}
+                                                                <td class="text-right text-xs py-1 pe-2">
+                                                                    @foreach (explode(', ', $transact_details->breakdown) as $value)
+                                                                        {!! $value !!}<br>
+                                                                    @endforeach
                                                                 </td>
                                                                 <td class="text-right text-xs py-1 px-3">
                                                                     {{ number_format($transact_details->Amount, 2, '.', ',') }}

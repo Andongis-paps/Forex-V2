@@ -694,7 +694,7 @@
 
                 $(this).val(subtotal.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}));
 
-                var subtotal_GET = parseFloat($(this).val().toString().split(".")[0].replace(/,/g, ""));
+                var subtotal_GET = parseFloat($(this).val().toString().replace(/,/g, ""));
                 total_amount += subtotal_GET;
 
                 if ((total_amount == 0) == false) {

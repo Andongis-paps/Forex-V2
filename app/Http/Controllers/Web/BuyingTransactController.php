@@ -103,7 +103,7 @@ class BuyingTransactController extends Controller{
             $bread_d = [];
 
             foreach ($breakdown as $value) {
-                $bread_d[] = number_format($value->BillAmount, 2) .''. " ({$value->SinagRateBuying})";
+                $bread_d[] = number_format($value->BillAmount, 2) .''. ' -  <strong>('.$value->SinagRateBuying.')</strong>';
             }
 
             $transaction->rates = $get_rates;
