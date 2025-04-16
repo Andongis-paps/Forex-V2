@@ -269,7 +269,7 @@
                 sub_totals.each(function() {
                     var rate_input = $(this).closest('tr').find('.form-control#current-rates');
                     var rate_val = rate_input.val();
-                    var sub_total_val = parseFloat($(this).closest('tr').find('.form-control#bill-total-input').val().toString().split(".")[0].replace(/,/g, ""));
+                    var sub_total_val = parseFloat($(this).closest('tr').find('.form-control#bill-total-input').val().toString().replace(/,/g, ""));
                     var true_sub_total = sub_total_val * rate_val;
 
                     new_total_amount += parseFloat(true_sub_total);

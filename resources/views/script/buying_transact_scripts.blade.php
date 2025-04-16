@@ -663,7 +663,8 @@
             multiplier_inputs.each(function() {
                 var multiplier_input = $(this).closest('tr').find('.form-control#multiplier');
                 var multiplier_value = multiplier_input.val();
-                var bill_amount_value = parseFloat($(this).closest('tr').find('.form-control#bill-amount').val().toString().split(".")[0].replace(/,/g, ""));
+                // var bill_amount_value = parseFloat($(this).closest('tr').find('.form-control#bill-amount').val().toString().split(".")[0].replace(/,/g, ""));
+                var bill_amount_value = parseFloat($(this).closest('tr').find('.form-control#bill-amount').val().toString().replace(/,/g, ""));
 
                 var subtotal = bill_amount_value * multiplier_value;
 
