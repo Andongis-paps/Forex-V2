@@ -140,13 +140,16 @@ class StopBuyingMaintenanceController extends Controller {
         $currency_id = $request->input('stop-buying-currid');
         $branches = array_filter(explode(',', str_replace(' ', '', $request->input('stop-buying-selected-branch'))));
 
-        $current_rate_config = DB::connection('forex')->table('tblcurrencydenom as tdc')
-            // ->select('tdc.CDID', 'tdc.BranchID', 'tdc.BillAmount')
-            ->where('tdc.CurrencyID', $currency_id)
-            // ->where('TransType', $TTID)
-            ->when($branches, fn($query) => $query->whereIn('tdc.BranchID', $branches))
-            ->orderBy('tdc.BranchID', 'DESC')
-            ->orderBy('tdc.BillAmount', 'DESC')
+        $current_rate_config = DB::connection('forex')->table('tblcurrencydenom as tcd')
+            ->where('tcd.CurrencyID', $currency_id)
+            ->when(is_array($branches), function ($query) use ($branches) {
+                return $query->whereIn('tcd.BranchID', $branches);
+            }, function ($query) use ($branches) {
+                return $query->where('tcd.BranchID', $branches);
+            })
+            ->orderBy('tcd.BranchID')
+            ->orderBy('tcd.TransType')
+            ->orderByDesc('tcd.BillAmount')
             ->pluck('tdc.CDID');
 
         $cdidCount = $current_rate_config->count();

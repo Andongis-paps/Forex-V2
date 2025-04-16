@@ -300,7 +300,7 @@ Route::group(['middleware' => ['auth', 'PreventBackHistory']], function () {
         Route::prefix('admin_pending_serials')->group(function() {
             Route::get('/', [AdminSerialsController::class, 'show'])->name('admin_transactions.pending_serials');
         });
-        // Buffer
+        // Buffer ni Rolly
         Route::prefix('buffer')->group(function() {
             Route::get('/buffer', [BufferController::class, 'buffer'])->name('admin_transactions.buffer.buffer');
             Route::get('/stocks/{branch_id}', [BufferController::class, 'stocks'])->name('admin_transactions.buffer.stocks');
