@@ -161,7 +161,7 @@ return [
     'transact_rset' => 'R Set',
     'transact_count' => 'Transaction count',
     'transact_total_amount' => 'Total',
-    'transact_date_sold' => 'Date Sold',
+    'transact_date_sold' => 'Date Sold',a
     'transact_time_sold' => 'Time Sold',
     'transact_exchange_amnt' => 'Exchange Amount',
     'transact_principal_amnt' => 'Principal Amount',
