@@ -122,6 +122,7 @@
                                                 @if (count($result['transact_details']) > 0)
                                                     @foreach ($result['transact_details'] as $transact_details)
                                                         @php
+                                                            $grouped_rates = [];
                                                             $formatted_rates_arr = [];
 
                                                             if (isset($transact_details->Voided) && $transact_details->Voided == 0) {
@@ -130,19 +131,11 @@
 
                                                             $report_status = $transact_details->HasTicket == 0 && $transact_details->Voided == 0;
 
-                                                            // $formatted_rate = '';
-                                                            // $rate_used = $transact_details->whole_rate + $transact_details->decimal_rate;
-                                                            // $decimal_places = (strpos((string) $rate_used, '.') !== false) ? strlen(explode('.', $rate_used)[1]) : 0;
-
-                                                            // if ($decimal_places <= 2 && !in_array($transact_details->CurrencyID, [12, 14, 31])) {
-                                                            //     $formatted_rate = number_format(floor($rate_used * 100) / 100, 2);
-                                                            // } else if ($decimal_places <= 4 && in_array($transact_details->CurrencyID, [12, 14, 31])) {
-                                                            //     $formatted_rate = number_format(floor($rate_used * 100000) / 100000, 4, '.', ',');
-                                                            // }
-
                                                             $formatted_rate = '';
-                                                            
-                                                            foreach ($transact_details->rates as $rate) {
+                                                            $rates_array = explode(",", $transact_details->rates);
+                                                            $denoms_array = explode(",", $transact_details->denoms);
+
+                                                            foreach ($rates_array as $rate) {
                                                                 $whole_number = floor($rate);
                                                                 $decimal = $rate - $whole_number;
                                                                 $segmented_rate = $whole_number + $decimal;
@@ -156,6 +149,12 @@
                                                                 }
 
                                                                 $formatted_rates_arr[] = $formatted_rate;
+                                                            }
+
+                                                            foreach ($denoms_array as $key => $denoms) {
+                                                                if (!isset($grouped_rates[$denoms])) {
+                                                                    $grouped_rates[$denoms] = [];
+                                                                }
                                                             }
                                                         @endphp
 
@@ -192,11 +191,11 @@
                                                                 {{-- <td class="text-right text-xs py-1 px-3" data-bs-toggle="popover" @if (count($formatted_rates_arr) > 1) data-bs-content="{!! $transact_details->breakdown !!}" @endif data-bs-placement="bottom" data-bs-custom-class="popover-dark" tabindex="0">
                                                                     {{ \Illuminate\Support\Str::limit(implode(', ',$formatted_rates_arr), 10, '...') }}
                                                                 </td> --}}
-                                                                <td class="text-right text-xs py-1 pe-2">
+                                                                {{-- <td class="text-right text-xs py-1 pe-2">
                                                                     @foreach (explode(', ', $transact_details->breakdown) as $value)
                                                                         {!! $value !!}<br>
                                                                     @endforeach
-                                                                </td>
+                                                                </td> --}}
                                                                 <td class="text-right text-xs py-1 px-3">
                                                                     {{ number_format($transact_details->Amount, 2, '.', ',') }}
                                                                     @if ($transact_details->Voided == 0)
@@ -227,7 +226,7 @@
                                                                             <a class="btn btn-primary button-edit button-edit-trans-details text-white btn-popover btn-details pe-2" href="{{ route('branch_transactions.buying_transaction.details', ['id' => $transact_details->FTDID]) }}">
                                                                                 <i class='bx bx-detail'></i>
                                                                             </a>
-                                                                            @if (is_array($transact_details->serials) && count(array_filter($transact_details->serials, 'strlen')) !== count($transact_details->serials))
+                                                                            @if ($transact_details->pending_serials == 1)
                                                                                 <span class="badge position-absolute top-75 start-90 translate-middle pending-badge-danger"><i class='bx bxs-info-circle bx-flashing badge-icon'></i></span>
                                                                             @else
                                                                                 <span class="badge position-absolute top-75 start-90 translate-middle pending-badge-success"><i class='bx bx-check-double badge-icon'></i></span>
@@ -285,8 +284,14 @@
                                                                     {{ \Illuminate\Support\Str::limit(implode(', ',$formatted_rates_arr), 10, '...') }}
                                                                 </td> --}}
                                                                 <td class="text-right text-xs py-1 pe-2">
-                                                                    @foreach (explode(', ', $transact_details->breakdown) as $value)
-                                                                        {!! $value !!}<br>
+                                                                    @foreach ($denoms_array as $key => $value)
+                                                                        @php
+                                                                            $rate = $formatted_rates_arr[$key] ?? null;
+                                                                        @endphp
+
+                                                                        @if ($rate !== null)
+                                                                            {{ $value }} - <strong>({{ $rate }})</strong><br>
+                                                                        @endif
                                                                     @endforeach
                                                                 </td>
                                                                 <td class="text-right text-xs py-1 px-3">
@@ -319,7 +324,7 @@
                                                                             <a class="btn btn-primary button-edit button-edit-trans-details text-white btn-popover btn-details pe-2" href="{{ route('branch_transactions.buying_transaction.details', ['id' => $transact_details->FTDID]) }}">
                                                                                 <i class='bx bx-detail'></i>
                                                                             </a>
-                                                                            @if (is_array($transact_details->serials) && count(array_filter($transact_details->serials, 'strlen')) !== count($transact_details->serials))
+                                                                            @if ($transact_details->pending_serials == 1)
                                                                                 <span class="badge position-absolute top-75 start-90 translate-middle pending-badge-danger"><i class='bx bxs-info-circle bx-flashing badge-icon'></i></span>
                                                                             @else
                                                                                 <span class="badge position-absolute top-75 start-90 translate-middle pending-badge-success"><i class='bx bx-check-double badge-icon'></i></span>
