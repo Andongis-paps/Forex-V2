@@ -289,9 +289,9 @@
                                                                             $rate = $formatted_rates_arr[$key] ?? null;
                                                                         @endphp
 
-                                                                        @if ($rate !== null)
+                                                                        {{-- @if ($rate !== null) --}}
                                                                             {{ $value }} - <strong>({{ $rate }})</strong><br>
-                                                                        @endif
+                                                                        {{-- @endif --}}
                                                                     @endforeach
                                                                 </td>
                                                                 <td class="text-right text-xs py-1 px-3">
