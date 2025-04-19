@@ -60,7 +60,7 @@
                                                     <div class="row align-items-center px-3">
                                                         <div class="col-3">
                                                             <strong>
-                                                                {{ trans('labels.transact_date') }}&nbsp : &nbsp;
+                                                                {{ trans('labels.transact_date') }}: &nbsp;
                                                             </strong>
                                                         </div>
                                                         <div class="col-9">

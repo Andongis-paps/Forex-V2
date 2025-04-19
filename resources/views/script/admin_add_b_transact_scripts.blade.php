@@ -133,13 +133,158 @@
                 }
             }, 500);
         });
+
+        $('#update-b-rate').click(function() {
+            var test = $('#og-total-amount').val();
+            $('#container-test').fadeIn("fast");
+            $('#container-test').css('display', 'block');
+
+            setTimeout(function() {
+                var rate_array = [];
+                $('#container-test').fadeOut("fast");
+
+                $('.update-rate').toggleClass('d-none');
+                $('.read-only-rate').toggleClass('d-none');
+                $('#update-new-rates').toggleClass('d-none');
+
+                $('.bill-rate-input').each(function(index) {
+                    let rate = $(this).val();
+                    $('.current-rates').eq(index).val(rate);
+                });
+                
+                $('#buying-receipt-total-amount').val(test);
+            }, 500);
+
+            $('.current-rates').on('keyup', function() {
+                rateValues();
+            });
+
+            function rateValues() {
+                var new_total_amount = 0;
+                var table = $('#bill-summary-table');
+                var sub_totals = table.find('.bill-total-input');
+
+                sub_totals.each(function() {
+                    var rate_input = $(this).closest('tr').find('.form-control#current-rates');
+                    var rate_val = rate_input.val();
+                    var sub_total_val = parseFloat($(this).closest('tr').find('.form-control#bill-total-input').val().toString().replace(/,/g, ""));
+                    var true_sub_total = sub_total_val * rate_val;
+
+                    new_total_amount += parseFloat(true_sub_total);
+                });
+
+                var integer_part = Math.floor(new_total_amount);
+                var decim_part = new_total_amount - integer_part;
+
+                if (decim_part < 0.25) {
+                    decim_part = 0;
+                } else if (decim_part >= 0.25 && decim_part < 0.50) {
+                    decim_part = 0.25;
+                } else if (decim_part >= 0.50 && decim_part < 0.75) {
+                    decim_part = 0.50;
+                } else if (decim_part >= 0.75 && decim_part < 1) {
+                    decim_part = 0.75;
+                }
+
+                var rounded_total_amnt = integer_part + decim_part;
+
+                $('#buying-receipt-total-amount').val(rounded_total_amnt.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2})).text(rounded_total_amnt.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}));
+            }
+        });
+
+        $('#update-rate-transaction').click(function() {
+            var rates = [];
+            var denom_ids = [];
+            var total_amount = [];
+            var user_id_array = [];
+            var sec_code_array = [];
+            var user_sec_onpage = $('#update-b-rate-security-code').val();
+
+            $('.denom-id').each(function() {
+                denom_ids.push($(this).val());
+            });
+            
+            $('.bill-total-input').each(function() {
+                total_amount.push($(this).val());
+            });
+
+            $('.current-rates').each(function() {
+                rates.push($(this).val());
+            });
+
+            $.ajax({
+                url: "{{ route('user_info') }}",
+                type: "GET",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                },
+                success: function(get_user_info) {
+                    var user_info = get_user_info.security_codes;
+
+                    user_info.forEach(function(gar) {
+                        sec_code_array.push(gar.SecurityCode);
+                        user_id_array.push(gar.UserID);
+                    });
+
+                    if (sec_code_array.includes(user_sec_onpage)) {
+                        $('#update-rate-transaction').prop('disabled', true);
+
+                        var index = sec_code_array.indexOf(user_sec_onpage);
+                        var matched_user_id = user_id_array[index];
+
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'Rate updated!',
+                            icon: 'success',
+                            timer: 900,
+                            showConfirmButton: false
+                        }).then(() => {
+                            setTimeout(function() {
+                                var form_data = new FormData($('#update-rates')[0]);
+                                form_data.append('matched_user_id', matched_user_id);
+                                form_data.append('AFTDID', $('#serials-aftdid').val())
+                                form_data.append('rates', rates.join(", "));
+                                form_data.append('denom_ids', denom_ids.join(", "));
+                                form_data.append('total_amount', total_amount.join(", "));
+                                form_data.append('new_total_amnt', $('#buying-receipt-total-amount').val());
+                              
+                                $.ajax({
+                                    url: "{{ route('admin_transactions.admin_b_transaction.update_rate') }}",
+                                    type: "post",
+                                    data: form_data,
+                                    contentType: false,
+                                    processData: false,
+                                    cache: false,
+                                    success: function(data) {
+                                        var route = "{{ route('admin_transactions.admin_b_transaction.details', ['id' => ':id']) }}";
+                                        var url = route.replace(':id', data.AFTDID);
+
+                                        window.location.href = url;
+                                    }
+                                });
+                            }, 200);
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            text: 'Invalid or mismatched security code.',
+                            customClass: {
+                                popup: 'my-swal-popup',
+                            }
+                        }).then(()=> {
+                            $('#update-rate-transaction').prop('disabled', false);
+                        });
+                    }
+                }
+            });
+        });
     });
 
     $(document).ready(function() {
         var trans_id = '';
 
         $('#update-transction-btn').on('click', function(){
-            trans_id = $('#serials-ftdid').val();
+            trans_id = $('#serials-aftdid').val();
         });
 
         $('#update-transaction').click(function() {

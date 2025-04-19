@@ -278,6 +278,7 @@ Route::group(['middleware' => ['auth', 'PreventBackHistory']], function () {
             Route::post('/print', [AdminBuyingTransactionController::class, 'print'])->name('admin_transactions.admin_b_transaction.print');
             Route::get('/details/{id}', [AdminBuyingTransactionController::class, 'details'])->name('admin_transactions.admin_b_transaction.details');
             Route::post('/update', [AdminBuyingTransactionController::class, 'update'])->name('admin_transactions.admin_b_transaction.update');
+            Route::post('/update_rate', [AdminBuyingTransactionController::class, 'updateRate'])->name('admin_transactions.admin_b_transaction.update_rate');
             Route::get('/serials/{id}', [AdminBuyingTransactionController::class, 'serials'])->name('admin_transactions.admin_b_transaction.serials');
             Route::post('/saveSerials', [AdminBuyingTransactionController::class, 'saveSerials'])->name('admin_transactions.admin_b_transaction.save_serials');
             Route::post('/void', [AdminBuyingTransactionController::class, 'void'])->name('admin_transactions.admin_b_transaction.void');

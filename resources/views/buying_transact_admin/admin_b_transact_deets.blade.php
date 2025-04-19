@@ -218,6 +218,7 @@
                                                         </div>
                                                         <div class="col-9">
                                                             <input type="text" class="form-control" id="buying-receipt-total-amount" name="transact-total-amount" value="{{ number_format($trans_deets->Amount , 2 , '.' , ',') }}" readonly>
+                                                            <input type="hidden" id="og-total-amount" value="{{ number_format($trans_deets->Amount , 2 , '.' , ',') }}">
                                                             <input type="hidden" class="form-control" id="buying-receipt-transacted-by" value="{{ $trans_deets->Name }}">
                                                         </div>
                                                     </div>
@@ -246,7 +247,7 @@
                                                         </div>
                                                     @endcan
 
-                                                    <input type="hidden" id="serials-ftdid" value="{{ $trans_deets->AFTDID }}">
+                                                    <input type="hidden" id="serials-aftdid" value="{{ $trans_deets->AFTDID }}">
                                                     <input type="hidden" id="buying-print-count" value="{{ $trans_deets->Print }}">
                                                 </div>
                                             </form>
@@ -351,10 +352,22 @@
                                 </div>
 
                                 <div class="card mt-3">
-                                    <div class="col-12 p-2 border border-gray-300 rounded-tl rounded-tr serials-header summary-header">
-                                        <span class="text-lg font-bold p-1 text-black">
-                                           <i class='bx bx-detail'></i>&nbsp;{{ trans('labels.serials_serial_summary') }}
-                                        </span>
+                                    <div class="col-12 p-2 border border-gray-300 rounded-tr rounded-tl">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <span class="text-lg font-bold p-1 text-black">
+                                                    <i class='bx bx-detail'></i>&nbsp;{{ trans('labels.serials_serial_summary') }}
+                                                </span>
+                                            </div>
+                                            <div class="col-6 text-end">
+                                                @can('edit-permission', $menu_id)
+                                                    <button class="btn btn-primary btn-sm btn-edit-details" id="update-b-rate" type="button">
+                                                    {{-- <button class="btn btn-primary btn-sm btn-edit-details" type="button" data-bs-toggle="modal" data-bs-target="#transaction-details-modal"> --}}
+                                                        Edit &nbsp;<i class='bx bx-edit-alt'></i>
+                                                    </button>
+                                                @endcan
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <table class="table table-bordered table-hover" id="bill-summary-table">
@@ -367,13 +380,15 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @if (count($result['denom_details']) > 0)
-                                                @foreach ($result['denom_details'] as $denom_details)
+                                            @forelse ($result['denom_details'] as $denom_details)
+                                                <form method="post" action="{{ route('admin_transactions.admin_b_transaction.update_rate') }}" id="update-rates">
+                                                    @csrf
                                                     <div id="denom-details">
                                                         <tr class="denom-details-list-tabl" id="denom-details-list-table">
                                                             <td class="text-right pe-3 text-sm py-1 px-3">
                                                                 {{ number_format($denom_details->BillAmount, 2 , '.' , ',') }}
-                                                                <input type="hidden" class="form-control bill-amount-input" value="{{ number_format($denom_details->BillAmount, 2 , '.' , ',') }}">
+                                                                <input type="hidden" class="form-control denom-id" value="{{ $denom_details->ADenomID }}">
+                                                                <input type="hidden" class="form-control bill-amount-input" name="bill-amount-input" value="{{ $denom_details->BillAmount }}">
                                                             </td>
                                                             <td class="text-center px-3 text-sm p-1">
                                                                 {{ $denom_details->Multiplier }}
@@ -383,18 +398,25 @@
                                                                 <strong>
                                                                     {{ number_format($denom_details->Total, 2 , '.' , ',') }}
                                                                 </strong>
-                                                                <input type="hidden" class="form-control bill-total-input" value="{{ $denom_details->Total }}">
+                                                                <input type="hidden" class="form-control bill-total-input" id="bill-total-input" value="{{ $denom_details->Total }}">
                                                             </td>
                                                             <td class="text-end text-sm py-1 px-3">
-                                                                <strong>
-                                                                    {{ $denom_details->SinagRateBuying }}
-                                                                </strong>
-                                                                <input type="hidden" class="form-control bill-rate-input" value="{{ $denom_details->SinagRateBuying }}">
+                                                                <div class="col-12 read-only-rate" id="read-only-rate">
+                                                                    <strong>
+                                                                        {{ number_format(floor($denom_details->SinagRateBuying * 10000) / 10000, 4, '.', ',') }}
+                                                                    </strong>
+                                                                </div>
+    
+                                                                <div class="col-12 update-rate d-none" id="update-rate">
+                                                                    <input class="form-control current-rates text-right" name="current-rates" id="current-rates" type="number" value="{{ number_format(floor($denom_details->SinagRateBuying * 10000) / 10000, 4, '.', ',') }}">
+                                                                </div>
+    
+                                                                <input type="hidden" class="form-control bill-rate-input" value="{{ number_format(floor($denom_details->SinagRateBuying * 10000) / 10000, 4, '.', ',') }}">
                                                             </td>
                                                         </tr>
                                                     </div>
-                                                @endforeach
-                                            @else
+                                                </form>
+                                            @empty
                                                 <tr>
                                                     <td class="text-center text-td-buying text-sm py-3" colspan="4">
                                                         <span class="buying-no-transactions text-lg">
@@ -402,15 +424,15 @@
                                                         </span>
                                                     </td>
                                                 </tr>
-                                            @endif
+                                            @endforelse
                                         </tbody>
                                     </table>
                                     <div class="card-footer p-2 border border-gray-300 rounded-tl rounded-tr">
                                         <div class="row">
                                             <div class="col-lg-6 offset-1 text-end pe-0">
-
                                             </div>
                                             <div class="col-lg-5 text-end ps-0">
+                                                <button class="btn btn-primary btn-sm d-none" id="update-new-rates" data-bs-toggle="modal" data-bs-target="#update-admin-b-rate-sec-code-modal" type="button">Update</button>
                                             </div>
                                         </div>
                                     </div>
@@ -433,6 +455,7 @@
 
     @include('UI.UX.security_code')
     @include('UI.UX.customer_searching')
+    @include('UI.UX.update_admin_b_rate_modal')
     @include('UI.UX.update_admin_b_transact_details_modal')
 @endsection
 

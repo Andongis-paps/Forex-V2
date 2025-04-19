@@ -64,7 +64,13 @@ class AdminBuyingTransactionController extends Controller {
             ->groupBy('fda.TransactionDate', 'fda.TransactionNo', 'fda.ReceiptNo', 'fda.ORNo', 'tc.Currency', 'tt.TransType', 'fda.CurrencyAmount', 'fda.RateUsed', 'fda.Amount', 'tbx.Name', 'tcx.FullName', 'fda.AFTDID', 'fda.Remarks', 'fda.Rset', 'fda.Voided', 'encoder', 'whole_rate', 'decimal_rate')
             ->where('fda.BranchID', '=', Auth::user()->getBranch()->BranchID)
             ->orderBy('fda.TransactionNo' , 'DESC')
-            ->paginate(30);
+            ->paginate(30)
+            ->appends([
+                'date-to-search' => $date_to,
+                'date-from-search' => $date_from,
+                'invoice-search' => $invoice_no,
+                'radio-search-type' => $filter,
+            ]);
 
         $get_ftdid = [];
 
@@ -682,6 +688,32 @@ class AdminBuyingTransactionController extends Controller {
                 ->where('tbladminbuyingtransact.AFTDID', '=' , $request->get('trans_id'))
                 ->update($data_updated);
 		}
+    }
+
+    public function updateRate(Request $request) {
+        $rates = explode(", ", $request->get('rates'));
+        $denom_ids = explode(", ", $request->get('denom_ids'));
+        $total_amount = explode(", ", $request->get('total_amount'));
+
+        DB::connection('forex')->table('tbladminbuyingtransact as afd')
+            ->where('afd.AFTDID', $request->get('AFTDID'))
+            ->update([
+                'Amount' => str_replace(',', '', $request->get('new_total_amnt')),
+            ]);
+
+        foreach ($denom_ids as $key => $IDs) {
+            DB::connection('forex')->table('tbladmindenom as atd')
+                ->where('atd.ADenomID', $IDs)
+                ->update([
+                    'SinagRateBuying' => $rates[$key],
+                ]);
+        }
+
+        $response = [
+            'AFTDID' => $request->get('AFTDID')
+        ];
+
+        return response()->json($response);
     }
 
     public function serials(Request $request) {
