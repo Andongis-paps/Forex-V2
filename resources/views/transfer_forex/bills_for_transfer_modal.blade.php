@@ -49,13 +49,9 @@
 </div>
 
 <div class="modal-footer">
-    <div class="row align-items-center">
-        <div class="col-6 text-end pe-0">
-            <button class="btn btn-secondary btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
-        </div>
-        <div class="col-6 text-end pe-2">
-            <button class="btn btn-primary btn-sm" type="button" id="proceed-transfer">Proceed</button>
-        </div>
+    <div class="col-12 text-end">
+        <button class="btn btn-secondary btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary btn-sm" type="button" id="proceed-transfer">Proceed</button>
     </div>
 </div>
 
