@@ -150,7 +150,7 @@ class StopBuyingMaintenanceController extends Controller {
             ->orderBy('tcd.BranchID')
             ->orderBy('tcd.TransType')
             ->orderByDesc('tcd.BillAmount')
-            ->pluck('tdc.CDID');
+            ->pluck('tcd.CDID');
 
         $cdidCount = $current_rate_config->count();
         $stop_buying_statuses = count($new_rate_config['stop_buying']);

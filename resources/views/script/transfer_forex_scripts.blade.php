@@ -314,7 +314,7 @@
                 var transferable_bill_amnt = $('<td class="text-right text-sm py-1 px-3">'+ parseFloat(gar.bill_amount).toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}) +'</td>');
                 var transferable_serials = $('<td class="text-center text-sm p-1"><strong>'+ gar.serials +'</strong></td>');
 
-                total_amount_transfer += parseInt(gar.bill_amount);
+                total_amount_transfer += parseFloat(gar.bill_amount);
 
                 bill_count = selected_bill_currency.length;
 
@@ -328,7 +328,7 @@
 
             var transfer_fx_cash_count = transferable_bill_details.reduce((result, bill_details) => {
                 const currency = bill_details.currency;
-                const bill_amount = parseInt(bill_details.bill_amount);
+                const bill_amount = parseFloat(bill_details.bill_amount);
 
                 if (!result[currency]) {
                     result[currency] = {
