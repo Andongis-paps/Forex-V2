@@ -32,36 +32,39 @@ class AdminBuyingTransactionController extends Controller {
         $raw_date = Carbon::now('Asia/Manila');
         $r_set =  session('time_toggle_status') == 1 ? 'O' : '';
 
-        $result['transact_details'] = DB::connection('forex')->table('tbladminbuyingtransact')
-            ->leftJoin('tblcurrency' , 'tbladminbuyingtransact.CurrencyID' , 'tblcurrency.CurrencyID')
-            ->leftJoin('tbltransactiontype' , 'tbladminbuyingtransact.TransType' , 'tbltransactiontype.TTID')
-            ->leftJoin('pawnshop.tblxusers', 'tbladminbuyingtransact.UserID', '=', 'pawnshop.tblxusers.UserID')
-            ->leftJoin('pawnshop.tblxcustomer' , 'tbladminbuyingtransact.CustomerID' , 'pawnshop.tblxcustomer.CustomerID')
-            ->select(
-                'tbladminbuyingtransact.TransactionDate',
-                'tbladminbuyingtransact.TransactionNo',
-                'tbladminbuyingtransact.ReceiptNo',
-                'tbladminbuyingtransact.ORNo',
-                'tblcurrency.Currency',
-                'tbltransactiontype.TransType',
-                'tbladminbuyingtransact.CurrencyAmount',
-                'tbladminbuyingtransact.RateUsed',
-                'tbladminbuyingtransact.Amount',
-                'pawnshop.tblxusers.Name',
-                'pawnshop.tblxcustomer.FullName',
-                'pawnshop.tblxusers.SecurityCode',
-                'tbladminbuyingtransact.AFTDID',
-                'tbladminbuyingtransact.Remarks',
-                'tbladminbuyingtransact.Rset',
-                'tbladminbuyingtransact.Voided',
-            )
-            ->where('tbladminbuyingtransact.TransactionDate', '=' , $raw_date->toDateString())
+        $date_to = $request->query('date-to-search');
+        $date_from = $request->query('date-from-search');
+        $invoice_no = $request->query('invoice-search');
+        $filter = intval($request->query('radio-search-type'));
+
+        $result['transact_details'] = DB::connection('forex')->table('tbladminbuyingtransact as fda')
+            ->selectRaw('fda.TransactionDate, fda.TransactionNo, fda.ReceiptNo, fda.ORNo, tc.Currency, tt.TransType, fda.CurrencyAmount, fda.Amount, tbx.Name, tcx.FullName, fda.AFTDID, fda.Remarks, fda.Rset, fda.Voided, tbx.Name as encoder, FLOOR(fda.RateUsed) as whole_rate, fda.RateUsed, (fda.RateUsed - FLOOR(fda.RateUsed)) as decimal_rate')
+            ->join('tbladmindenom as atd' , 'fda.AFTDID' , 'atd.AFTDID')
+            ->join('tblcurrency as tc' , 'fda.CurrencyID' , 'tc.CurrencyID')
+            ->join('tbltransactiontype as tt' , 'fda.TransType' , 'tt.TTID')
+            ->join('pawnshop.tblxusers as tbx', 'fda.UserID', '=', 'tbx.UserID')
+            ->join('pawnshop.tblxcustomer as tcx' , 'fda.CustomerID' , 'tcx.CustomerID')
+            ->where('fda.TransactionDate', '=' , $raw_date->toDateString())
             ->when($r_set == 'O', function($query) use ($r_set) {
-                return $query->where('tbladminbuyingtransact.Rset', '=', $r_set);
+                return $query->where('fda.Rset', '=', $r_set);
             })
-            ->where('tbladminbuyingtransact.BranchID', '=', Auth::user()->getBranch()->BranchID)
-            ->orderBy('tbladminbuyingtransact.TransactionNo' , 'DESC')
-            ->paginate(10);
+            ->when(empty($filter), function ($query) use ($raw_date) {
+                return $query->where('fda.TransactionDate', $raw_date->toDateString());
+            })
+            ->when(!empty($filter), function ($query) use ($filter, $date_from, $date_to, $invoice_no) {
+                switch ($filter) {
+                    case 1:
+                        return $query->whereBetween('fda.TransactionDate', [$date_from, $date_to]);
+                    case 2:
+                        return $query->where('fda.ORNo', $invoice_no);
+                    default:
+                        return $query;
+                }
+            })
+            ->groupBy('fda.TransactionDate', 'fda.TransactionNo', 'fda.ReceiptNo', 'fda.ORNo', 'tc.Currency', 'tt.TransType', 'fda.CurrencyAmount', 'fda.RateUsed', 'fda.Amount', 'tbx.Name', 'tcx.FullName', 'fda.AFTDID', 'fda.Remarks', 'fda.Rset', 'fda.Voided', 'encoder', 'whole_rate', 'decimal_rate')
+            ->where('fda.BranchID', '=', Auth::user()->getBranch()->BranchID)
+            ->orderBy('fda.TransactionNo' , 'DESC')
+            ->paginate(30);
 
         $get_ftdid = [];
 
@@ -71,13 +74,38 @@ class AdminBuyingTransactionController extends Controller {
                 ->selectRaw('tbladminforexserials.Serials')
                 ->get();
 
+            $rates = DB::connection('forex')->table('tbladmindenom as atd')
+                ->where('atd.AFTDID', '=', $transaction->AFTDID)
+                ->selectRaw('atd.SinagRateBuying')
+                ->get();
+
+            $breakdown = DB::connection('forex')->table('tbladmindenom as atd')
+                ->selectRaw('atd.BillAmount, atd.SinagRateBuying')
+                ->where('atd.AFTDID', '=', $transaction->AFTDID)
+                ->orderBy('atd.BillAmount', 'DESC')
+                ->get();
+
             $get_serials = [];
 
             foreach ($serials as $serial) {
                 $get_serials[] = $serial->Serials;
             }
 
+            $get_rates = [];
+
+            foreach ($rates as $rate) {
+                $get_rates[] = $rate->SinagRateBuying;
+            }
+
+            $bread_d = [];
+
+            foreach ($breakdown as $value) {
+                $bread_d[] = number_format($value->BillAmount, 2) .''. ' -  <strong>('.$value->SinagRateBuying.')</strong>';
+            }
+
+            $transaction->rates = $get_rates;
             $transaction->serials = $get_serials;
+            $transaction->breakdown = implode(', ', $bread_d);
 
             $get_ftdid[] = $transaction;
         }
@@ -275,8 +303,9 @@ class AdminBuyingTransactionController extends Controller {
 
     public function save(Request $request) {
         $raw_date = Carbon::now('Asia/Manila');
-        $radio_rset =  session('time_toggle_status') == 1 ? 'O' : $request->input('radio-rset');
-        $buffer_status = $request->input('buffer_option') == "true" ? 1 : 0;
+        $radio_rset = session('time_toggle_status') == 1 ? 'O' : 'O';
+        // $buffer_status = $request->input('buffer_option') == "true" ? 1 : 0;
+        // $radio_rset =  session('time_toggle_status') == 1 ? 'O' : $request->input('radio-rset');
 
         $get_transaction_no = DB::connection('forex')->table('tbladminbuyingtransact')
             ->selectRaw('CASE WHEN MAX(TransactionNo) IS NULL THEN 1 ELSE MAX(TransactionNo) + 1 END AS updatedTransactNo')
@@ -314,7 +343,7 @@ class AdminBuyingTransactionController extends Controller {
                     'Rset' => $radio_rset,
                     'ReceiptNo' => $get_receipt_no,
                     'CompanyID' => Auth::user()->getBranch()->CompanyID,
-                    'Buffer' => $buffer_status
+                    // 'Buffer' => $buffer_status
                 );
 
                 $validator = Validator::make($request->all(), [

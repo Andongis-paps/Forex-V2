@@ -792,10 +792,6 @@ select {
 .-ml-px {
   margin-left: -1px;
 }
-.-ms-3 {
-  -webkit-margin-start: -0.75rem;
-          margin-inline-start: -0.75rem;
-}
 .mb-0 {
   margin-bottom: 0px;
 }

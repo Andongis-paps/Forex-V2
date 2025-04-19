@@ -24,13 +24,13 @@
                                         <div class="row align-items-center">
                                             <div class="col-6">
                                                 <span class="text-lg font-bold p-2 text-black">
-                                                    <i class='bx bx-list-ul' ></i>&nbsp;{{ trans('labels.buying_transaction_title') }}
+                                                   <i class='bx bx-detail'></i>&nbsp;{{ trans('labels.buying_transaction_title') }}
                                                 </span>
                                             </div>
 
                                             <div class="col-6 text-end">
                                                 @can('print-permission', $menu_id)
-                                                    <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#buying-transact-modal" id="printing-receipt-buying">{{ trans('labels.transact_print_buiying_receipt') }}  &nbsp; <i class='bx bxs-file-doc'></i></button>
+                                                    <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#buying-transact-modal" id="printing-receipt-buying">{{ trans('labels.transact_print_buiying_receipt') }}  &nbsp;<i class='bx bxs-file-doc'></i></button>
                                                 @endcan
 
                                                 @can('edit-permission', $menu_id)
@@ -50,7 +50,7 @@
                                                     <div class="row align-items-center px-3">
                                                         <div class="col-3">
                                                             <strong>
-                                                                {{ trans('labels.transact_date') }}&nbsp : &nbsp;
+                                                                {{ trans('labels.transact_date') }}: &nbsp;
                                                             </strong>
                                                         </div>
                                                         <div class="col-9">
@@ -61,7 +61,7 @@
                                                     <div class="row align-items-center px-3 mt-2">
                                                         <div class="col-3">
                                                             <strong>
-                                                                {{ trans('labels.transact_#') }}&nbsp;: &nbsp;
+                                                                {{ trans('labels.transact_#') }}: &nbsp;
                                                             </strong>
                                                         </div>
                                                         <div class="col-9">
@@ -70,7 +70,7 @@
                                                     </div>
 
                                                     {{-- Buying Transaction - Receipt Set --}}
-                                                        <div class="row align-items-center px-3 mt-2 d-none @if(session('time_toggle_status') == 1) d-none @endif" id="rset-container">
+                                                        {{-- <div class="row align-items-center px-3 mt-2 d-none @if(session('time_toggle_status') == 1) d-none @endif" id="rset-container">
                                                             <div class="col-3">
                                                                 <strong>
                                                                     Receipt Set :
@@ -103,14 +103,14 @@
                                                             <div class="col-9">
                                                                 <input type="text" class="form-control" id="buying-receipt-rset" name="transact-receipt-rset" value="{{ $trans_deets->Rset }}" readonly>
                                                             </div>
-                                                        </div>
+                                                        </div> --}}
                                                     {{-- Buying Transaction - Receipt Set --}}
 
                                                     {{-- Buying Transaction - OR Number --}}
                                                         <div class="row align-items-center px-3 mt-2 d-none" id="or-number-container-deet">
                                                             <div class="col-3">
                                                                 <strong>
-                                                                    {{ trans('labels.buying_or_number') }} :
+                                                                    {{ trans('labels.buying_or_number') }}:
                                                                 </strong>
                                                             </div>
                                                             <div class="col-9">
@@ -121,7 +121,7 @@
                                                         <div class="row align-items-center px-3 mt-2 @if(session('time_toggle_status') == 1) d-none @endif" id="or-no-details-cont">
                                                             <div class="col-3">
                                                                 <strong>
-                                                                    {{ trans('labels.transact_invoice_#') }}&nbsp;: &nbsp;
+                                                                    {{ trans('labels.transact_invoice_#') }}: &nbsp;
                                                                 </strong>
                                                             </div>
                                                             <div class="col-9">
@@ -134,7 +134,7 @@
                                                         <div class="row align-items-center px-3 mt-2 d-none" id="customer-container">
                                                             <div class="col-3">
                                                                 <strong>
-                                                                    {{ trans('labels.transact_customer') }}&nbsp;:
+                                                                    {{ trans('labels.transact_customer') }}:
                                                                 </strong>
                                                             </div>
                                                             <div class="col-6">
@@ -153,7 +153,7 @@
                                                         <div class="row align-items-center px-3 mt-2" id="customer-details-cont">
                                                             <div class="col-3">
                                                                 <strong>
-                                                                    {{ trans('labels.transact_customer') }}&nbsp;: &nbsp;
+                                                                    {{ trans('labels.transact_customer') }}: &nbsp;
                                                                 </strong>
                                                             </div>
                                                             <div class="col-9">
@@ -178,7 +178,7 @@
                                                     <div class="row align-items-center px-3 mt-2">
                                                         <div class="col-3">
                                                             <strong>
-                                                                {{ trans('labels.transact_type') }}&nbsp; :
+                                                                {{ trans('labels.transact_type') }}:
                                                             </strong>
                                                         </div>
                                                         <div class="col-9">
@@ -190,7 +190,7 @@
                                                         <div class="row align-items-center px-3 mt-2">
                                                             <div class="col-3">
                                                                 <strong>
-                                                                    {{ trans('labels.transfer_forex_mtcn') }}&nbsp; :
+                                                                    {{ trans('labels.transfer_forex_mtcn') }}:
                                                                 </strong>
                                                             </div>
                                                             <div class="col-9">
@@ -202,7 +202,7 @@
                                                     <div class="row align-items-center px-3 mt-2">
                                                         <div class="col-3">
                                                             <strong>
-                                                                Currency Amount&nbsp; : &nbsp;
+                                                                Currency Amount: &nbsp;
                                                             </strong>
                                                         </div>
                                                         <div class="col-9">
@@ -213,7 +213,7 @@
                                                     <div class="row align-items-center px-3 mt-2">
                                                         <div class="col-3">
                                                             <strong>
-                                                                Total Amount&nbsp; : &nbsp;
+                                                                Total Amount: &nbsp;
                                                             </strong>
                                                         </div>
                                                         <div class="col-9">
@@ -225,7 +225,7 @@
                                                     <div class="row align-items-center px-3 mt-2">
                                                         <div class="col-3">
                                                             <strong>
-                                                                Remarks&nbsp; : &nbsp;
+                                                                Remarks: &nbsp;
                                                             </strong>
                                                         </div>
                                                         <div class="col-9">
@@ -237,7 +237,7 @@
                                                         <div class="row align-items-center px-3 mt-2">
                                                             <div class="col-3">
                                                                 <strong>
-                                                                    Print Count&nbsp; : &nbsp;
+                                                                    Print Count: &nbsp;
                                                                 </strong>
                                                             </div>
                                                             <div class="col-9">
@@ -254,6 +254,7 @@
                                     @endif
 
                                     <div class="col-12 text-end p-2 border border-gray-300 rounded-bl rounded-br">
+                                        <a class="btn btn-secondary btn-sm text-white" href="{{ route('admin_transactions.buying_transaction') }}">Back</a>
                                         <button class="btn btn-primary btn-sm d-none" type="button" id="update-transction-btn" data-bs-toggle="modal" data-bs-target="#update-admin-b-trans-sec-code-modal">
                                             Update
                                         </button>
@@ -267,7 +268,7 @@
                                         <div class="row align-items-center">
                                             <div class="col-6">
                                                 <span class="text-lg font-bold p-1 text-black">
-                                                    <i class='bx bx-list-ul' ></i>&nbsp;{{ trans('labels.serials_serials') }}
+                                                   <i class='bx bx-detail'></i>&nbsp;{{ trans('labels.serials_serials') }}
                                                 </span>
                                             </div>
                                             <div class="col-6 text-end">
@@ -293,7 +294,7 @@
                                                 <div id="transaction-details">
                                                     <tr class="transact-details-list-table" id="transact-details-list-table">
                                                         <td class="text-center text-sm p-1">
-                                                            {{ Str::title($forex_serials->Currency) }}
+                                                            {{ $forex_serials->Currency }}
                                                         </td>
                                                         <td class="text-right text-sm py-1 px-3">
                                                             {{ number_format($forex_serials->BillAmount , 2 , '.' , ',') }}
@@ -352,7 +353,7 @@
                                 <div class="card mt-3">
                                     <div class="col-12 p-2 border border-gray-300 rounded-tl rounded-tr serials-header summary-header">
                                         <span class="text-lg font-bold p-1 text-black">
-                                            <i class='bx bx-list-ul' ></i>&nbsp;{{ trans('labels.serials_serial_summary') }}
+                                           <i class='bx bx-detail'></i>&nbsp;{{ trans('labels.serials_serial_summary') }}
                                         </span>
                                     </div>
 

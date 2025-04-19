@@ -1,5 +1,11 @@
 {{-- Buying Transaction Table --}}
 <script>
+    $(document).ready(function() {
+        $('input[name="radio-search-type"]').change(function() {
+            $('#invoice-searching, #date-range-searching').toggleClass('d-none');
+        });
+    });
+
      $(document).ready(function() {
         var total_curr_amount = 0;
 

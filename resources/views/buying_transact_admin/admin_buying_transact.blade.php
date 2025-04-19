@@ -31,7 +31,7 @@
                                                 <i class='bx bxs-badge-dollar' ></i>&nbsp;{{ trans('labels.new_buying_trans_title') }}
                                             </span>
                                         </div>
-                                        <div class="col-12 border border-gray-300 p-3 pb-0" id="buying-container">
+                                        <div class="col-12 border border-gray-300 pt-3 pb-0" id="buying-container">
                                             {{-- Buying Transaction - Date --}}
                                             <div class="row align-items-center px-3 mb-3">
                                                 <div class="col-3">
@@ -76,7 +76,7 @@
                                             </div> --}}
 
                                             {{-- Buying Transaction - Receipt Set --}}
-                                            <div class="row align-items-center px-3 mt-2 mb-3 @if(session('time_toggle_status') == 1) d-none @endif">
+                                            {{-- <div class="row align-items-center px-3 mt-2 mb-3 @if(session('time_toggle_status') == 1) d-none @endif">
                                                 <div class="col-3">
                                                     <strong>
                                                         {{ trans('labels.buying_rset') }}: &nbsp;<span class="required-class">*</span>
@@ -98,9 +98,9 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                             {{-- Buying Transaction - OR Number --}}
-                                            <div class="row align-items-center px-3 mt-2 mb-3" id="or-number-container">
+                                            <div class="row align-items-center px-3 mt-3" id="or-number-container">
                                                 <div class="col-3">
                                                     <strong>
                                                         {{ trans('labels.buying_or_number') }}: &nbsp;<span class="required-class">*</span>
@@ -144,7 +144,7 @@
                                                             <option value="Select a currency" id="buying-default-currency">Select a currency</option>
                                                         </select>
 
-                                                        <button class="btn btn-primary btn-sm" id="currency-manual-modal-button" type="button" disabled><i class='bx bx-spreadsheet pb-1'></i>&nbsp;{{ trans('labels.buying_currency_manual') }}</button>
+                                                        <button class="btn btn-primary btn-sm" id="currency-manual-modal-button" type="button" disabled>{{ trans('labels.buying_currency_manual') }}</button>
                                                     </div>
                                                 </div>
                                                 

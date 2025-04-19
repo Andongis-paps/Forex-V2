@@ -112,7 +112,7 @@ return [
     'edit_buying_trans_title' => 'Edit Buying Transaction',
     'buying_trans_date' => 'Transaction Date',
     'buying_trans_type' => 'Transaction Type',
-    'buying_customer_name' => 'Customer Name',
+    'buying_customer_name' => 'Customer',
     'buying_or_number' => 'Invoice No.',
     'buying_rset' => 'Receipt Set',
     'buying_rset_o' => 'O',
@@ -148,10 +148,10 @@ return [
     'transact_date' => 'Transaction Date',
     'transact_time' => 'Transaction Time',
     'transact_#' => 'Transaction No.',
-    'transact_invoice_#' => 'Invoice Number',
-    'transact_customer_name' => 'Customer Name',
+    'transact_invoice_#' => 'Invoice No.',
+    'transact_customer_name' => 'Customer',
     'transact_curr' => 'Currency',
-    'transact_type' => 'Transaction Type',
+    'transact_type' => 'Type',
     'transact_curr_amnt' => 'Curr. Amount',
     'transact_rate' => 'Rate Used',
     'transact_amnt' => 'Peso Amount',
@@ -223,7 +223,7 @@ return [
 
     // Add Selling Transaction
     'add_selling_trans_date' => 'Transaction Date',
-    'add_selling_customer_name' => 'Customer Name',
+    'add_selling_customer_name' => 'Customer',
     'add_selling_trans_rset' => 'R Set',
     'add_selling_trans_selling_no' => 'Transaction No.',
     'add_selling_trans_receipt_no' => 'Receipt No.',
@@ -354,7 +354,7 @@ return [
     // Customer details - buying transaction
     'customer_id' => 'Customer ID',
     'customer_#' => 'Customer No.',
-    'customer_name' => 'Customer Name',
+    'customer_name' => 'Customer',
     'customer_date_time' => 'Timestamp',
     'customer_birhtdate' => 'Birthdate',
     'customer_neid_count' => 'No ID Count',
@@ -365,7 +365,7 @@ return [
     'customer_search_f_name' => 'First Name',
     'customer_search_m_name' => 'Middle Name',
     'customer_search_b_date' => 'Birth Date',
-    'customer_search_name' => 'Customer Name',
+    'customer_search_name' => 'Customer',
     'customer_search_number' => 'Customer Number',
 
     // Window Based - Branch

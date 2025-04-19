@@ -399,7 +399,7 @@
             multiplier_inputs.each(function() {
                 var multiplier_input = $(this).closest('tr').find('.form-control#multiplier');
                 var multiplier_value = multiplier_input.val();
-                var bill_amount_value = parseFloat($(this).closest('tr').find('.form-control#bill-amount').val().toString().split(".")[0].replace(/,/g, ""));
+                var bill_amount_value = parseFloat($(this).closest('tr').find('.form-control#bill-amount').val().toString().replace(/,/g, ""));
 
                 var subtotal = bill_amount_value * multiplier_value;
 
@@ -429,7 +429,7 @@
 
                 $(this).val(subtotal.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}));
 
-                var subtotal_GET = parseFloat($(this).val().toString().split(".")[0].replace(/,/g, ""));
+                var subtotal_GET = parseFloat($(this).val().toString().replace(/,/g, ""));
                 total_amount += subtotal_GET;
 
                 if ((total_amount == 0) == false) {
@@ -644,23 +644,31 @@
                 var get = $('#mtcn-input-field').val();
                 var mtcn_number = $('#mtcn-input-field').val();
 
-                if (rset_value == 'O') {
-                    if (b_or_number == '') {
-                        Swal.fire({
-                            icon: 'error',
-                            text: 'Invoice number is required.',
-                            customClass: {
-                                popup: 'my-swal-popup',
-                            }
-                        });
-                    } else {
-                        $('#security-code-modal').modal("show");
-                    }
-                } else {
-                    $('#security-code-modal').modal("show");
-                }
+                // if (rset_value == 'O') {
+                //     if (b_or_number == '') {
+                //         Swal.fire({
+                //             icon: 'error',
+                //             text: 'Invoice number is required.',
+                //             customClass: {
+                //                 popup: 'my-swal-popup',
+                //             }
+                //         });
+                //     } else {
+                //         $('#security-code-modal').modal("show");
+                //     }
+                // } else {
+                //     $('#security-code-modal').modal("show");
+                // }
 
-                if (b_transact_date == '') {
+                if (b_or_number == '') {
+                    Swal.fire({
+                        icon: 'error',
+                        text: 'Invoice number is required.',
+                        customClass: {
+                            popup: 'my-swal-popup',
+                        }
+                    });
+                } else if (b_transact_date == '') {
                     Swal.fire({
                         icon: 'error',
                         text: 'Transact Date is required.',
@@ -700,7 +708,7 @@
                             popup: 'my-swal-popup',
                         }
                     });
-                } else if (b_transact_date && b_customer && b_rset && b_or_number && b_transact_type && b_currency != '') {
+                } else if (b_transact_date && b_customer && b_or_number && b_transact_type && b_currency != '') {
                     $('#security-code-modal').modal("show");
                 }
             });
