@@ -67,7 +67,7 @@ class BuyingTransactController extends Controller{
             })
             ->groupBy('fd.TransactionDate', 'fd.TransactionNo', 'fd.ReceiptNo', 'fd.ORNo', 'tr.Currency', 'fd.CurrencyID', 'tt.TransType', 'fd.CurrencyAmount', 'whole_rate', 'decimal_rate', 'fd.Amount', 'tbx.Name', 'tcx.FullName', 'tbx.SecurityCode', 'fd.FTDID', 'fd.Rset', 'encoder', 'fd.Voided', 'fd.HasTicket')
             ->orderBy('fd.TransactionNo' , 'DESC')
-            ->paginate(5)
+            ->paginate(30)
             ->appends([
                 'date-to-search' => $date_to,
                 'date-from-search' => $date_from,
