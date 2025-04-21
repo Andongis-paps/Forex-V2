@@ -3,7 +3,7 @@
    <div class="layout-page">
         <div class="content-wrapper">
             @include('template.menu')
-            <div class="container-fluid flex-grow-1 container-p-y m-0 pt-0 pt-0">
+            <div class="container-fluid flex-grow-1 container-p-y m-0 pt-0">
                 <div class="row">
                     <div class="col-lg-12 mb-4">
                         <div class="row justify-content-center">

@@ -32,34 +32,37 @@ class AdminRetailSellingController extends Controller {
         $this->MenuID = $request->attributes->get('MenuID');
         $menu_id = $this->MenuID;
 
-        $result['selling_transact_details'] = DB::connection('forex')->table('tbladminsoldcurr')
-            ->join('tblcurrency' , 'tbladminsoldcurr.CurrencyID' , 'tblcurrency.CurrencyID')
-            ->join('pawnshop.tblxcustomer' , 'tbladminsoldcurr.CustomerID' , 'pawnshop.tblxcustomer.CustomerID')
-            ->leftJoin('pawnshop.tblxusers', 'tbladminsoldcurr.UserID', '=', 'pawnshop.tblxusers.UserID')
-            ->select(
-                'tbladminsoldcurr.DateSold',
-                'tbladminsoldcurr.SellingNo',
-                'tbladminsoldcurr.ReceiptNo',
-                'tbladminsoldcurr.ORNo',
-                'tblcurrency.Currency',
-                'tbladminsoldcurr.CurrAmount',
-                'tbladminsoldcurr.RateUsed',
-                'tbladminsoldcurr.AmountPaid',
-                'tbladminsoldcurr.Rset',
-                'tbladminsoldcurr.ASCID',
-                'tbladminsoldcurr.Remarks',
-                'tbladminsoldcurr.Voided',
-                'pawnshop.tblxcustomer.FullName',
-                'pawnshop.tblxusers.SecurityCode',
-            )
-            ->where('tbladminsoldcurr.DateSold', '=' , $raw_date->toDateString())
-            ->where('tbladminsoldcurr.BranchID', '=', Auth::user()->getBranch()->BranchID)
-            ->when($r_set == 'O', function($query) use ($r_set) {
-                return $query->where('tbladminsoldcurr.Rset', '=', $r_set);
-            })
-            ->orderBy('tbladminsoldcurr.SellingNo' , 'DESC')
-            ->paginate(15);
+        $date_to = $request->query('date-to-search');
+        $date_from = $request->query('date-from-search');
+        $invoice_no = $request->query('invoice-search');
+        $filter = intval($request->query('radio-search-type'));
 
+        $result['selling_transact_details'] = DB::connection('forex')->table('tbladminsoldcurr as asc')
+            ->selectRaw('asc.DateSold, asc.SellingNo, asc.ReceiptNo, asc.ORNo, tblcurrency.Currency, asc.CurrAmount, asc.RateUsed, asc.AmountPaid, asc.Rset, asc.ASCID, asc.Remarks, asc.Voided, tcx.FullName, tbx.SecurityCode')
+            ->join('tblcurrency' , 'asc.CurrencyID' , 'tblcurrency.CurrencyID')
+            ->join('pawnshop.tblxcustomer as tcx' , 'asc.CustomerID' , 'tcx.CustomerID')
+            ->leftJoin('pawnshop.tblxusers as tbx', 'asc.UserID', '=', 'tbx.UserID')
+            ->where('asc.DateSold', '=' , $raw_date->toDateString())
+            ->where('asc.BranchID', '=', Auth::user()->getBranch()->BranchID)
+            ->when($r_set == 'O', function($query) use ($r_set) {
+                return $query->where('asc.Rset', '=', $r_set);
+            })
+            ->when(empty($filter), function ($query) use ($raw_date) {
+                return $query->where('asc.DateSold', $raw_date->toDateString());
+            })
+            ->when(!empty($filter), function ($query) use ($filter, $date_from, $date_to, $invoice_no) {
+                switch ($filter) {
+                    case 1:
+                        return $query->whereBetween('asc.DateSold', [$date_from, $date_to]);
+                    case 2:
+                        return $query->where('asc.ORNo', $invoice_no);
+                    default:
+                        return $query;
+                }
+            })
+            ->groupBy('asc.DateSold', 'asc.SellingNo', 'asc.ReceiptNo', 'asc.ORNo', 'tblcurrency.Currency', 'asc.CurrAmount', 'asc.RateUsed', 'asc.AmountPaid', 'asc.Rset', 'asc.ASCID', 'asc.Remarks', 'asc.Voided', 'tcx.FullName', 'tbx.SecurityCode')
+            ->orderBy('asc.SellingNo' , 'DESC')
+            ->paginate(30);
 
         return view('retail_selling_transact_admin.admin_new_s_transact', compact('result', 'menu_id'));
     }

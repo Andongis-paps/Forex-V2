@@ -14,21 +14,78 @@
                             <div class="col-12">
                                 <div class="card">
                                     <div class="col-12 p-2 border border-gray-300 rounded-tl rounded-tr">
-                                        <div class="row align-items-center">
-                                            <div class="col-6">
-                                                <span class="text-lg font-bold p-2 text-black">
-                                                    <i class='bx bxs-badge-dollar' ></i>&nbsp;{{ trans('labels.selling_transact') }}
-                                                </span>
+                                        <form class="m-0" method="GET" action="{{ route('admin_transactions.selling_transaction') }}">
+                                            <div class="row align-items-center">
+                                                <div class="col-3">
+                                                    <span class="text-lg font-bold p-2 text-black">
+                                                        <i class='bx bxs-dollar-circle'></i>&nbsp;{{ trans('labels.selling_transact') }}
+                                                    </span>
+                                                </div>
+
+                                                <div class="col-6">
+                                                    <div class="row">
+                                                        @can('edit-permission', $menu_id)
+                                                            <div class="col-10 p-0">
+                                                                <div class="col-12 @if (request()->query('radio-search-type') == 2) d-none @endif" id="date-range-searching">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <input class="form-control" name="date-from-search" id="date-from-search" type="date" value="{{ request()->query('date-from-search') }}">
+                                                                        <input class="form-control" name="date-to-search" id="date-to-search" type="date" value="{{ request()->query('date-to-search') }}">
+                                                                        <button class="btn btn-primary btn-sm shadow-none" type="submit">Search</button>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-12 @if (request()->query('radio-search-type') == 2) @else d-none @endif " id="invoice-searching">
+                                                                    <div class="input-group input-group-sm">
+                                                                        <input class="form-control" name="invoice-search" id="invoice-search" type="number" value="{{ request()->query('invoice-search') }}">
+                                                                        <button class="btn btn-primary btn-sm shadow-none" type="submit">Search</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-2">
+                                                                <div class="row ps-3">
+                                                                    <button class="btn btn-secondary btn-sm shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-filter" aria-expanded="true" aria-controls="accordion-filter"><i class='bx bx-filter-alt bx-xs me-1'></i>Filter</button>
+                                                                </div>
+                                                            </div>
+                                                        @endcan
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-3 text-end">
+                                                    @can('add-permission', $menu_id)
+                                                        <a class="btn btn-primary btn-sm text-white" href="{{ route('admin_transactions.admin_s_transaction.add') }}">
+                                                            {{ trans('labels.add_new_selling_trans_title') }} <i class='menu-icon tf-icons bx bx-plus text-white ms-1 me-0'></i>
+                                                        </a>
+                                                    @endcan
+                                                </div>
                                             </div>
 
-                                            <div class="col-6 text-end">
-                                                @can('add-permission', $menu_id)
-                                                    <a class="btn btn-primary btn-sm text-white" href="{{ route('admin_transactions.admin_s_transaction.add') }}">
-                                                        {{ trans('labels.add_new_selling_trans_title') }} <i class='menu-icon tf-icons bx bx-plus text-white ms-1 me-0'></i>
-                                                    </a>
-                                                @endcan
+                                            <div class="row justify-content-center">
+                                                <div class="col-6">
+                                                    <div id="accordion" class="accordion accordion-without-arrow">
+                                                        <div class="accordion-item !bg-transparent">
+                                                            <div id="accordion-filter" class="accordion-collapse collapse" data-bs-parent="#accordion">
+                                                                <div class="accordion-body">
+                                                                    <div class="row text-center">
+                                                                        <div class="btn-group btn-group-sm" role="group" aria-label="Basic radio toggle button group">
+                                                                            <input type="radio" class="btn-check" name="radio-search-type" id="date-range" value="1" @if (request()->query('date-to-search') || request()->query('date-from-search')) checked @else checked @endif>
+                                                                            <label class="btn btn-outline-primary" for="date-range">
+                                                                                <strong>Date Range</strong>
+                                                                            </label>
+
+                                                                            <input type="radio" class="btn-check" name="radio-search-type" id="invoice-no" value="2" @if (request()->query('invoice-search')) checked @endif>
+                                                                            <label class="btn btn-outline-primary" for="invoice-no">
+                                                                                <strong>Invoice No.</strong>
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
+                                        </form>
                                     </div>
 
                                     <table class="table table-bordered table-hover">
