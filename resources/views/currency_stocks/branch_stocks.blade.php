@@ -129,7 +129,8 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-12 border border-solid border-gray-300" @if(count($result['currencies']) > 10) id="currency-summary-container" @endif>
+                                    {{-- <div class="col-12 border border-solid border-gray-300" @if(count($result['currencies']) > 10) id="currency-summary-container" @endif> --}}
+                                    <div class="col-12 border border-solid border-gray-300">
                                         <table class="table table-hover mb-0">
                                             <thead class="sticky-header">
                                                 <tr>
