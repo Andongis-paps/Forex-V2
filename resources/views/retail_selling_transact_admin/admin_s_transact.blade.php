@@ -26,7 +26,7 @@
                                             </span>
                                         </div>
 
-                                        <div class="col-12 border border-gray-300 p-3" id="selling-container">
+                                        <div class="col-12 border border-gray-300 pt-3 pb-0" id="selling-container">
                                             {{-- Selling Transact - Date --}}
                                             <div class="row align-items-center px-3">
                                                 <div class="col-3">
@@ -65,7 +65,7 @@
                                                 </div>
                                             </div>
                                             {{-- Selling Transact - Receipt Set --}}
-                                            <div class="row align-items-center px-3 mt-3 @if(session('time_toggle_status') == 1) d-none @endif">
+                                            {{-- <div class="row align-items-center px-3 mt-3 @if(session('time_toggle_status') == 1) d-none @endif">
                                                 <div class="col-3">
                                                     <strong>
                                                         {{ trans('labels.buying_rset') }}: &nbsp;<span class="required-class">*</span>
@@ -86,7 +86,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
 
                                             <input type="hidden" value="{{ session('time_toggle_status') }}" id="time-toggle-stat">
                                             {{-- Selling Transaction - OR Number --}}
@@ -170,7 +170,7 @@
                                             </div>
 
                                             {{-- Selling Transact - Total Amount --}}
-                                            <div class="row align-items-center px-3 mt-3">
+                                            <div class="row align-items-center px-3 mt-3 mb-2">
                                                 <div class="col-3 offset-5 text-end">
                                                     <strong>
                                                         {{ trans('labels.selling_trans_total_amnt') }}: &nbsp;
