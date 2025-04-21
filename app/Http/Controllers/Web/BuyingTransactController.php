@@ -81,31 +81,38 @@ class BuyingTransactController extends Controller{
                 'radio-search-type' => $filter,
             ]);
 
-        $FTDIDs = $query->clone()->pluck('fd.FTDID')
-            ->toArray();
+        $FTDIDs = '';
+        $rates = '';
 
-        $rates = DB::connection('forex')->table('tbldenom as tdm')
-            ->selectRaw('
-                tdm.FTDID,
-                CASE
-                    WHEN fd.CurrencyID NOT IN (12, 14, 31) THEN GROUP_CONCAT(FORMAT(FLOOR(tdm.SinagRateBuying * 100) / 100, 2))
-                    WHEN fd.CurrencyID IN (12, 14, 31) THEN GROUP_CONCAT(FORMAT(FLOOR(tdm.SinagRateBuying * 100000) / 100000, 4))
-                    ELSE GROUP_CONCAT(tdm.SinagRateBuying)
-                END AS Rate
-            ')
-            ->join('tblforextransactiondetails as fd' , 'tdm.FTDID' , 'fd.FTDID')
-            ->when(is_array($FTDIDs), function ($query) use ($FTDIDs) {
-                return $query->whereIn('tdm.FTDID', $FTDIDs);
-            }, function ($query) use ($FTDIDs) {
-                return $query->where('tdm.FTDID', $FTDIDs);
-            })
-            ->groupBy('tdm.FTDID')
-            ->orderBy('tdm.FTDID', 'DESC')
-            ->pluck('Rate')
-            ->toArray();
+        // dd(isset($result['transact_details']));
 
-        foreach ($result['transact_details'] as $index => $transaction) {
-            $transaction->rates = $rates[$index];
+        if (count($result['transact_details']) > 0) {
+            $FTDIDs = $query->clone()->pluck('fd.FTDID')
+                ->toArray();
+
+            $rates = DB::connection('forex')->table('tbldenom as tdm')
+                ->selectRaw('
+                    tdm.FTDID,
+                    CASE
+                        WHEN fd.CurrencyID NOT IN (12, 14, 31) THEN GROUP_CONCAT(FORMAT(FLOOR(tdm.SinagRateBuying * 100) / 100, 2))
+                        WHEN fd.CurrencyID IN (12, 14, 31) THEN GROUP_CONCAT(FORMAT(FLOOR(tdm.SinagRateBuying * 100000) / 100000, 4))
+                        ELSE GROUP_CONCAT(tdm.SinagRateBuying)
+                    END AS Rate
+                ')
+                ->join('tblforextransactiondetails as fd' , 'tdm.FTDID' , 'fd.FTDID')
+                ->when(is_array($FTDIDs), function ($query) use ($FTDIDs) {
+                    return $query->whereIn('tdm.FTDID', $FTDIDs);
+                }, function ($query) use ($FTDIDs) {
+                    return $query->where('tdm.FTDID', $FTDIDs);
+                })
+                ->groupBy('tdm.FTDID')
+                ->orderBy('tdm.FTDID', 'DESC')
+                ->pluck('Rate')
+                ->toArray();
+
+            foreach ($result['transact_details'] as $index => $transaction) {
+                $transaction->rates = $rates[$index];
+            }
         }
 
         return view('buying_transact.add_new_buying_transact', compact('result' , 'rates', 'menu_id'));
