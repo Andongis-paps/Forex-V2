@@ -25,6 +25,9 @@
                     allowOutsideClick: false,
                     allowEscapeKey: false,
                     confirmButtonColor: '#03c3ec',
+                    showClass: {
+                        popup: 'swal2-zoom-in'
+                    },
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $('meta[name="csrf-token"]').attr('content', '{{ csrf_token() }}');
