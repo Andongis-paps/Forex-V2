@@ -39,7 +39,7 @@ class AdminReceiveTransfersController extends Controller {
             ->where('tfx.Remarks', '!=', 'BUFFER')
             ->whereNotNull('tfx.ITNo')
             ->orderBy('trt.RTID', 'DESC')
-            ->paginate(25, ['*'], 'received');
+            ->paginate(20, ['*'], 'received');
 
         $result['transfers'] = DB::connection('forex')->table('tbltransferforex as tfx')
             ->select('tfx.TransferForexID AS TFID', 'tfx.TransferForexNo AS TFNO', 'tfx.ITNo AS TrackingNo', 'tfx.TransferDate AS TFDate', 'tfx.BranchID AS TFBranch', 'tfx.Remarks AS TFRemarks', 'tfx.EntryDate AS TFEntryDate', 'tfx.CourierID AS TFCourierID', 'tfr.RTID AS RTID', 'tfr.TFID AS RTTFID', 'tfr.RTDate AS RTDate', 'tfr.UserID AS RTReceivedBy', 'tfr.Received AS RTReceived', 'tfr.Remarks AS RTRemarks', 'tb.BranchCode AS BranchCode')
@@ -51,7 +51,7 @@ class AdminReceiveTransfersController extends Controller {
             ->where('tfx.Voided', '=', 0)
             ->whereNotNull('tfx.ITNo')
             ->orderBy('tfx.TransferForexNo' , 'DESC')
-            ->paginate(25, ['*'], 'icoming');
+            ->paginate(20, ['*'], 'icoming');
 
         return view('selling_receive_transfers.received_transfers', compact('result', 'menu_id'));
     }

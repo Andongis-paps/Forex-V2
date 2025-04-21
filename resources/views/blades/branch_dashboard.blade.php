@@ -609,7 +609,7 @@
                                     </div>
 
                                     <div class="row" id="stocks-card">
-                                        <div class="col-12 ps-0">
+                                        <div class="col-12 px-0">
                                             <div class="card dahsboard-cards">
                                                 <div class="card-header pb-1 pt-3 mb-2 align-items-center ">
                                                     <div class="row align-items-center text-left">

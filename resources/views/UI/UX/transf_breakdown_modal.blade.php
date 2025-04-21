@@ -3,13 +3,13 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div class="col-12">
-                    <span class="text-lg font-semibold p-2">
+                    <span class="text-lg font-bold p-2">
                         {{ trans('labels.selling_availble_bills') }}
                     </span>
                 </div>
             </div>
 
-            <div class="modal-body">
+            <div class="modal-body p-2">
                 <div class="col-12 available-stock-list-container @if (count($result['serial_breakdown']) <= 5) stocks-lowest-height @elseif (count($result['serial_breakdown']) < 10) stocks-min-height @elseif (count($result['serial_breakdown']) > 10) stocks-max-height @endif border rounded">
                     <table class="table table-hover m-0" id="transf-all-break-d-table">
                         <thead class="sticky-header">
@@ -25,7 +25,7 @@
                                 <tr class="denom-details-list-tabl" id="denom-details-list-table">
                                     <td class="text-center text-sm p-1">
                                         <span class="">
-                                            {{ Str::title($serial_breakdown->Currency) }}
+                                            {{ $serial_breakdown->Currency }}
                                         </span>
                                         <input type="hidden" class="transfer-break-d-currency" value="{{ Str::title($serial_breakdown->Currency) }}">
                                     </td>
@@ -64,7 +64,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ trans('labels.close_action') }}</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">{{ trans('labels.close_action') }}</button>
             </div>
         </div>
     </div>
