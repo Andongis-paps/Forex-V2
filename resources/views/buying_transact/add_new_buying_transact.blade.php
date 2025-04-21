@@ -131,23 +131,8 @@
                                                             $report_status = $transact_details->HasTicket == 0 && $transact_details->Voided == 0;
 
                                                             $formatted_rate = '';
+                                                            $rates_array = explode(",", $transact_details->rates);
                                                             $denoms_array = explode(",", $transact_details->denoms);
-
-                                                            foreach ($transact_details->rates as $rate) {
-                                                                $whole_number = floor($rate);
-                                                                $decimal = $rate - $whole_number;
-                                                                $segmented_rate = $whole_number + $decimal;
-
-                                                                $decimal_places = (strpos((string) $segmented_rate, '.') !== false) ? strlen(explode('.', $segmented_rate)[1]) : 0;
-
-                                                                if ($decimal_places <= 2 && !in_array($transact_details->CurrencyID, [12, 14, 31])) {
-                                                                    $formatted_rate = number_format(floor($segmented_rate * 100) / 100, 2);
-                                                                } else if ($decimal_places <= 4 && in_array($transact_details->CurrencyID, [12, 14, 31])) {
-                                                                    $formatted_rate = number_format(floor($segmented_rate * 100000) / 100000, 4, '.', ',');
-                                                                }
-
-                                                                $formatted_rates_arr[] = $formatted_rate;
-                                                            }
                                                         @endphp
 
                                                         @if (session('time_toggle_status') == 1)
@@ -183,11 +168,11 @@
                                                                 {{-- <td class="text-right text-xs py-1 px-3" data-bs-toggle="popover" @if (count($formatted_rates_arr) > 1) data-bs-content="{!! $transact_details->breakdown !!}" @endif data-bs-placement="bottom" data-bs-custom-class="popover-dark" tabindex="0">
                                                                     {{ \Illuminate\Support\Str::limit(implode(', ',$formatted_rates_arr), 10, '...') }}
                                                                 </td> --}}
-                                                                {{-- <td class="text-right text-xs py-1 pe-2">
-                                                                    @foreach (explode(', ', $transact_details->breakdown) as $value)
-                                                                        {!! $value !!}<br>
+                                                                <td class="text-right text-xs py-1 pe-2">
+                                                                    @foreach ($denoms_array as $key => $value)
+                                                                        {{ $value }} - (<strong>{{ $rates_array[$key] }}</strong>)<br>
                                                                     @endforeach
-                                                                </td> --}}
+                                                                </td>
                                                                 <td class="text-right text-xs py-1 px-3">
                                                                     {{ number_format($transact_details->Amount, 2, '.', ',') }}
                                                                     @if ($transact_details->Voided == 0)
@@ -277,13 +262,7 @@
                                                                 </td> --}}
                                                                 <td class="text-right text-xs py-1 pe-2">
                                                                     @foreach ($denoms_array as $key => $value)
-                                                                        @php
-                                                                            $rate = $formatted_rates_arr[$key] ?? null;
-                                                                        @endphp
-
-                                                                        {{-- @if ($rate !== null) --}}
-                                                                            {{ $value }} - <strong>({{ $rate }})</strong><br>
-                                                                        {{-- @endif --}}
+                                                                        {{ $value }} - (<strong>{{ $rates_array[$key] }}</strong>)<br>
                                                                     @endforeach
                                                                 </td>
                                                                 <td class="text-right text-xs py-1 px-3">

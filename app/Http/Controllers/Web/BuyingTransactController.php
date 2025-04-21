@@ -41,8 +41,7 @@ class BuyingTransactController extends Controller{
         $invoice_no = $request->query('invoice-search');
         $filter = intval($request->query('radio-search-type'));
 
-        $result['transact_details'] = DB::connection('forex')->table('tblforextransactiondetails as fd')
-            ->selectRaw('fd.TransactionDate, fd.TransactionNo, fd.ReceiptNo, fd.ORNo, tr.Currency, fd.CurrencyID, tt.TransType, fd.CurrencyAmount, FLOOR(fd.RateUsed) as whole_rate, fd.RateUsed, (fd.RateUsed - FLOOR(fd.RateUsed)) as decimal_rate, fd.Amount, tbx.Name, tcx.FullName, fd.FTDID, fd.Rset, tbx.Name as encoder, fd.Voided, fd.HasTicket, MAX(CASE WHEN fs.Serials IS NULL THEN 1 ELSE 0 END) as pending_serials, GROUP_CONCAT(DISTINCT tdm.BillAmount ORDER BY tdm.BillAmount DESC) as denoms')
+        $query = DB::connection('forex')->table('tblforextransactiondetails as fd')
             ->join('tbldenom as tdm' , 'fd.FTDID' , 'tdm.FTDID')
             ->join('tblforexserials as fs' , 'fd.FTDID' , 'fs.FTDID')
             ->join('tblcurrency as tr' , 'fd.CurrencyID' , 'tr.CurrencyID')
@@ -65,8 +64,14 @@ class BuyingTransactController extends Controller{
                     default:
                         return $query;
                 }
-            })
-            ->groupBy('fd.TransactionDate', 'fd.TransactionNo', 'fd.ReceiptNo', 'fd.ORNo', 'tr.Currency', 'fd.CurrencyID', 'tt.TransType', 'fd.CurrencyAmount', 'whole_rate', 'decimal_rate', 'fd.Amount', 'tbx.Name', 'tcx.FullName', 'fd.FTDID', 'fd.Rset', 'encoder', 'fd.Voided', 'fd.HasTicket')
+            });
+
+        $result['transact_details'] = $query->clone()
+            ->selectRaw('fd.TransactionDate, fd.TransactionNo, fd.ReceiptNo, fd.ORNo, tr.Currency, fd.CurrencyID, tt.TransType, fd.CurrencyAmount, fd.Amount, tbx.Name, tcx.FullName, fd.FTDID, fd.Rset, tbx.Name as encoder, fd.Voided, fd.HasTicket,
+                MAX(CASE WHEN fs.Serials IS NULL THEN 1 ELSE 0 END) as pending_serials,
+                GROUP_CONCAT(DISTINCT tdm.BillAmount ORDER BY tdm.BillAmount DESC) as denoms
+            ')
+            ->groupBy('fd.TransactionDate', 'fd.TransactionNo', 'fd.ReceiptNo', 'fd.ORNo', 'tr.Currency', 'fd.CurrencyID', 'tt.TransType', 'fd.CurrencyAmount', 'fd.Amount', 'tbx.Name', 'tcx.FullName', 'fd.FTDID', 'fd.Rset', 'encoder', 'fd.Voided', 'fd.HasTicket')
             ->orderBy('fd.TransactionNo' , 'DESC')
             ->paginate(30)
             ->appends([
@@ -76,51 +81,34 @@ class BuyingTransactController extends Controller{
                 'radio-search-type' => $filter,
             ]);
 
-        $get_ftdid = [];
+        $FTDIDs = $query->clone()->pluck('fd.FTDID')
+            ->toArray();
 
-        foreach ($result['transact_details'] as $transaction) {
-            // $serials = DB::connection('forex')->table('tblforexserials as fs')
-            //     ->where('fs.FTDID', '=', $transaction->FTDID)
-            //     ->selectRaw('fs.Serials')
-            //     ->get();
+        $rates = DB::connection('forex')->table('tbldenom as tdm')
+            ->selectRaw('
+                tdm.FTDID,
+                CASE
+                    WHEN fd.CurrencyID NOT IN (12, 14, 31) THEN GROUP_CONCAT(FORMAT(FLOOR(tdm.SinagRateBuying * 100) / 100, 2))
+                    WHEN fd.CurrencyID IN (12, 14, 31) THEN GROUP_CONCAT(FORMAT(FLOOR(tdm.SinagRateBuying * 100000) / 100000, 4))
+                    ELSE GROUP_CONCAT(tdm.SinagRateBuying)
+                END AS Rate
+            ')
+            ->join('tblforextransactiondetails as fd' , 'tdm.FTDID' , 'fd.FTDID')
+            ->when(is_array($FTDIDs), function ($query) use ($FTDIDs) {
+                return $query->whereIn('tdm.FTDID', $FTDIDs);
+            }, function ($query) use ($FTDIDs) {
+                return $query->where('tdm.FTDID', $FTDIDs);
+            })
+            ->groupBy('tdm.FTDID')
+            ->orderBy('tdm.FTDID', 'DESC')
+            ->pluck('Rate')
+            ->toArray();
 
-            $rates = DB::connection('forex')->table('tbldenom as td')
-                ->where('td.FTDID', '=', $transaction->FTDID)
-                ->selectRaw('td.SinagRateBuying')
-                ->get();
-
-            // $breakdown = DB::connection('forex')->table('tbldenom as td')
-            //     ->selectRaw('td.BillAmount, td.SinagRateBuying')
-            //     ->where('td.FTDID', '=', $transaction->FTDID)
-            //     ->orderBy('td.BillAmount', 'DESC')
-            //     ->get();
-
-            // $get_serials = [];
-
-            // foreach ($serials as $serial) {
-            //     $get_serials[] = $serial->Serials;
-            // }
-
-            $get_rates = [];
-
-            foreach ($rates as $rate) {
-                $get_rates[] = $rate->SinagRateBuying;
-            }
-
-            // $bread_d = [];
-
-            // foreach ($breakdown as $value) {
-            //     $bread_d[] = number_format($value->BillAmount, 2) .''. ' -  <strong>('.$value->SinagRateBuying.')</strong>';
-            // }
-
-            $transaction->rates = $get_rates;
-            // // $transaction->serials = $get_serials;
-            // $transaction->breakdown = implode(', ', $bread_d);
-
-            $get_ftdid[] = $transaction;
+        foreach ($result['transact_details'] as $index => $transaction) {
+            $transaction->rates = $rates[$index];
         }
 
-        return view('buying_transact.add_new_buying_transact', compact('result' , 'get_ftdid', 'menu_id'));
+        return view('buying_transact.add_new_buying_transact', compact('result' , 'rates', 'menu_id'));
     }
 
     public function scDetails(Request $request) {
