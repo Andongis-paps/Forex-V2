@@ -186,7 +186,7 @@
                     $('#branch-breakdown-container').css({
                         height: data_count * 15,
                         overflow: hidden,
-                        overflow-y: scroll
+                        'overflow-y': scroll
                     });
                 } else if (data_count < 15) {
                     $('#branch-breakdown-container').css({
