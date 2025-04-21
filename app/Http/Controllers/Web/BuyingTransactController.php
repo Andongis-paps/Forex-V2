@@ -81,10 +81,8 @@ class BuyingTransactController extends Controller{
                 'radio-search-type' => $filter,
             ]);
 
-        $FTDIDs = '';
         $rates = '';
-
-        // dd(isset($result['transact_details']));
+        $FTDIDs = '';
 
         if (count($result['transact_details']) > 0) {
             $FTDIDs = $query->clone()->pluck('fd.FTDID')

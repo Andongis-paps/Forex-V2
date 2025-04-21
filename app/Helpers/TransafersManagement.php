@@ -31,6 +31,7 @@ class TransafersManagement {
             ->join('tblbranch as tb', 'tb.BranchID', 'tfx.BranchID')
             ->join('pawnshop.tblxbranch as tbx', 'tb.BranchCode', 'tbx.BranchCode')
             ->where('tfx.Voided', '=', 0)
+            ->where('tbf.BufferTransfer', '<>', 1)
             ->where('tbf.BufferTransfer', '<>', 2)
             ->where('tbf.BranchID', Auth::user()->getBranch()->BranchID)
             ->where('tfx.TransferDate', '>', $raw_date->parse('2025-01-01'))

@@ -130,8 +130,8 @@ Route::group(['middleware' => ['auth', 'PreventBackHistory']], function () {
     // Closing unused routes group =================================================================================================================================================
 
     // Routes for Branch Modules =================================================================================================================================================
-    // Route::prefix('branch_transactions')->middleware(['BranchInitializeSetup'])->group(function() {
-        Route::prefix('branch_transactions')->group(function() {
+    Route::prefix('branch_transactions')->middleware(['BranchInitializeSetup'])->group(function() {
+        // Route::prefix('branch_transactions')->group(function() {
         Route::prefix('notifications')->group(function() {
             Route::get('/', [NotificationController::class, 'notifications'])->name('notifications');
             Route::get('/show', [NotificationController::class, 'show'])->name('notif.show');
