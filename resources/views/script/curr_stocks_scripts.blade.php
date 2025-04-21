@@ -142,15 +142,27 @@
                     $('#container-test').fadeIn("fast");
                     $('#container-test').css('display', 'block');
 
-                    var branches_of_currency = data.branches_of_currency;
-                    var data_count = branches_of_currency;
+                    var branches = data.branches_of_currency;
+                    var data_count = branches.length;
                     
-                    console.log(branches_of_currency);
-
                     setTimeout(function() {
                         $('#container-test').fadeOut("fast");
 
-                        branches_of_currency.forEach(function(gar) {
+                        console.log( data_count > 20);
+
+                        if (data_count > 20) {
+                            $('#branch-breakdown-container').css({
+                                height: 700,
+                                overflow: 'hidden',
+                                'overflow-y': 'scroll'
+                            });
+                        } else if (data_count < 20) {
+                            $('#branch-breakdown-container').css({
+                                height: 'auto'
+                            });
+                        }
+
+                        branches.forEach(function(gar) {
                             branchesOfCurrency(gar.BranchCode, gar.total_count_per_branch, gar.total_amount_per_branch, data_count, gar.has_pending, gar.pending_count_per_branch, gar.pending_amount_per_branch);
                         });
                     }, 500);
@@ -181,18 +193,6 @@
 
                 table.find('tbody').append(row);
                 row.hide().fadeIn(250);
-
-                if (data_count >= 15) {
-                    $('#branch-breakdown-container').css({
-                        height: 500,
-                        overflow: hidden,
-                        'overflow-y': scroll
-                    });
-                } else if (data_count < 15) {
-                    $('#branch-breakdown-container').css({
-                        height: 'auto'
-                    });
-                }
             }
         }
     });

@@ -9,7 +9,7 @@
     <div class="col-12">
         {{-- <div class="col-12"> --}}
         <div class="col-12 border border-solid border-gray-300 rounded-md" id="branch-breakdown-container">
-            <table class="table table-bordered table-hover mb-0" id="branch-breakdown">
+            <table class="table table-hover mb-0" id="branch-breakdown">
                 <thead>
                     <tr>
                         <th class="text-center text-xs font-extrabold text-black whitespace-nowrap p-1 w-25">Branch</th>
