@@ -220,6 +220,7 @@
                                                         </div>
                                                         <div class="col-9">
                                                             <input type="text" class="form-control" id="sold-currency-curr-amnt" value="{{ number_format($soldcurr_deets->CurrAmount, 2, '.', ',') }}" readonly>
+                                                            <input type="hidden" class="form-control" id="t-sold-currency-curr-amnt" value="{{ $soldcurr_deets->CurrAmount }}" readonly>
                                                         </div>
                                                     </div>
 

@@ -233,7 +233,9 @@
         });
 
         rate_used_field.keyup(function() {
-            var new_total_amnt = $(this).val() * $('#sold-currency-curr-amnt').val();
+            var new_total_amnt = $(this).val() * $('#t-sold-currency-curr-amnt').val();
+
+            console.log(new_total_amnt);
 
             $('input[name="true-sold-currency-total-amnt"]').val(new_total_amnt);
             $('#sold-currency-total-amnt').val(new_total_amnt.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}));
