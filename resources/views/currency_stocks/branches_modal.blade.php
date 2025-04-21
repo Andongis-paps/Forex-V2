@@ -7,8 +7,8 @@
 
 <div class="modal-body p-2">
     <div class="col-12">
-        <div class="col-12">
-        {{-- <div class="col-12 border border-solid border-gray-300 rounded-md" id="branch-breakdown-container"> --}}
+        {{-- <div class="col-12"> --}}
+        <div class="col-12 border border-solid border-gray-300 rounded-md" id="branch-breakdown-container">
             <table class="table table-bordered table-hover mb-0" id="branch-breakdown">
                 <thead>
                     <tr>

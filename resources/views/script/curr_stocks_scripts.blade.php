@@ -45,6 +45,9 @@
                 icon: 'warning',
                 showConfirmButton: true,
                 confirmButtonText: 'Proceed',
+                showClass: {
+                    popup: 'swal2-zoom-in'
+                },
             });
         }
 
@@ -181,7 +184,9 @@
 
                 if (data_count >= 15) {
                     $('#branch-breakdown-container').css({
-                        height: data_count * 15
+                        height: data_count * 15,
+                        overflow: hidden,
+                        overflow-y: scroll
                     });
                 } else if (data_count < 15) {
                     $('#branch-breakdown-container').css({
