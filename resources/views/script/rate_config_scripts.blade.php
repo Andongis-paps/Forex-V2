@@ -367,7 +367,7 @@
                         html: 'Apply rates to branches selected?<br>You can still change branches before applying.',
                         icon: 'question',
                         confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#788393',
+                        cancelButtonColor: '#8592a3',
                         showCancelButton: true,
                         confirmButtonText: 'Proceed',
                         allowOutsideClick: false,

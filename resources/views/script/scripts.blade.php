@@ -706,6 +706,7 @@
                             showConfirmButton: false,
                             allowOutsideClick: false,
                             allowEscapeKey: false,
+                            cancelButtonColor: '#8592A3',
                             timer: 750,
                             showClass: {
                                 popup: 'swal2-zoom-in'
