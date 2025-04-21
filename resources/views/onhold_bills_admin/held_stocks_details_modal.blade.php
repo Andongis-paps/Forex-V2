@@ -3,7 +3,7 @@
     <span class="text-lg font-bold text-black">{{ trans('labels.curr_stocks_stock_details') }}</span>
 </div>
 
-<div class="modal-body px-4 pt-2">
+<div class="modal-body py-2 px-3">
     <div class="row justify-content-center">
         <div class="col-12 my-1 text-start">
             <div class="row align-items-center">
@@ -31,7 +31,7 @@
                         </th>
                         <th class="text-center text-xs font-extrabold text-black p-1">Date Held</th>
                         <th class="text-center text-xs font-extrabold text-black p-1">Held By</th>
-                        <th class="text-center text-xs font-extrabold text-black p-1">Receipt Set</th>
+                        {{-- <th class="text-center text-xs font-extrabold text-black p-1">Receipt Set</th> --}}
                         <th class="text-center text-xs font-extrabold text-black p-1">Serial</th>
                         <th class="text-center text-xs font-extrabold text-black p-1">Bill Amount</th>
                         <th class="text-center text-xs font-extrabold text-black p-1">Rate Used</th>
@@ -59,13 +59,13 @@
             <hr class="my-2">
         </div>
 
-        <div class="col-4 mt-1">
+        <div class="col-7 mt-1">
             <div class="col-lg-12 px-3">
                 <div class="row justify-content-center align-items-center">
                     <div class="col-12 text-center mb-1">
                         <label for="description">
                             <strong>
-                                {{ trans('labels.enter_security_code') }} &nbsp; <span class="required-class">*</span>
+                                {{ trans('labels.enter_security_code') }}:
                             </strong>
                         </label>
                     </div>
@@ -80,8 +80,8 @@
 </div>
 
 <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
     @can('add-permission', $menu_id)
-        <button type="button" class="btn btn-primary d-none" id="proceed-unhold">Proceed</button>
+        <button type="button" class="btn btn-primary d-none btn-sm" id="proceed-unhold">Proceed</button>
     @endcan
 </div>

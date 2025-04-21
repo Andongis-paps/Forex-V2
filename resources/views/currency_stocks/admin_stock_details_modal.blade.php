@@ -218,7 +218,7 @@
                     <div class="col-12 text-center mb-1">
                         <label for="description">
                             <strong>
-                                {{ trans('labels.enter_security_code') }} &nbsp;:
+                                {{ trans('labels.enter_security_code') }}:
                             </strong>
                         </label>
                     </div>

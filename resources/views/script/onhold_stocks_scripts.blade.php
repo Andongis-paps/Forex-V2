@@ -65,9 +65,9 @@
             row.append(input_field);
             row.append(date_held);
             row.append(held_by);
-            row.append(r_set);
-            row.append(bill_amount);
+            // row.append(r_set);
             row.append(serials);
+            row.append(bill_amount);
             row.append(buying_rate);
             row.append(principal);
 
@@ -76,7 +76,7 @@
 
             if (held_stock_count > 10) {
                 $('#onhold-stock-summary-container').css({
-                    height: 500
+                    height: 550
                 });
 
                 table_height = held_stock_count * 8.5;
