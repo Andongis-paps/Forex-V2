@@ -122,7 +122,6 @@
                                                 @if (count($result['transact_details']) > 0)
                                                     @foreach ($result['transact_details'] as $transact_details)
                                                         @php
-                                                            $grouped_rates = [];
                                                             $formatted_rates_arr = [];
 
                                                             if (isset($transact_details->Voided) && $transact_details->Voided == 0) {
@@ -132,10 +131,9 @@
                                                             $report_status = $transact_details->HasTicket == 0 && $transact_details->Voided == 0;
 
                                                             $formatted_rate = '';
-                                                            $rates_array = explode(",", $transact_details->rates);
                                                             $denoms_array = explode(",", $transact_details->denoms);
 
-                                                            foreach ($rates_array as $rate) {
+                                                            foreach ($transact_details->rates as $rate) {
                                                                 $whole_number = floor($rate);
                                                                 $decimal = $rate - $whole_number;
                                                                 $segmented_rate = $whole_number + $decimal;
@@ -149,12 +147,6 @@
                                                                 }
 
                                                                 $formatted_rates_arr[] = $formatted_rate;
-                                                            }
-
-                                                            foreach ($denoms_array as $key => $denoms) {
-                                                                if (!isset($grouped_rates[$denoms])) {
-                                                                    $grouped_rates[$denoms] = [];
-                                                                }
                                                             }
                                                         @endphp
 
