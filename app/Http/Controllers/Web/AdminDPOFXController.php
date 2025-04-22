@@ -34,13 +34,13 @@ class AdminDPOFXController extends Controller {
         $this->MenuID = $request->attributes->get('MenuID');
         $menu_id = $this->MenuID;
 
-        $result['dpo_wallet'] = DB::connection('forex')->table('tbldpofxcontrol')
-            ->leftJoin('accounting.tblcompany', 'tbldpofxcontrol.CompanyID', 'accounting.tblcompany.CompanyID')
-            ->join('tbldpotype', 'tbldpofxcontrol.DPOTID', 'tbldpotype.DPOTID')
-            ->orderBy('tbldpofxcontrol.DPOCID', 'DESC')
+        $result['dpo_wallet'] = DB::connection('forex')->table('tbldpofxcontrol as dpc')
+            ->leftJoin('accounting.tblcompany as tc', 'dpc.CompanyID', 'tc.CompanyID')
+            ->join('tbldpotype', 'dpc.DPOTID', 'tbldpotype.DPOTID')
+            ->orderBy('dpc.DPOCID', 'DESC')
             ->get();
 
-        $result['current_balance'] = DB::connection('forex')->table('tbldpofxcontrol')
+        $result['current_balance'] = DB::connection('forex')->table('tbldpofxcontrol as dpc')
             ->selectRaw('SUM(DollarIn - DollarOut) as Balance')
             ->first();
 
@@ -51,12 +51,12 @@ class AdminDPOFXController extends Controller {
         $this->MenuID = $request->attributes->get('MenuID');
         $menu_id = $this->MenuID;
 
-        $result['dpo_ins'] = DB::connection('forex')->table('tbldpoindetails')
-            ->selectRaw('tbldpoindetails.DPDID, tbldpoindetails.EntryDate, tbldpoindetails.DPDNo, accounting.tblcompany.CompanyName, pawnshop.tblxusers.Name, tbldpoindetails.DollarAmount, tbldpoindetails.Amount')
-            ->join('pawnshop.tblxusers', 'tbldpoindetails.UserID', '=', 'pawnshop.tblxusers.UserID')
-            ->join('accounting.tblcompany', 'tbldpoindetails.CompanyID', '=', 'accounting.tblcompany.CompanyID')
-            ->groupBy('tbldpoindetails.DPDID', 'tbldpoindetails.EntryDate', 'tbldpoindetails.DPDNo', 'accounting.tblcompany.CompanyName', 'pawnshop.tblxusers.Name', 'tbldpoindetails.DollarAmount', 'tbldpoindetails.Amount')
-            ->orderBy('tbldpoindetails.DPDID', 'DESC')
+        $result['dpo_ins'] = DB::connection('forex')->table('tbldpoindetails as dd')
+            ->selectRaw('dd.DPDID, dd.EntryDate, dd.DPDNo, tc.CompanyName, tbx.Name, dd.DollarAmount, dd.Amount')
+            ->join('pawnshop.tblxusers as tbx', 'dd.UserID', '=', 'tbx.UserID')
+            ->join('accounting.tblcompany as tc', 'dd.CompanyID', '=', 'tc.CompanyID')
+            ->groupBy('dd.DPDID', 'dd.EntryDate', 'dd.DPDNo', 'tc.CompanyName', 'tbx.Name', 'dd.DollarAmount', 'dd.Amount')
+            ->orderBy('dd.DPDID', 'DESC')
             ->paginate(15);
 
         return view('DPOFX.add_new_dpo_in', compact('result', 'menu_id'));
@@ -66,18 +66,15 @@ class AdminDPOFXController extends Controller {
         $this->MenuID = $request->attributes->get('MenuID');
         $menu_id = $this->MenuID;
 
-        $result['company'] = DB::connection('forex')->table('tblbranch')
-            ->join('pawnshop.tblxbranch', 'tblbranch.BranchCode', 'pawnshop.tblxbranch.BranchCode')
-            ->join('accounting.tblsegmentgroup', 'pawnshop.tblxbranch.BranchID', 'accounting.tblsegmentgroup.BranchID')
-            ->join('accounting.tblcompany', 'accounting.tblsegmentgroup.CompanyID', 'accounting.tblcompany.CompanyID')
-            ->join('accounting.tblsegments', 'accounting.tblsegmentgroup.SegmentID', 'accounting.tblsegments.SegmentID')
-            ->select(
-                'accounting.tblcompany.CompanyID',
-                'accounting.tblcompany.CompanyName',
-            )
-            ->where('accounting.tblsegments.SegmentID', '=', 3)
-            ->groupBy('accounting.tblcompany.CompanyID')
-            ->orderBy('accounting.tblcompany.CompanyID', 'ASC')
+        $result['company'] = DB::connection('forex')->table('tblbranch as tb')
+            ->selectRaw('tc.CompanyID, tc.CompanyName')
+            ->join('pawnshop.tblxbranch as tbx', 'tb.BranchCode', 'tbx.BranchCode')
+            ->join('accounting.tblsegmentgroup as asg', 'tbx.BranchID', 'asg.BranchID')
+            ->join('accounting.tblcompany as tc', 'asg.CompanyID', 'tc.CompanyID')
+            ->join('accounting.tblsegments as sg', 'asg.SegmentID', 'sg.SegmentID')
+            ->where('sg.SegmentID', '=', 3)
+            ->groupBy('tc.CompanyID', 'tc.CompanyName')
+            ->orderBy('tc.CompanyID', 'ASC')
             ->get();
 
         return view('DPOFX.dpo_in_transact', compact('result', 'menu_id'));
@@ -221,7 +218,7 @@ class AdminDPOFXController extends Controller {
             ->join('pawnshop.tblxcustomer', 'tbldpooutdetails.CustomerID', 'pawnshop.tblxcustomer.CustomerID')
             ->join('pawnshop.tblxusers', 'tbldpooutdetails.UserID', 'pawnshop.tblxusers.UserID')
             ->orderBy('tbldpooutdetails.DPODOID', 'DESC')
-            ->paginate(15);
+            ->paginate(20);
 
         return view('DPOFX.add_new_dpo_out', compact('result', 'menu_id'));
     }

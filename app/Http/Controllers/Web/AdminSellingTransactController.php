@@ -726,6 +726,7 @@ class AdminSellingTransactController extends Controller {
         $gain_loss = $request->input('gain-loss');
         $excluded_amnt = $request->input('excluded-amnt');
         $buffer_only_amnt = $request->input('buffer-only-amnt');
+
         // $excluded_add_funds_amnt = $request->input('total-excluded-add-funds');
 
         // $actual_add_funds = 0;
@@ -832,18 +833,6 @@ class AdminSellingTransactController extends Controller {
                     'tblforexserials.STMDID' => $STMDID,
                 ]);
 
-            // $branch_sales = DB::connection('forex')->table('tblforexserials as fs')
-            //     ->selectRaw('fs.Buffer, fs.BufferType, fd.BranchID, bt.Received, SUM(fs.BillAmount * fs.CMRUsed) as trans_cap_amnt')
-            //     ->leftJoin('tblbuffertransfer as bt', 'fs.TFID', 'bt.TFID')
-            //     ->join('tblforextransactiondetails as fd', 'fs.FTDID', 'fd.FTDID')
-            //     ->when(is_array($trimmed_fsids), function ($query) use ($trimmed_fsids) {
-            //         return $query->whereIn('fs.FSID', $trimmed_fsids);
-            //     }, function ($query) use ($trimmed_fsids) {
-            //         return $query->where('fs.FSID', $trimmed_fsids);
-            //     })
-            //     ->groupBy('fs.Buffer', 'fs.BufferType', 'fd.BranchID', 'bt.Received')
-            //     ->get();
-
             $init_query = DB::connection('forex')->table('tblforexserials as fs')
                 ->when(is_array($trimmed_fsids), function ($query) use ($trimmed_fsids) {
                     return $query->whereIn('fs.FSID', $trimmed_fsids);
@@ -932,20 +921,6 @@ class AdminSellingTransactController extends Controller {
                     'tbladminforexserials.STMDID' => $STMDID,
                 ]);
 
-            // $admin_sales = DB::connection('forex')->table('tbladminforexserials as fs')
-            //     ->selectRaw('fs.Buffer, fs.BufferType, COALESCE(fd.BranchID, bf.BranchID) as BranchID, SUM(fs.BillAmount * fs.CMRUsed) as trans_cap_amnt')
-            //     ->leftJoin('tbladminbuyingtransact as fd', 'fs.AFTDID', 'fd.AFTDID')
-            //     ->leftJoin('tblbufferfinancing AS bf', 'fs.bfid', '=', 'bf.bfid')
-            //     ->leftJoin('tblbuffertransfer as bt', 'bf.BranchID', 'bt.BranchID')
-            //     ->join('tbladmindenom AS d', 'fs.adenomid', '=', 'd.adenomid')
-            //     ->when(is_array($trimmed_afsids), function ($query) use ($trimmed_afsids) {
-            //         return $query->whereIn('fs.AFSID', $trimmed_afsids);
-            //     }, function ($query) use ($trimmed_afsids) {
-            //         return $query->where('fs.AFSID', $trimmed_afsids);
-            //     })
-            //     ->groupBy('fs.Buffer', 'fs.BufferType', 'BranchID')
-            //     ->get();
-
             $init_query = DB::connection('forex')->table('tbladminforexserials as fs')
                 ->when(is_array($trimmed_afsids), function ($query) use ($trimmed_afsids) {
                     return $query->whereIn('fs.AFSID', $trimmed_afsids);
@@ -1017,42 +992,27 @@ class AdminSellingTransactController extends Controller {
         }
 
         if (isset($excluded_amnt) && count($excluded_amnt) > 0) {
-            $max_bcno = DB::connection('forex')->table('tblbuffercontrol')
-                ->selectRaw('MAX(BCNO) + 1 AS maxBCNO')
-                ->value('maxBCNO');
+            $difference = array_sum($buffer_only_amnt) - array_sum($excluded_amnt);
 
-            DB::connection('forex')->table('tblbuffercontrol')
-                ->insert([
-                    'BCNO' => $max_bcno,
-                    'BCDate' => $raw_date->toDateString(),
-                    'BCType' => 2,
-                    'DOTID' => 2,
-                    'DollarOut' => array_sum($buffer_only_amnt) - array_sum($excluded_amnt),
-                    'Balance' => 0,
-                    'UserID' => $request->input('matched_user_id'),
-                    'EntryDate' => $raw_date->toDateTimeString(),
-                    'BranchID' => Auth::user()->getBranch()->BranchID,
-                ]);
+            if ($difference != 0) {
+                $max_bcno = DB::connection('forex')->table('tblbuffercontrol')
+                    ->selectRaw('MAX(BCNO) + 1 AS maxBCNO')
+                    ->value('maxBCNO');
+
+                DB::connection('forex')->table('tblbuffercontrol')
+                    ->insert([
+                        'BCNO' => $max_bcno,
+                        'BCDate' => $raw_date->toDateString(),
+                        'BCType' => 2,
+                        'DOTID' => 2,
+                        'DollarOut' => $difference,
+                        'Balance' => 0,
+                        'UserID' => $request->input('matched_user_id'),
+                        'EntryDate' => $raw_date->toDateTimeString(),
+                        'BranchID' => Auth::user()->getBranch()->BranchID,
+                    ]);
+            }
         }
-        
-        // if (isset($buffer_only_amnt)) {
-        //     $max_bcno = DB::connection('forex')->table('tblbuffercontrol')
-        //         ->selectRaw('MAX(BCNO) + 1 AS maxBCNO')
-        //         ->value('maxBCNO');
-
-        //     DB::connection('forex')->table('tblbuffercontrol')
-        //         ->insert([
-        //             'BCNO' => $max_bcno,
-        //             'BCDate' => $raw_date->toDateString(),
-        //             'BCType' => 2,
-        //             'DOTID' => 2,
-        //             'DollarOut' => array_sum($buffer_only_amnt),
-        //             'Balance' => 0,
-        //             'UserID' => $request->input('matched_user_id'),
-        //             'EntryDate' => $raw_date->toDateTimeString(),
-        //             'BranchID' => Auth::user()->getBranch()->BranchID,
-        //         ]);
-        // }
 
         $grouped_company_ids = DB::connection('forex')->table('tblfcformseries')
             ->where('tblfcformseries.RSet', '=', $request->input('radio-rset'))

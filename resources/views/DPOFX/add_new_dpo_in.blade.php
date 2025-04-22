@@ -36,14 +36,14 @@
                                     <table class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
-                                                <th class="text-center text-sm font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.transact_date') }}</th>
-                                                <th class="text-center text-sm font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.transact_#') }}</th>
-                                                <th class="text-center text-sm font-extrabold text-black p-1 whitespace-nowrap">Company</th>
-                                                <th class="text-center text-sm font-extrabold text-black p-1 whitespace-nowrap">Processed By</th>
-                                                <th class="text-center text-sm font-extrabold text-black p-1 whitespace-nowrap">Dollar Amount</th>
-                                                <th class="text-center text-sm font-extrabold text-black p-1 whitespace-nowrap">Exchange Amount</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.transact_date') }}</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.transact_#') }}</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Company</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Processed By</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Dollar Amount</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Exchange Amount</th>
                                                 @can('access-permission', $menu_id)
-                                                    <th class="text-center text-sm font-extrabold text-black p-1 whitespace-nowrap"></th>
+                                                    <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Action</th>
                                                 @endcan
                                             </tr>
                                         </thead>
@@ -101,8 +101,8 @@
                                         <tfoot>
                                             <tr>
                                                 <td class="text-center p-1 py-1 whitespace-nowrap" colspan="1">
-                                                    <span class="transaction-count" id="transaction-count">
-                                                        {{ trans('labels.transact_count') }}: <span class="table-footer-texts font-semibold" id="trans-count">{{ count($result['dpo_ins']) }}</span>
+                                                    <span class="text-sm" id="transaction-count">
+                                                        {{ trans('labels.transact_count') }}: <span class="font-semibold" id="trans-count">{{ count($result['dpo_ins']) }}</span>
                                                     </span>
                                                 </td>
                                                 <td colspan="3"></td>

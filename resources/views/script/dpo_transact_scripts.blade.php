@@ -147,12 +147,12 @@
             var transact_date = $('<td class="text-center text-sm p-1">'+ TransactionDate +'</td>');
             var rate = $('<td class="text-right text-sm py-1 px-3">'+ SinagRateBuying.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}) +'</td>');
             // var commission = $('<td class="text-right text-sm p-2 commission-cells"><input class="form-control text-right" id="commission-field" name="commission-field[]" type="number" value="0" placeholder="0.00"></td>');
-            var receipt_set = $('<td class="text-center text-sm p-2 commission-cells">'+ Rset +'<input type="hidden" name="receipt-set[]" value="'+ Rset +'"></td>');
+            var receipt_set = $('<td class="text-center text-sm p-1 commission-cells">'+ Rset +'<input type="hidden" name="receipt-set[]" value="'+ Rset +'"></td>');
 
             new_row.append(select_dpo);
+            new_row.append(transact_date);
             new_row.append(branch);
             new_row.append(company);
-            new_row.append(transact_date);
             new_row.append(receipt_set);
             new_row.append(mtcn);
             // new_row.append(commission);

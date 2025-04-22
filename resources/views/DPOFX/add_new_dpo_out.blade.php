@@ -34,18 +34,18 @@
                                     <table class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
-                                                <th class="text-center text-sm font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.transact_#') }}</th>
-                                                <th class="text-center text-sm font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.transact_date') }}</th>
-                                                <th class="text-center text-sm font-extrabold text-black p-1 whitespace-nowrap">Customer</th>
-                                                <th class="text-center text-sm font-extrabold text-black p-1 whitespace-nowrap">Transacted By</th>
-                                                <th class="text-center text-sm font-extrabold text-black p-1 whitespace-nowrap">Dollar Amount</th>
-                                                <th class="text-center text-sm font-extrabold text-black p-1 whitespace-nowrap">Selling Rate</th>
-                                                <th class="text-center text-sm font-extrabold text-black p-1 whitespace-nowrap">Principal</th>
-                                                <th class="text-center text-sm font-extrabold text-black p-1 whitespace-nowrap">Exchange Amount</th>
-                                                <th class="text-center text-sm font-extrabold text-black p-1 whitespace-nowrap">Gain/Loss</th>
-                                                <th class="text-center text-sm font-extrabold text-black p-1 whitespace-nowrap">Remarks</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.transact_date') }}</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.transact_#') }}</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Customer</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Transacted By</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Dollar Amount</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Selling Rate</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Principal</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Exchange Amount</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Gain/Loss</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Remarks</th>
                                                 @can('access-permission', $menu_id)
-                                                    <th class="text-center text-sm font-extrabold text-black p-1 whitespace-nowrap"></th>
+                                                    <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Action</th>
                                                 @endcan
                                             </tr>
                                         </thead>
@@ -59,10 +59,10 @@
                                                 @forelse ($result['dpo_out'] as $dpo_out)
                                                     <tr>
                                                         <td class="text-center text-sm p-1">
-                                                            {{ $dpo_out->DPOSellingNo }}
+                                                            {{ \Carbon\Carbon::parse($dpo_out->EntryDate)->format('Y-m-d') }}
                                                         </td>
                                                         <td class="text-center text-sm p-1">
-                                                            {{ \Carbon\Carbon::parse($dpo_out->EntryDate)->format('Y-m-d') }}
+                                                            {{ $dpo_out->DPOSellingNo }}
                                                         </td>
                                                         <td class="text-center text-sm p-1">
                                                             {{ $dpo_out->FullName }}

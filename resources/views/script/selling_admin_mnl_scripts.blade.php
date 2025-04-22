@@ -55,7 +55,7 @@
 
                         Swal.fire({
                             icon: 'error',
-                            html: `<span class="text-sm text-black">Selling rates are missing for some entries. Complete them first to continue.</span>`,
+                            html: `<span class="text-sm text-black">Selling rates are missing for some queued bills. Complete them first to continue.</span>`,
                         });
                     } else {
                         var total_curr_amnt = 0;

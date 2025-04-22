@@ -39,7 +39,7 @@
                                         <div class="col-4">
                                             <label class="mb-1" for="dpo-reference-number">
                                                 <strong>
-                                                    {{ trans('labels.dpo_add_company') }} :
+                                                    {{ trans('labels.dpo_add_company') }}:
                                                 </strong>
                                             </label>
 
@@ -54,7 +54,7 @@
                                         {{-- <div class="col-4">
                                             <label class="mb-1" for="dpo-reference-number">
                                                 <strong>
-                                                    {{ trans('labels.dpo_add_transact_ref_no') }} :
+                                                    {{ trans('labels.dpo_add_transact_ref_no') }}:
                                                 </strong>
                                             </label>
 
@@ -83,25 +83,29 @@
                                     </div>
 
                                     <div class="row align-items-center justify-content-center px-3 mt-3">
-                                        <div class="col-3">
+                                        <div class="col-1">
                                             <div class="row">
                                                 @can('add-permission', $menu_id)
-                                                    <button class="btn btn-primary" type="button" id="generate-dpo-transacts" disabled>{{ trans('labels.dpo_add_transact_generate') }}</button>
+                                                    <button class="btn btn-primary btn-sm" type="button" id="generate-dpo-transacts" disabled>{{ trans('labels.dpo_add_transact_generate') }}</button>
                                                 @endcan
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="row align-items-center justify-content-center px-3 mb-2 mt-3">
-                                        <div class="col-12 dpo-transact-container p-0">
-                                            <table class="table table-hover py-1" id="dpofx-transacts-table">
-                                                <thead class="sticky-header">
+                                    <div class="row align-items-center px-3">
+                                        <hr class="my-2">
+                                    </div>
+
+                                    <div class="row align-items-center justify-content-center px-3">
+                                        <div class="col-12 p-0">
+                                            <table class="table table-bordered table-hover mb-0" id="dpofx-transacts-table">
+                                                <thead>
                                                     <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">
                                                         <input class="form-check-input" type="checkbox" id="dpofx-select-all" name="dpofx-select-all" checked>
                                                     </th>
+                                                    <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.dpo_transact_date') }}</th>
                                                     <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.dpo_transact_branch') }}</th>
                                                     <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Company</th>
-                                                    <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.dpo_transact_date') }}</th>
                                                     <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Receipt Set</th>
                                                     <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.dpo_transact_mtcn') }}</th>
                                                     {{-- <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Commission</th> --}}
@@ -116,12 +120,12 @@
                                                     <tr>
                                                         <td colspan="6"></td>
                                                         <td class="text-right text-sm py-1 px-3">
-                                                            <strong><span class="text-sm font-extrabold text-black">&#36;</span>&nbsp; <span id="total-dpofx-amount">0.00</span></strong>
+                                                            <strong><span class="text-sm font-extrabold text-black">&#36;</span> <span id="total-dpofx-amount">0.00</span></strong>
                                                             <input type="hidden" id="true-total-dpofx-amnt" value="">
                                                         </td>
                                                         <td colspan="1"></td>
                                                         <td class="text-right text-sm py-1 px-3">
-                                                            <strong><span class="text-sm font-extrabold text-black">PHP</span>&nbsp; <span id="total-peso-amount">0.00</span></strong>
+                                                            <strong><span class="text-sm font-extrabold text-black">PHP</span> <span id="total-peso-amount">0.00</span></strong>
                                                             <input type="hidden" id="true-total-peso-amount" value="">
                                                         </td>
                                                     </tr>
@@ -139,10 +143,10 @@
                                     </div>
                                     <div class="col-lg-6 text-end">
                                         @can('access-permission', $menu_id)
-                                            <a class="btn btn-secondary" type="button" href="{{ route('admin_transactions.dpofx.dpo_in') }}">{{ trans('labels.back_action') }}</a>
+                                            <a class="btn btn-secondary btn-sm" type="button" href="{{ route('admin_transactions.dpofx.dpo_in') }}">{{ trans('labels.back_action') }}</a>
                                         @endcan
                                         @can('add-permission', $menu_id)
-                                            <button class="btn btn-primary" type="button" id="save-dpo-transact" disabled>{{ trans('labels.confirm_action') }}</button>
+                                            <button class="btn btn-primary btn-sm" type="button" id="save-dpo-transact" disabled>{{ trans('labels.confirm_action') }}</button>
                                         @endcan
                                     </div>
                                 </div>

@@ -1,6 +1,14 @@
 {{-- DPO Transact Scripts --}}
 <script>
     $(document).ready(function() {
+        var current_date = new Date();
+        var year = current_date.getFullYear();
+        var month = String(current_date.getMonth() + 1).padStart(2, '0');
+        var day = String(current_date.getDate()).padStart(2, '0');
+
+        var formatted_date = year + '-' + month + '-' + day;
+        var set_date = $('#selling-transact-date-manila').val(formatted_date).text(formatted_date);
+        
         $('#dpoin-select-all').click(function() {
             var rate_conf_check_stat = $(this).prop('checked');
 
@@ -99,11 +107,11 @@
             var select_dpoin = $('<td class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap"><input class="form-check-input dpoin-select-one" type="checkbox" id="dpoin-select-one" name="dpoin-select-one" data-dpoiid="'+ DPOIID +'" checked></td>');
             var company = $('<td class="text-center text-sm p-1">'+ CompanyName +'</td>');
             var mtcn = $('<td class="text-center text-sm p-1">'+ MTCN +'</td>');
-            var dollar_amnt = $('<td class="text-right text-sm py-1 px-3">'+ DollarAmount.toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) +'</td>');
-            var rate_used = $('<td class="text-right text-sm py-1 px-3">'+ RateUsed.toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) +'</td>');
-            var peso_amnt = $('<td class="text-right text-sm py-1 px-3">'+ Amount.toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) +'</td>');
-            var exchange_amnt = $('<td class="text-right text-sm py-1 px-3">'+ exchange_amount.toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) +'</td>');
-            var processed_gain_loss = $('<td class="text-right text-sm py-1 px-3"><span class="badge '+ badgeColor +'"><text>'+ gain_loss_formatted +' &nbsp; '+ icon_gain_loss +'</text></span></td>');
+            var dollar_amnt = $('<td class="text-right text-sm py-1 pe-2">'+ DollarAmount.toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) +'</td>');
+            var rate_used = $('<td class="text-right text-sm py-1 pe-2">'+ RateUsed.toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) +'</td>');
+            var peso_amnt = $('<td class="text-right text-sm py-1 pe-2">'+ Amount.toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) +'</td>');
+            var exchange_amnt = $('<td class="text-right text-sm py-1 pe-2">'+ exchange_amount.toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) +'</td>');
+            var processed_gain_loss = $('<td class="text-right text-sm py-1 pe-2"><span class="badge '+ badgeColor +'"><text>'+ gain_loss_formatted +' &nbsp; '+ icon_gain_loss +'</text></span></td>');
 
             row.append(select_dpoin);
             row.append(company);
