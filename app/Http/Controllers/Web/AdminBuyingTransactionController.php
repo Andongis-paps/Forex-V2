@@ -311,7 +311,7 @@ class AdminBuyingTransactionController extends Controller {
         $raw_date = Carbon::now('Asia/Manila');
         $radio_rset = session('time_toggle_status') == 1 ? 'O' : 'O';
         // $buffer_status = $request->input('buffer_option') == "true" ? 1 : 0;
-        // $radio_rset =  session('time_toggle_status') == 1 ? 'O' : $request->input('radio-rset');
+        $radio_rset =  session('time_toggle_status') == 1 ? 'O' : $request->input('radio-rset');
 
         $get_transaction_no = DB::connection('forex')->table('tbladminbuyingtransact')
             ->selectRaw('CASE WHEN MAX(TransactionNo) IS NULL THEN 1 ELSE MAX(TransactionNo) + 1 END AS updatedTransactNo')

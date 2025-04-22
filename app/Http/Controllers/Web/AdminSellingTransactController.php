@@ -687,6 +687,10 @@ class AdminSellingTransactController extends Controller {
             ->orderBy('CompanyID', 'ASC')
             ->get();
 
+        $no_rates = DB::connection('forex')->query()->fromSub($joined_queries, 'combined')
+            ->selectRaw('MAX(CASE WHEN CMRUsed = 0 THEN 1 ELSE 0 END) as has_no_rate')
+            ->value('has_no_rate');
+
         $total_sales_per_company = DB::connection('forex')->query()->fromSub($joined_queries, 'combined')
             ->selectRaw('CompanyID, CompanyName, SUM(exchange_amount) as total_exchange_amount, Active')
             ->groupBy('CompanyID', 'CompanyName', 'Active')
@@ -701,6 +705,7 @@ class AdminSellingTransactController extends Controller {
             ->get();
 
         $response = [
+            'no_rates' => $no_rates,
             'bills_rset' => $bills_rset,
             'total_sales_per_company' => $total_sales_per_company,
             'sales_limit' => $sales_limit

@@ -49,6 +49,14 @@
                             icon: 'error',
                             text: 'No bills consolidated.',
                         });
+                    } else if (data.no_rates == 1) {
+                        clearData();
+                        clearFooter();
+
+                        Swal.fire({
+                            icon: 'error',
+                            html: `<span class="text-sm text-black">Selling rates are missing for some entries. Complete them first to continue.</span>`,
+                        });
                     } else {
                         var total_curr_amnt = 0;
                         var total_gain_loss = 0;

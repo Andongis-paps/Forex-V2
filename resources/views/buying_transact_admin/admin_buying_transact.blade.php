@@ -76,7 +76,7 @@
                                             </div> --}}
 
                                             {{-- Buying Transaction - Receipt Set --}}
-                                            {{-- <div class="row align-items-center px-3 mt-2 mb-3 @if(session('time_toggle_status') == 1) d-none @endif">
+                                            <div class="row align-items-center px-3 my-3 @if(session('time_toggle_status') == 1) d-none @endif">
                                                 <div class="col-3">
                                                     <strong>
                                                         {{ trans('labels.buying_rset') }}: &nbsp;<span class="required-class">*</span>
@@ -98,7 +98,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div> --}}
+                                            </div>
                                             {{-- Buying Transaction - OR Number --}}
                                             <div class="row align-items-center px-3 mt-3" id="or-number-container">
                                                 <div class="col-3">
@@ -326,12 +326,12 @@
                                                 <div class="col-lg-6">
 
                                                 </div>
-                                                <div class="col-lg-6 text-end pe-4">
+                                                <div class="col-lg-6 text-end">
                                                     @can('access-permission', $menu_id)
-                                                        <a class="btn btn-secondary" type="button" href="{{ route('admin_transactions.buying_transaction') }}">{{ trans('labels.back_action') }}</a>
+                                                        <a class="btn btn-secondary btn-sm" type="button" href="{{ route('admin_transactions.buying_transaction') }}">{{ trans('labels.back_action') }}</a>
                                                     @endcan
                                                     @can('add-permission', $menu_id)
-                                                        <button class="btn btn-primary" type="button" id="transaction-confirm-button" disabled>{{ trans('labels.confirm_action') }}</button>
+                                                        <button class="btn btn-primary btn-sm" type="button" id="transaction-confirm-button" disabled>{{ trans('labels.confirm_action') }}</button>
                                                     @endcan
                                                 </div>
                                             </div>
