@@ -96,27 +96,6 @@
             $('#ui-datepicker-div').css('top' , '145');
         });
 
-        $('#transaction-confirm-button').on('click',function() {
-            serials_to_be_sold = [];
-
-            $('.new-serial-container').each(function() {
-                var this_element = $(this).find('.serial-input-appended-data').val();
-                serials_to_be_sold.push(this_element);
-            });
-
-            if (serials_to_be_sold.length > 10) {
-                Swal.fire({
-                    icon: 'error',
-                    text: 'Selected serials limit has been reached.',
-                    customClass: {
-                        popup: 'my-swal-popup',
-                    }
-                });
-            } else {
-                $('#security-code-modal').modal("show");
-            }
-        });
-
         $('#or-number-selling').change(function() {
             $.ajax({
                 url: "{{ route('branch_transactions.selling_transaction.or_number_duplicate_s') }}",
@@ -315,13 +294,14 @@
         
         // UI/UX - Clear the modal for stock
         function clearStock() {
-            $('#serial-stock-table tbody tr').empty();
-            $('#serial-stock-table-appended tbody tr').empty();
-            $('#currency-amnt-selling-new').val('');
-            $('#true-currency-amnt-selling').val('');
             $('#total-amnt-selling').text('0.00');
             $('#true-total-amnt-selling').val('');
+            $('#currency-amnt-selling-new').val('');
+            $('#true-currency-amnt-selling').val('');
+            $('#serial-stock-table tbody tr').empty();
             $('#available-bills-total-amount').text('');
+            $('#serial-stock-table-appended tbody tr').empty();
+            $('#transaction-confirm-button').prop('disabled', true)
             $('#denomination-filter').empty().append('<option value="default">All</option>');
         }
 
@@ -809,6 +789,14 @@
 
             // $('#available-bills-total-amount').text(available_bills_total_amnt.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}));
         }
+        
+        $('#transaction-confirm-button').on('click',function() {
+            if (!$('#true-total-amnt-selling').val()) {
+                $(this).prop('disabled',  true);
+            } else {
+                $('#security-code-modal').modal("show");
+            }
+        });
     });
 
     // Verification of selling transaction through security code

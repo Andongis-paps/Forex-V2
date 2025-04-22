@@ -28,6 +28,7 @@
 
         $('input[name="radio-rset"]').change(function() {
             var rset_value = $(this).val();
+
             $('#new-serial-container').empty();
             $('#or-number-selling').removeAttr('disabled');
             $('#button-add-serial').attr('disabled', 'disabled');
@@ -94,83 +95,57 @@
             $('#ui-datepicker-div').css('top' , '145');
         });
 
-        $('#transaction-confirm-button').on('click',function() {
-            serials_to_be_sold = [];
-
-            $('.new-serial-container').each(function() {
-                var this_element = $(this).find('.serial-input-appended-data').val();
-                serials_to_be_sold.push(this_element);
-            });
-
-            if (serials_to_be_sold.length > 15) {
-                Swal.fire({
-                    icon: 'error',
-                    text: 'Selected serials limit has been reached.',
-                    customClass: {
-                        popup: 'my-swal-popup',
-                    }
-                });
-            } else {
-                $('#security-code-modal').modal("show");
-            }
-        });
-
         $('#or-number-selling').change(function() {
-            var current_or_number = $(this).val();
-
             $.ajax({
                 url: "{{ route('admin_transactions.admin_s_transaction.duplicate') }}",
                 type: "post",
                 data: {
                     _token: "{{ csrf_token() }}",
+                    current_or_number: $(this).val()
                 }, success: function(data) {
-                    var or_no_array = [];
-                    var or_numbers = data.or_numbers;
+                    let timerInterval;
 
-                    or_numbers.forEach(function(or_numbs) {
-                        or_no_array.push(or_numbs.ORNo);
+                    Swal.fire({
+                        title: "Checking for duplicates...",
+                        timer: 600,
+                        didOpen: () => {
+                            Swal.showLoading();
+                                const timer = Swal.getPopup().querySelector("b");
+                            timerInterval = setInterval(() => {
+                                timer.textContent = `${Swal.getTimerLeft()}`;
+                            }, 600);
+                        },
+                        willClose: () => {
+                            clearInterval(timerInterval);
+                        }
+                    }).then(() => {
+                        if (data.boolean) {
+                            dupeAlert();
+                        } else {
+                            $('input[name="radio-rset"][value="O"]').prop('checked', true).trigger('change');
+                            $('#currencies-select-selling').removeAttr('disabled','disabled');
+                        }
                     });
-
-                    if (or_no_array) {
-                        let timerInterval;
-
-                        Swal.fire({
-                            title: "Checking for duplicates...",
-                            timer: 600,
-                            didOpen: () => {
-                                Swal.showLoading();
-                                    const timer = Swal.getPopup().querySelector("b");
-                                timerInterval = setInterval(() => {
-                                    timer.textContent = `${Swal.getTimerLeft()}`;
-                                }, 600);
-                            },
-                            willClose: () => {
-                                clearInterval(timerInterval);
-                            }
-                        }).then(() => {
-                            if (or_no_array.includes(parseInt(current_or_number))) {
-                                Swal.fire({
-                                    title: 'Duplicate entry',
-                                    icon: 'error',
-                                    text: 'OR number is already existing.',
-                                    customClass: {
-                                        popup: 'my-swal-popup',
-                                    }
-                                }).then(() => {
-                                    $('#rate-used-true').val('');
-                                    $('#rate-used-selling').val('');
-                                    $('#or-number-selling').val('').attr('placeholder', 'OR Number');
-                                    $('#currencies-select-selling').attr('disabled','disabled');
-                                });
-                            } else {
-                                $('#currencies-select-selling').removeAttr('disabled','disabled');
-                            }
-                        });
-                    }
                 }
-            })
-        });
+            });
 
+            function dupeAlert() {
+                Swal.fire({
+                    title: 'Duplicate entry',
+                    icon: 'error',
+                    text: 'Invoice mumber is already existing.',
+                    customClass: {
+                        popup: 'my-swal-popup',
+                    }
+                }).then(() => {
+                    $('#rate-used-true').val('');
+                    $('#rate-used-selling').val('');
+                    $('#or-number-selling').val('').attr('placeholder', 'OR Number');
+                    $('#currencies-select-selling').attr('disabled','disabled');
+                });
+            }
+        });
+        
         $('#or-number-selling').on('input', function() {
             this.value = this.value.replace(/[^0-9]/g, '');
 
@@ -183,6 +158,11 @@
         $('#currencies-select-selling').change(function() {
             var selected_curr_id = $(this).val();
 
+            $('input[name="radio-rset"]')
+
+            console.log($('#true-currency-amnt-selling').val());
+
+            clearStock();
             clearTotalCurrAmnt();
             getSerialDetails(selected_curr_id);
         });
@@ -303,13 +283,14 @@
         }
 
         function clearStock() {
-            $('#serial-stock-table tbody tr').empty();
-            $('#serial-stock-table-appended tbody tr').empty();
-            $('#currency-amnt-selling-new').val('');
-            $('#true-currency-amnt-selling').val('');
             $('#total-amnt-selling').text('0.00');
             $('#true-total-amnt-selling').val('');
+            $('#currency-amnt-selling-new').val('');
+            $('#true-currency-amnt-selling').val('');
+            $('#serial-stock-table tbody tr').empty();
             $('#available-bills-total-amount').text('');
+            $('#serial-stock-table-appended tbody tr').empty();
+            $('#transaction-confirm-button').prop('disabled', true)
             $('#denomination-filter').empty().append('<option value="default">All</option>');
         }
 
@@ -572,7 +553,7 @@
             var get_total_curr_amnt = $('#true-currency-amnt-selling').val();
 
             if (parseInt(get_total_curr_amnt) == 0) {
-                $('#transaction-confirm-button').attr('disabled', 'disabled');
+                $('#transaction-confirm-button').prop('disabled', true);
             }
 
             var bill_stocks_amnt = parseFloat($('#available-bills-total-amount-input').val()) + parseFloat(bill_amtn_selling);
@@ -840,6 +821,14 @@
 
             $('#available-bills-total-amount').text(available_bills_total_amnt.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}));
         }
+
+        $('#transaction-confirm-button').on('click',function() {
+            if (!$('#true-total-amnt-selling').val()) {
+                $(this).prop('disabled',  true);
+            } else {
+                $('#security-code-modal').modal("show");
+            }
+        });
     });
 
     // Verification of selling transaction through security code

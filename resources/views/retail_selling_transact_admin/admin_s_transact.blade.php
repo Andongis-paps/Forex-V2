@@ -65,7 +65,7 @@
                                                 </div>
                                             </div>
                                             {{-- Selling Transact - Receipt Set --}}
-                                            {{-- <div class="row align-items-center px-3 mt-3 @if(session('time_toggle_status') == 1) d-none @endif">
+                                            <div class="row align-items-center px-3 mt-3 @if(session('time_toggle_status') == 1) d-none @endif">
                                                 <div class="col-3">
                                                     <strong>
                                                         {{ trans('labels.buying_rset') }}: &nbsp;<span class="required-class">*</span>
@@ -86,7 +86,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div> --}}
+                                            </div>
 
                                             <input type="hidden" value="{{ session('time_toggle_status') }}" id="time-toggle-stat">
                                             {{-- Selling Transaction - OR Number --}}
@@ -206,11 +206,11 @@
                                                 </div>
                                                 <div class="col-lg-6 text-end">
                                                     @can('access-permission', $menu_id)
-                                                        <a class="btn btn-secondary" type="button" href="{{ URL::to('/addNewSellingTrans') }}">{{ trans('labels.back_action') }}</a>
+                                                        <a class="btn btn-secondary btn-sm" type="button" href="{{ URL::to('/addNewSellingTrans') }}">{{ trans('labels.back_action') }}</a>
                                                     @endcan
 
                                                     @can('add-permission', $menu_id)
-                                                        <button class="btn btn-primary" type="button" id="transaction-confirm-button" disabled>{{ trans('labels.confirm_action') }}</button>
+                                                        <button class="btn btn-primary btn-sm" type="button" id="transaction-confirm-button" disabled>{{ trans('labels.confirm_action') }}</button>
                                                     @endcan
                                                 </div>
                                             </div>
@@ -238,7 +238,7 @@
                                 <thead>
                                     <tr>
                                         <th class="text-center text-xs font-extrabold text-black p-1">{{ trans('labels.selling_currency') }}</th>
-                                        <th class="text-center text-xs font-extrabold text-black p-1">{{ trans('labels.selling_bill_amount') }}</th>
+                                        <th class="text-center text-xs font-extrabold text-black p-1">{{ trans('labels.selling_denom') }}</th>
                                         <th class="text-center text-xs font-extrabold text-black p-1">{{ trans('labels.selling_pieces') }}</th>
                                         <th class="text-center text-xs font-extrabold text-black p-1">{{ trans('labels.selling_sub_total') }}</th>
                                         @if (session('time_toggle_status') == 0)
@@ -265,7 +265,7 @@
                                                 <td class="text-center text-sm py-1">
                                                     {{ $available_serials->bill_amount_count }}
                                                 </td>
-                                                <td class="text-right text-sm font-bold py-1">
+                                                <td class="text-right text-sm font-bold py-1 pe-2">
                                                     @php
                                                         $bill_amnt =  $available_serials->BillAmount;
                                                         $bill_amnt_cnt =  $available_serials->bill_amount_count;

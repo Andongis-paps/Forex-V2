@@ -200,8 +200,8 @@
                                                     <input type="hidden" id="user-id-selling" name="user-id-selling">
                                                 </div>
                                                 <div class="col-lg-6 text-end">
-                                                    <a class="btn btn-secondary" type="button" href="{{ route('branch_transactions.selling_transaction') }}">{{ trans('labels.back_action') }}</a>
-                                                    <button class="btn btn-primary" type="button" id="transaction-confirm-button" disabled>{{ trans('labels.confirm_action') }}</button>
+                                                    <a class="btn btn-secondary btn-sm" type="button" href="{{ route('branch_transactions.selling_transaction') }}">{{ trans('labels.back_action') }}</a>
+                                                    <button class="btn btn-primary btn-sm" type="button" id="transaction-confirm-button" disabled>{{ trans('labels.confirm_action') }}</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -256,7 +256,7 @@
                                                 <td class="text-center text-sm py-1">
                                                     {{ $available_serials->bill_amount_count }}
                                                 </td>
-                                                <td class="text-right text-sm font-bold py-1">
+                                                <td class="text-right text-sm font-bold py-1 pe-2">
                                                     @php
                                                         $bill_amnt =  $available_serials->BillAmount;
                                                         $bill_amnt_cnt =  $available_serials->bill_amount_count;

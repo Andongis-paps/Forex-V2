@@ -389,17 +389,30 @@ class AdminRetailSellingController extends Controller {
     }
 
     public function OrNoDuplicateRetailSelling(Request $request) {
-        $or_numbers = DB::connection('forex')->table('tbladminsoldcurr')
-            ->where('tbladminsoldcurr.BranchID', '=', Auth::user()->getBranch()->BranchID)
-            ->select(
-                'tbladminsoldcurr.ORNo'
-            )
-            ->whereNotNull('tbladminsoldcurr.ORNo')
-            ->where('tbladminsoldcurr.ORNo', '!=', 0)
-            ->get();
+        $or_numbers = DB::connection('forex')->table('tbladminbuyingtransact as afd')
+            ->where('afd.BranchID', '=', Auth::user()->getBranch()->BranchID)
+            ->select('afd.ORNo')
+            ->where('afd.ORNo', $request->get('current_or_number'))
+            ->where('afd.Voided', 0)
+            ->exists();
+
+        $or_numbers_sell = DB::connection('forex')->table('tbladminsoldcurr as asc')
+            ->select('asc.ORNo')
+            ->where('asc.BranchID', '=', Auth::user()->getBranch()->BranchID)
+            ->where('asc.ORNo', $request->get('current_or_number'))
+            ->where('asc.Voided', 0)
+            ->exists();
+
+        $boolean = '';
+
+        if ($or_numbers || $or_numbers_sell) {
+            $boolean = true;
+        } else {
+            $boolean = false;
+        }
 
         $response = [
-            'or_numbers' => $or_numbers
+            'boolean' => $boolean,
         ];
 
         return response()->json($response);
