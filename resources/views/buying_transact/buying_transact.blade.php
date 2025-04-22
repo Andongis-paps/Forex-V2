@@ -276,12 +276,12 @@
 
                                         <div class="col-12 border border-gray-300 rounded-bl rounded-br p-2">
                                             <div class="row">
-                                                <div class="col-lg-12 text-end pe-3">
+                                                <div class="col-lg-12 text-end">
                                                     @can('access-permission', $menu_id)
-                                                        <a class="btn btn-secondary" type="button" href="{{ route('branch_transactions.buying_transaction') }}">{{ trans('labels.back_action') }}</a>
+                                                        <a class="btn btn-secondary btn-sm" type="button" href="{{ route('branch_transactions.buying_transaction') }}">{{ trans('labels.back_action') }}</a>
                                                     @endcan
                                                     @can('add-permission', $menu_id)
-                                                        <button class="btn btn-primary" type="button" id="transaction-confirm-button" disabled>{{ trans('labels.confirm_action') }}</button>
+                                                        <button class="btn btn-primary btn-sm" type="button" id="transaction-confirm-button" disabled>{{ trans('labels.confirm_action') }}</button>
                                                     @endcan
                                                 </div>
                                             </div>
