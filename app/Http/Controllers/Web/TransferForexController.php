@@ -152,14 +152,14 @@ class TransferForexController extends Controller {
             ->groupBy('tbltransferforex.ITID')
             ->get();
 
-        $result['tracking_number'] = DB::connection('itinventory')->table('tbldepartment')
+        $result['tracking_number'] = DB::connection('itinventory')->table('tbldepartment as dp')
             ->select('tblitemtransfer.itno as TrackingNumber','tblitemtransfer.ITID as TrackingID', 'tblitemtransfer.itdate as EntryDate')
-            ->join('tracking.tblitemtransfer', 'tbldepartment.deptid', 'tracking.tblitemtransfer.deptid')
-            ->where('tracking.tblitemtransfer.DeptID', '=', 5)
-            ->where('tracking.tblitemtransfer.Sender', '=', Auth::user()->getBranch()->pxBranchID)
-            ->where('tracking.tblitemtransfer.itdate', '=', Carbon::now()->toDateString())
-            // ->where('tracking.tblitemtransfer.BahayReceived', '=', 0)
-            ->orderBy('tracking.tblitemtransfer.itno', 'DESC')
+            ->join('tracking.tblitemtransfer as it', 'dp.deptid', 'it.deptid')
+            ->where('it.DeptID', '=', 5)
+            ->where('it.Sender', '=', Auth::user()->getBranch()->pxBranchID)
+            // ->where('it.itdate', '=', Carbon::now()->toDateString())
+            // ->where('it.BahayReceived', '=', 0)
+            ->orderBy('it.itno', 'DESC')
             ->get();
 
         $ITDIDs = [];

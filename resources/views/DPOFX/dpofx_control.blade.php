@@ -15,7 +15,7 @@
                     </div>
 
                     {{-- Control Details - Wallet --}}
-                    <div class="col-lg-8">
+                    <div class="col-lg-9">
                         <div class="row justify-content-center">
                             <div class="col-12">
                                 <div class="card">
@@ -57,9 +57,6 @@
                                                         <tr>
                                                             <td class="text-center text-sm p-1 whitespace-nowrap">
                                                                 {{ $dpo_wallet->DPOCNo }}
-                                                            </td>
-                                                            <td class="text-center text-sm p-1 whitespace-nowrap">
-                                                                {{ $dpo_wallet->EntryDate }}
                                                             </td>
                                                             <td class="text-center text-sm p-1 whitespace-nowrap">
                                                                 {{ $dpo_wallet->DPOType }}
@@ -112,26 +109,29 @@
                     </div>
 
                     {{-- Wallet --}}
-                    <div class="col-lg-4">
+                    <div class="col-lg-3">
                         <div class="row justify-content-center">
                             <div class="col-12">
-                                <div class="card">
-                                    <div class="col-12 border border-gray-300 rounded-tl rounded-tr text-center py-2">
-                                        <strong>
-                                            <span class="text-xl font-bold">{{ trans('labels.dpo_acc_balance') }}</span>
-
-                                        </strong>
+                                {{-- <a class="primary-links" href="{{ route('admin_transactions.buffer.buffer_wallet') }}"> --}}
+                                    <div class="card dahsboard-cards h-100">
+                                        <div class="card-body py-4">
+                                            <div class="row align-items-center text-left mb-2">
+                                                <div class="col-1">
+                                                    <i class='bx bx-coin-stack text-[#0D6EFD]'></i>
+                                                </div>
+                                                &nbsp;
+                                                <div class="col-9">
+                                                    <span class="!text-[#424242] text-md">Available DPOFX Balance</span>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-12 text-left">
+                                                    <span class="!text-[#424242] card-title text-2xl font-bold">&#36; </span>&nbsp;<span class="!text-[#424242] card-title text-2xl mb-3 font-bold">{{ number_format($result['current_balance']->Balance, 2, '.', ',') }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="col-12 border border-gray-300 text-center py-3" id="buffer-wallet-amount-container">
-
-                                        <strong>
-                                            <span class="text-4xl font-semibold text-white">&#36; {{ number_format($result['current_balance']->Balance, 2, '.', ',') }}</span>
-                                        </strong>
-                                    </div>
-                                    <div class="col-12 border border-gray-300 rounded-bl rounded-br text-center py-2">
-
-                                    </div>
-                                </div>
+                                {{-- </a> --}}
                             </div>
                         </div>
                     </div>

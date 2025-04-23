@@ -25,20 +25,20 @@
             var table = $('#dpo-in-details-table');
             var row = $('<tr>');
             var branch = $('<td class="text-center text-sm p-1">'+ BranchCode +'</td>');
-            var mtcn = $('<td class="text-center text-sm p-1">'+ MTCN +'</td>');
-            var dollar_amnt = $('<td class="text-right text-sm py-1 px-3">'+ DollarAmount.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}) +'</td>');
-            var rate = $('<td class="text-right text-sm py-1 px-3">'+ RateUsed.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}) +'</td>');
-            var peso_amnt = $('<td class="text-right text-sm py-1 px-3">'+ Amount.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}) +'</td>');
+            var mtcn = $('<td class="text-center font-bold text-sm p-1">'+ MTCN +'</td>');
+            var dollar_amnt = $('<td class="text-right text-sm py-1 pe-2">'+ DollarAmount.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}) +'</td>');
+            var rate = $('<td class="text-right text-sm py-1 pe-2">'+ RateUsed.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}) +'</td>');
+            var peso_amnt = $('<td class="text-right text-sm py-1 pe-2">'+ Amount.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}) +'</td>');
             var receipt_set = $('<td class="text-center text-sm p-1">'+ Rset +'</td>');
             var entry_date = $('<td class="text-center text-sm p-1">'+ EntryDate +'</td>');
 
+            row.append(entry_date);
             row.append(branch);
+            row.append(receipt_set);
             row.append(mtcn);
             row.append(dollar_amnt);
             row.append(rate);
             row.append(peso_amnt);
-            row.append(receipt_set);
-            row.append(entry_date);
 
             table.find('tbody').append(row);
         }

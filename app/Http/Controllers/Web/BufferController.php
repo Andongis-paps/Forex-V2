@@ -1074,24 +1074,24 @@ class BufferController extends Controller {
 
         $admin_stock_details_s = $this->adminStocks()['admin_stock_details_s'];
 
-        $query = DB::connection('forex')->table('tblbuffercontrol')
-            ->join('pawnshop.tblxusers', 'tblbuffercontrol.UserID', 'pawnshop.tblxusers.UserID')
-            ->join('tblbranch', 'tblbuffercontrol.BranchID', 'tblbranch.BranchID')
-            ->leftJoin('tbldollarintype', 'tblbuffercontrol.DITID', 'tbldollarintype.DITID')
-            ->leftJoin('tbldollarouttype', 'tblbuffercontrol.DOTID', 'tbldollarouttype.DOTID')
-            ->leftJoin('tbltransferforex', 'tblbuffercontrol.TFID', 'tbltransferforex.TransferForexID')
-            ->selectRaw('tblbuffercontrol.BCID, tblbuffercontrol.BCNO, tblbuffercontrol.BCDate, tblbuffercontrol.BCType, tbldollarintype.DollarInType, tbldollarouttype.DollarOutType, tblbuffercontrol.DollarIn, tblbuffercontrol.DollarOut, tblbuffercontrol.Balance, tblbuffercontrol.Remarks, tblbranch.BranchCode, pawnshop.tblxusers.Name')
-            ->groupBy('tblbuffercontrol.BCID', 'tblbuffercontrol.BCNO', 'tblbuffercontrol.BCDate', 'tblbuffercontrol.BCType', 'tbldollarintype.DollarInType', 'tbldollarouttype.DollarOutType', 'tblbuffercontrol.DollarIn', 'tblbuffercontrol.DollarOut', 'tblbuffercontrol.Balance', 'tblbuffercontrol.Remarks', 'tblbranch.BranchCode', 'pawnshop.tblxusers.Name');
+        $query = DB::connection('forex')->table('tblbuffercontrol as bfc')
+            ->join('pawnshop.tblxusers as tbx', 'bfc.UserID', 'tbx.UserID')
+            ->join('tblbranch as tb', 'bfc.BranchID', 'tblbranch.BranchID')
+            ->leftJoin('tbldollarintype as di', 'bfc.DITID', 'di.DITID')
+            ->leftJoin('tbldollarouttype as do', 'bfc.DOTID', 'do.DOTID')
+            ->leftJoin('tbltransferforex as tfx', 'bfc.TFID', 'tfx.TransferForexID')
+            ->selectRaw('bfc.BCID, bfc.BCNO, bfc.BCDate, bfc.BCType, di.DollarInType, do.DollarOutType, bfc.DollarIn, bfc.DollarOut, bfc.Balance, bfc.Remarks, tblbranch.BranchCode, pawnshop.tblxusers.Name')
+            ->groupBy('bfc.BCID', 'bfc.BCNO', 'bfc.BCDate', 'bfc.BCType', 'di.DollarInType', 'do.DollarOutType', 'bfc.DollarIn', 'bfc.DollarOut', 'bfc.Balance', 'bfc.Remarks', 'tblbranch.BranchCode', 'pawnshop.tblxusers.Name');
 
-        $result['buffer_in'] = $query->clone()->where('tblbuffercontrol.BCType', 1)
-            // ->where('tblbuffercontrol.BCDate', '>=', '2025-01-01')
-            ->where('tblbuffercontrol.BCDate', '>=',  '2025-01-01')
-            ->orderBy('tblbuffercontrol.BCID', 'DESC')
+        $result['buffer_in'] = $query->clone()->where('bfc.BCType', 1)
+            // ->where('bfc.BCDate', '>=', '2025-01-01')
+            ->where('bfc.BCDate', '>=',  '2025-01-01')
+            ->orderBy('bfc.BCID', 'DESC')
             ->paginate(10, ['*'], 'buffer_in');
 
-        $result['buffer_out'] = $query->clone()->where('tblbuffercontrol.BCType', 2)
-            // ->where('tblbuffercontrol.BCDate', '>=', '2025-01-01')
-            ->where('tblbuffercontrol.BCDate', '>=',  '2025-01-01')
+        $result['buffer_out'] = $query->clone()->where('bfc.BCType', 2)
+            // ->where('bfc.BCDate', '>=', '2025-01-01')
+            ->where('bfc.BCDate', '>=',  '2025-01-01')
             ->orderBy('tblbuffercontrol.BCID', 'DESC')
             ->paginate(10, ['*'], 'buffer_out');
 

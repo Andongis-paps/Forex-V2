@@ -34,11 +34,27 @@ class AdminDPOFXController extends Controller {
         $this->MenuID = $request->attributes->get('MenuID');
         $menu_id = $this->MenuID;
 
-        $result['dpo_wallet'] = DB::connection('forex')->table('tbldpofxcontrol as dpc')
-            ->leftJoin('accounting.tblcompany as tc', 'dpc.CompanyID', 'tc.CompanyID')
-            ->join('tbldpotype', 'dpc.DPOTID', 'tbldpotype.DPOTID')
+        // $result['dpo_wallet'] = DB::connection('forex')->table('tbldpofxcontrol as dpc')
+        //     ->leftJoin('accounting.tblcompany as tc', 'dpc.CompanyID', 'tc.CompanyID')
+        //     ->join('tbldpotype', 'DPOTID', 'tbldpotype.DPOTID')
+        //     ->orderBy('dpc.DPOCID', 'DESC')
+        //     ->get(); 
+
+        $result['dpo_in'] = DB::connection('forex')->table('tbldpofxcontrol as dpc')
+            ->selectRaw('dpc.DPOCID, dpc.DPOCNo, dpc.DPOCType, dpc.DollarIn, tc.CompanyName')
+            ->join('accounting.tblcompany as tc', 'dpc.CompanyID', 'tc.CompanyID')
+            ->join('tbldpotype as dt', 'dpc.DPOTID', 'dt.DPOTID')
+            ->groupBy('dpc.DPOCID', 'dpc.DPOCNo', 'dpc.DPOCType', 'dpc.DollarIn', 'tc.CompanyName')
             ->orderBy('dpc.DPOCID', 'DESC')
-            ->get();
+            ->paginate(10, ['*'], 'dpo_in');
+
+        $result['dpo_out'] = DB::connection('forex')->table('tbldpofxcontrol as dpc')
+            ->selectRaw('dpc.DPOCID, dpc.DPOCNo, dpc.DPOCType, dpc.DollarOut, tc.CompanyName')
+            ->join('accounting.tblcompany as tc', 'dpc.CompanyID', 'tc.CompanyID')
+            ->join('tbldpotype as dt', 'dpc.DPOTID', 'dt.DPOTID')
+            ->groupBy('dpc.DPOCID', 'dpc.DPOCNo', 'dpc.DPOCType', 'dpc.DollarOut', 'tc.CompanyName')
+            ->orderBy('dpc.DPOCID', 'DESC')
+            ->paginate(10, ['*'], 'dpo_out');
 
         $result['current_balance'] = DB::connection('forex')->table('tbldpofxcontrol as dpc')
             ->selectRaw('SUM(DollarIn - DollarOut) as Balance')
