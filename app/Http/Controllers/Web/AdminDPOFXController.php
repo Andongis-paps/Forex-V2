@@ -34,27 +34,27 @@ class AdminDPOFXController extends Controller {
         $this->MenuID = $request->attributes->get('MenuID');
         $menu_id = $this->MenuID;
 
-        // $result['dpo_wallet'] = DB::connection('forex')->table('tbldpofxcontrol as dpc')
-        //     ->leftJoin('accounting.tblcompany as tc', 'dpc.CompanyID', 'tc.CompanyID')
-        //     ->join('tbldpotype', 'DPOTID', 'tbldpotype.DPOTID')
-        //     ->orderBy('dpc.DPOCID', 'DESC')
-        //     ->get(); 
-
-        $result['dpo_in'] = DB::connection('forex')->table('tbldpofxcontrol as dpc')
-            ->selectRaw('dpc.DPOCID, dpc.DPOCNo, dpc.DPOCType, dpc.DollarIn, tc.CompanyName')
+        $query = DB::connection('forex')->table('tbldpofxcontrol as dpc')
             ->join('accounting.tblcompany as tc', 'dpc.CompanyID', 'tc.CompanyID')
-            ->join('tbldpotype as dt', 'dpc.DPOTID', 'dt.DPOTID')
-            ->groupBy('dpc.DPOCID', 'dpc.DPOCNo', 'dpc.DPOCType', 'dpc.DollarIn', 'tc.CompanyName')
+            ->join('tbldpotype as dt', 'dpc.DPOTID', 'dt.DPOTID');
+
+        $result['dpo_in'] = $query->clone()->selectRaw('dpc.DPOCID, dpc.DPOCNo, dt.DPOType, dpc.DollarIn, tc.CompanyName')
+            ->groupBy('dpc.DPOCID', 'dpc.DPOCNo', 'dt.DPOType', 'dpc.DollarIn', 'tc.CompanyName')
             ->orderBy('dpc.DPOCID', 'DESC')
             ->paginate(10, ['*'], 'dpo_in');
 
-        $result['dpo_out'] = DB::connection('forex')->table('tbldpofxcontrol as dpc')
-            ->selectRaw('dpc.DPOCID, dpc.DPOCNo, dpc.DPOCType, dpc.DollarOut, tc.CompanyName')
-            ->join('accounting.tblcompany as tc', 'dpc.CompanyID', 'tc.CompanyID')
-            ->join('tbldpotype as dt', 'dpc.DPOTID', 'dt.DPOTID')
-            ->groupBy('dpc.DPOCID', 'dpc.DPOCNo', 'dpc.DPOCType', 'dpc.DollarOut', 'tc.CompanyName')
+        $result['dpo_out'] = $query->clone()->selectRaw('dpc.DPOCID, dpc.DPOCNo, dt.DPOType, dpc.DollarOut, tc.CompanyName')
+            ->groupBy('dpc.DPOCID', 'dpc.DPOCNo', 'dt.DPOType', 'dpc.DollarOut', 'tc.CompanyName')
             ->orderBy('dpc.DPOCID', 'DESC')
             ->paginate(10, ['*'], 'dpo_out');
+
+        $result['dollar_in'] = $query->clone()->selectRaw('SUM(dpc.DollarIn) as total_dollar_in')
+            ->where('dpc.EntryDate', '>=',  '2025-01-01')
+            ->value('total_dollar_in');
+            
+        $result['dollar_out'] = $query->clone()->selectRaw('SUM(dpc.DollarOut) as total_dollar_out')
+            ->where('dpc.EntryDate', '>=',  '2025-01-01')
+            ->value('total_dollar_out');
 
         $result['current_balance'] = DB::connection('forex')->table('tbldpofxcontrol as dpc')
             ->selectRaw('SUM(DollarIn - DollarOut) as Balance')

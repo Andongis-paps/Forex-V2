@@ -43,52 +43,42 @@
                                             <thead>
                                                 <tr>
                                                     <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">DPO Ctrl. No.</th>
-                                                    <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Entry Date</th>
+                                                    <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Company</th>
                                                     <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Type</th>
                                                     <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Transaction</th>
-                                                    <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap w-25">Balance</th>
-                                                    <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Company</th>
                                                 </tr>
                                             </thead>
 
                                             <tbody id="transfers-result-table-tbody">
-                                                @if (count($result['dpo_wallet']) > 0)
-                                                    @foreach ($result['dpo_wallet'] as $dpo_wallet)
-                                                        <tr>
-                                                            <td class="text-center text-sm p-1 whitespace-nowrap">
-                                                                {{ $dpo_wallet->DPOCNo }}
-                                                            </td>
-                                                            <td class="text-center text-sm p-1 whitespace-nowrap">
-                                                                {{ $dpo_wallet->DPOType }}
-                                                            </td>
-                                                            <td class="text-right text-sm p-1 whitespace-nowrap">
-                                                                @if ($dpo_wallet->DollarOut == '0.00')
-                                                                    <span class="badge success-badge-custom font-bond">
-                                                                        <strong>
-                                                                            + {{ number_format($dpo_wallet->DollarIn, 2, '.', ',') }}
-                                                                        </strong>
-                                                                    </span>
-                                                                @elseif ($dpo_wallet->DollarIn == '0.00')
-                                                                    <span class="badge danger-badge-custom font-bond">
-                                                                        <strong>
-                                                                            - {{ number_format($dpo_wallet->DollarOut, 2, '.', ',') }}
-                                                                        </strong>
-                                                                    </span>
-                                                                @endif
-                                                            </td>
-                                                            <td class="text-right text-sm py-1 px-2 whitespace-nowrap">
-                                                                <strong> &dollar; {{ $dpo_wallet->Balance }}</strong>
-                                                            </td>
-                                                            <td class="text-center text-td-buying text-sm p-1 whitespace-nowrap">
-                                                                @if ($dpo_wallet->CompanyName != null)
-                                                                    {{ $dpo_wallet->CompanyName }}
-                                                                @else
-                                                                    <strong><span>N/A</span></strong>
-                                                                @endif
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
-                                                @else
+                                                @forelse ($result['dpo_in'] as $dpo_in)
+                                                    <tr>
+                                                        <td class="text-center text-sm p-1 whitespace-nowrap">
+                                                            {{ $dpo_in->DPOCNo }}
+                                                        </td>
+                                                        <td class="text-center text-td-buying text-sm p-1 whitespace-nowrap">
+                                                            @if ($dpo_in->CompanyName != null)
+                                                                {{ $dpo_in->CompanyName }}
+                                                            @else
+                                                                <strong><span>N/A</span></strong>
+                                                            @endif
+                                                        </td>
+                                                        <td class="text-center text-sm p-1 whitespace-nowrap">
+                                                            {{ $dpo_in->DPOType }}
+                                                        </td>
+                                                        {{-- <td class="text-right text-sm py-1 px-2 whitespace-nowrap">
+                                                            <strong> &dollar; {{ $dpo_in->Balance }}</strong>
+                                                        </td> --}}
+                                                        <td class="text-right text-sm py-1 pe-2 whitespace-nowrap">
+                                                            @if ($dpo_in->DollarIn != '0.00')
+                                                                <span class="text-[#00A65A] font-bold text-xs">
+                                                                    + {{ number_format($dpo_in->DollarIn, 2, '.', ',') }}
+                                                                </span>
+                                                            @elseif ($dpo_in->DollarIn == '0.00')
+                                                                {{ number_format(0, 2, '.', ',') }}
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                @empty
                                                     <tr>
                                                         <td class="text-center text-td-buying text-sm py-3" colspan="12" id="empty-receive-transf-table">
                                                             <span class="buying-no-transactions text-lg">
@@ -96,7 +86,7 @@
                                                             </span>
                                                         </td>
                                                     </tr>
-                                                @endif
+                                                @endforelse
                                             </tbody>
                                         </table>
                                     </div>

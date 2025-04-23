@@ -157,7 +157,7 @@ class TransferForexController extends Controller {
             ->join('tracking.tblitemtransfer as it', 'dp.deptid', 'it.deptid')
             ->where('it.DeptID', '=', 5)
             ->where('it.Sender', '=', Auth::user()->getBranch()->pxBranchID)
-            // ->where('it.itdate', '=', Carbon::now()->toDateString())
+            ->where('it.itdate', '>', '2025-01-01')
             // ->where('it.BahayReceived', '=', 0)
             ->orderBy('it.itno', 'DESC')
             ->get();

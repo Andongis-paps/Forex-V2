@@ -1076,12 +1076,12 @@ class BufferController extends Controller {
 
         $query = DB::connection('forex')->table('tblbuffercontrol as bfc')
             ->join('pawnshop.tblxusers as tbx', 'bfc.UserID', 'tbx.UserID')
-            ->join('tblbranch as tb', 'bfc.BranchID', 'tblbranch.BranchID')
+            ->join('tblbranch as tb', 'bfc.BranchID', 'tb.BranchID')
             ->leftJoin('tbldollarintype as di', 'bfc.DITID', 'di.DITID')
             ->leftJoin('tbldollarouttype as do', 'bfc.DOTID', 'do.DOTID')
             ->leftJoin('tbltransferforex as tfx', 'bfc.TFID', 'tfx.TransferForexID')
-            ->selectRaw('bfc.BCID, bfc.BCNO, bfc.BCDate, bfc.BCType, di.DollarInType, do.DollarOutType, bfc.DollarIn, bfc.DollarOut, bfc.Balance, bfc.Remarks, tblbranch.BranchCode, pawnshop.tblxusers.Name')
-            ->groupBy('bfc.BCID', 'bfc.BCNO', 'bfc.BCDate', 'bfc.BCType', 'di.DollarInType', 'do.DollarOutType', 'bfc.DollarIn', 'bfc.DollarOut', 'bfc.Balance', 'bfc.Remarks', 'tblbranch.BranchCode', 'pawnshop.tblxusers.Name');
+            ->selectRaw('bfc.BCID, bfc.BCNO, bfc.BCDate, bfc.BCType, di.DollarInType, do.DollarOutType, bfc.DollarIn, bfc.DollarOut, bfc.Balance, bfc.Remarks, tb.BranchCode, tbx.Name')
+            ->groupBy('bfc.BCID', 'bfc.BCNO', 'bfc.BCDate', 'bfc.BCType', 'di.DollarInType', 'do.DollarOutType', 'bfc.DollarIn', 'bfc.DollarOut', 'bfc.Balance', 'bfc.Remarks', 'tb.BranchCode', 'tbx.Name');
 
         $result['buffer_in'] = $query->clone()->where('bfc.BCType', 1)
             // ->where('bfc.BCDate', '>=', '2025-01-01')
@@ -1092,7 +1092,7 @@ class BufferController extends Controller {
         $result['buffer_out'] = $query->clone()->where('bfc.BCType', 2)
             // ->where('bfc.BCDate', '>=', '2025-01-01')
             ->where('bfc.BCDate', '>=',  '2025-01-01')
-            ->orderBy('tblbuffercontrol.BCID', 'DESC')
+            ->orderBy('bfc.BCID', 'DESC')
             ->paginate(10, ['*'], 'buffer_out');
 
         $query = DB::connection('forex')->table('tblbufferfinancing as bf')
