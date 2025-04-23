@@ -153,7 +153,7 @@ class TransferForexController extends Controller {
             ->get();
 
         $result['tracking_number'] = DB::connection('itinventory')->table('tbldepartment as dp')
-            ->select('tblitemtransfer.itno as TrackingNumber','tblitemtransfer.ITID as TrackingID', 'tblitemtransfer.itdate as EntryDate')
+            ->select('it.itno as TrackingNumber','it.ITID as TrackingID', 'it.itdate as EntryDate')
             ->join('tracking.tblitemtransfer as it', 'dp.deptid', 'it.deptid')
             ->where('it.DeptID', '=', 5)
             ->where('it.Sender', '=', Auth::user()->getBranch()->pxBranchID)
