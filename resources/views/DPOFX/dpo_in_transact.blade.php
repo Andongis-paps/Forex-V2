@@ -36,7 +36,7 @@
                                 <form class="mb-0" method="post" id="dpofx-in-form">
                                     @csrf
                                     <div class="row align-items-center justify-content-center px-2">
-                                        <div class="col-4">
+                                        {{-- <div class="col-4">
                                             <label class="mb-1" for="dpo-reference-number">
                                                 <strong>
                                                     {{ trans('labels.dpo_add_company') }}:
@@ -49,40 +49,14 @@
                                                     <option value="{{ $company->CompanyID }}">{{ $company->CompanyName }}</option>
                                                 @endforeach
                                             </select>
-                                        </div>
-
-                                        {{-- <div class="col-4">
-                                            <label class="mb-1" for="dpo-reference-number">
-                                                <strong>
-                                                    {{ trans('labels.dpo_add_transact_ref_no') }}:
-                                                </strong>
-                                            </label>
-
-                                            <input class="form-control" name="dpo-reference-number" type="number" disabled>
-                                        </div> --}}
-
-                                        {{-- <div class="col-3">
-                                            <label class="mb-1" for="dpo-reference-number">
-                                                <strong>
-                                                    {{ trans('labels.dpo_add_comms_amnt') }} :
-                                                </strong>
-                                            </label>
-
-                                            <input class="form-control text-right" name="dpo-commission" type="number" readonly>
                                         </div> --}}
 
                                         <div class="col-4">
-                                            <label class="mb-1" for="dpo-reference-number">
-                                                <strong>
-                                                    {{ trans('labels.dpo_add_transact_date') }} :
-                                                </strong>
-                                            </label>
-
-                                            <input class="form-control" name="dpo-transact-date" id="dpo-transact-date" type="text" disabled>
+                                            <input class="form-control" name="dpo-transact-date" id="dpo-transact-date" type="text" placeholder="Date from 'YYYY-MM-DD' to 'YYYY-MM-DD'">
                                         </div>
                                     </div>
 
-                                    <div class="row align-items-center justify-content-center px-3 mt-3">
+                                    <div class="row align-items-center justify-content-center px-3 mt-2">
                                         <div class="col-1">
                                             <div class="row">
                                                 @can('add-permission', $menu_id)

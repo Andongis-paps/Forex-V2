@@ -22,18 +22,17 @@
                                     <div class="col-12 p-2 border border-gray-300 rounded-tl rounded-tr">
                                         <div class="row align-items-center">
                                             <div class="col-6">
-                                                <span class="text-lg font-bold p-2 text-black">
-                                                    <i class='bx bx-wallet'></i>&nbsp;{{ trans('labels.dpo_control') }}
+                                                <span class="text-lg font-bold p-1 text-black">
+                                                    <i class="bx bx-trending-up"></i>&nbsp;DPO In
                                                 </span>
                                             </div>
                                             <div class="col-6 text-end">
                                                 <a class="btn btn-primary text-white btn-sm" href="{{ route('admin_transactions.dpofx.dpo_in') }}">
                                                     {{ trans('labels.dpo_add_transact') }} <i class='menu-icon tf-icons bx bx-plus text-white ms-1 me-0'></i>
                                                 </a>
-
-                                                <a class="btn btn-primary text-white btn-sm" href="{{ route('admin_transactions.dpofx.dpo_out') }}">
+                                                {{-- <a class="btn btn-primary text-white btn-sm" href="{{ route('admin_transactions.dpofx.dpo_out') }}">
                                                     {{ trans('labels.dpo_add_transact_sell') }} <i class='menu-icon tf-icons bx bx-plus text-white ms-1 me-0'></i>
-                                                </a>
+                                                </a> --}}
                                             </div>
                                         </div>
                                     </div>
@@ -45,7 +44,7 @@
                                                     <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">DPO Ctrl. No.</th>
                                                     <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Company</th>
                                                     <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Type</th>
-                                                    <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Transaction</th>
+                                                    <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">DPO In</th>
                                                 </tr>
                                             </thead>
 
@@ -65,9 +64,6 @@
                                                         <td class="text-center text-sm p-1 whitespace-nowrap">
                                                             {{ $dpo_in->DPOType }}
                                                         </td>
-                                                        {{-- <td class="text-right text-sm py-1 px-2 whitespace-nowrap">
-                                                            <strong> &dollar; {{ $dpo_in->Balance }}</strong>
-                                                        </td> --}}
                                                         <td class="text-right text-sm py-1 pe-2 whitespace-nowrap">
                                                             @if ($dpo_in->DollarIn != '0.00')
                                                                 <span class="text-[#00A65A] font-bold text-xs">
@@ -80,18 +76,120 @@
                                                     </tr>
                                                 @empty
                                                     <tr>
-                                                        <td class="text-center text-td-buying text-sm py-3" colspan="12" id="empty-receive-transf-table">
-                                                            <span class="buying-no-transactions text-lg">
-                                                                <strong>NO AVAILABLE DPOFX ENTRIES</strong>
+                                                        <td class="text-center text-td-buying text-sm py-2" colspan="12" id="empty-receive-transf-table">
+                                                            <span class="buying-no-transactions">
+                                                                <strong>NO AVAILABLE ENTRIES</strong>
                                                             </span>
                                                         </td>
                                                     </tr>
                                                 @endforelse
                                             </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan="3"></td>
+                                                    <td class="text-right text-sm py-1 pe-2 whitespace-nowrap">
+                                                        <span class="badge success-badge-custom">
+                                                            @if (count($result['dollar_in']) == 0)
+                                                                + {{ number_format(0, 2, '.', ',') }}
+                                                            @else
+                                                                + {{ number_format($result['dollar_in'][0], 2, '.', ',') }}
+                                                            @endif
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            </tfoot>
                                         </table>
                                     </div>
 
-                                    <div class="col-12 px-3 border border-gray-300 rounded-bl rounded-br py-2">
+                                    <div class="col-12 p-2 border border-gray-300 rounded-bl rounded-br py-2">
+                                        {{ $result['dpo_in']->links() }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 mt-2">
+                                <div class="card">
+                                    <div class="col-12 p-2 border border-gray-300 rounded-tl rounded-tr">
+                                        <div class="row align-items-center">
+                                            <div class="col-6">
+                                                <span class="text-lg font-bold p-1 text-black">
+                                                    <i class="bx bx-trending-down"></i>&nbsp;DPO Out
+                                                </span>
+                                            </div>
+                                            <div class="col-6 text-end">
+                                                <a class="btn btn-primary text-white btn-sm" href="{{ route('admin_transactions.dpofx.dpo_out') }}">
+                                                    {{ trans('labels.dpo_add_transact_sell') }} <i class='menu-icon tf-icons bx bx-plus text-white ms-1 me-0'></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <table class="table table-bordered table-hover" id="transfers-result-table">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">DPO Ctrl. No.</th>
+                                                    <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Company</th>
+                                                    <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Type</th>
+                                                    <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">DPO Out</th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody id="transfers-result-table-tbody">
+                                                @forelse ($result['dpo_out'] as $dpo_out)
+                                                    <tr>
+                                                        <td class="text-center text-sm p-1 whitespace-nowrap">
+                                                            {{ $dpo_out->DPOCNo }}
+                                                        </td>
+                                                        <td class="text-center text-td-buying text-sm p-1 whitespace-nowrap">
+                                                            @if ($dpo_out->CompanyName != null)
+                                                                {{ $dpo_out->CompanyName }}
+                                                            @else
+                                                                <strong><span>N/A</span></strong>
+                                                            @endif
+                                                        </td>
+                                                        <td class="text-center text-sm p-1 whitespace-nowrap">
+                                                            {{ $dpo_out->DPOType }}
+                                                        </td>
+                                                        <td class="text-right text-sm py-1 pe-2 whitespace-nowrap">
+                                                            @if ($dpo_out->DollarOut != '0.00')
+                                                                <span class="text-[#DC3545] font-bold text-xs">
+                                                                    - {{ number_format($dpo_out->DollarOut, 2, '.', ',') }}
+                                                                </span>
+                                                            @elseif ($dpo_out->DollarOut == '0.00')
+                                                                {{ number_format(0, 2, '.', ',') }}
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                @empty
+                                                    <tr>
+                                                        <td class="text-center text-td-buying text-sm py-2" colspan="12" id="empty-receive-transf-table">
+                                                            <span class="buying-no-transactions">
+                                                                <strong>NO AVAILABLE ENTRIES</strong>
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                @endforelse
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan="3"></td>
+                                                    <td class="text-right text-sm py-1 pe-2 whitespace-nowrap">
+                                                        <span class="badge danger-badge-custom">
+                                                            @if (count($result['dollar_out']) == 0)
+                                                                - {{ number_format(0, 2, '.', ',') }}
+                                                            @else
+                                                                - {{ number_format($result['dollar_out'][0], 2, '.', ',') }}
+                                                            @endif
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+
+                                    <div class="col-12 p-2 border border-gray-300 rounded-bl rounded-br py-2">
+                                        {{ $result['dpo_in']->links() }}
                                     </div>
                                 </div>
                             </div>

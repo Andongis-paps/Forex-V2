@@ -403,13 +403,13 @@
 
         var selling_trans_html =
             '<html>' +
-                '<table cellspacing="0" style="font-size:10pt; font-face:\'Arial\'; padding: 0;">' +
+                '<table cellspacing="0" style="font-size:9pt; font-face:\'Arial\'; padding: 0;">' +
                     '<tr>' +
-                        '<td style="margin-left: 10pt; padding: 0; width: 285pt;">' +
-                            '<table cellspacing="0" style="font-size:10pt; font-face:\'Arial\'; padding: 0;">' +
+                        '<td style="margin-left: 10pt; padding: 0; width: 270pt;">' +
+                            '<table cellspacing="0" style="font-size:9pt; font-face:\'Arial\'; padding: 0;">' +
                                 '<tbody>' +
                                     // '<tr>' +
-                                    //     '<td style="font-size:10pt; text-align: left; padding: 0;"><b>Branch Copy</b></td>';
+                                    //     '<td style="font-size:9pt; text-align: left; padding: 0;"><b>Branch Copy</b></td>';
                                     //     if (s_trans_rset == 'O') {
                                     //         selling_trans_html +=
                                     //             '<td style="padding: 0; font-size:8pt; text-align: right; width: 185pt;">&nbsp;'+ s_trans_rset +'</td>';
@@ -421,200 +421,203 @@
                                     //         '</tr>'+
                                             '<tr>' +
                                                     '<td style="text-align: left; padding: 0;">Transaction No.</td>' +
-                                                    '<td style="padding: 0;">&nbsp;:&nbsp; '+ s_trans_number +'</td>' +
+                                                    '<td style="padding: 0;">&nbsp;: '+ s_trans_number +'</td>' +
                                             '</tr>';
 
                                     //     if (s_trans_rset == 'O') {
                                     //         selling_trans_html +=
                                     //             '<tr>' +
                                     //                 '<td style="text-align: left; padding: 0;">Invoice No. </td>' +
-                                    //                 '<td style="padding: 0;">&nbsp;:&nbsp; '+ String(s_trans_or_number).padStart(11, '0') +'</td>' +
+                                    //                 '<td style="padding: 0;">&nbsp;: '+ String(s_trans_or_number).padStart(11, '0') +'</td>' +
                                     //             '</tr>';
                                     //     }
 
                                     selling_trans_html +=
                                     // '<tr>' +
-                                    //     '<td style="font-size:10pt; text-align: left; padding: 0;"><b>Branch Copy</b></td>' +
-                                    //     '<td style="padding: 0; font-size:8pt; text-align: left; width: 195pt;">&nbsp;'+ s_trans_rset +'</td>' +
+                                    //     '<td style="font-size:9pt; text-align: left; padding: 0;"><b>Branch Copy</b></td>' +
+                                    //     '<td style="padding: 0; font-size:8pt; text-align: left; width: 195pt;">&nbsp;'ans_rset +'</td>' +
                                     // '</tr>'+
                                     // '<tr>' +
                                     //     '<td style="text-align: left; padding: 0; width: 100pt;">Receipt No. :</td>' +
-                                    //     '<td style="padding: 0;">&nbsp; '+ s_trans_receipt_no +'</td>' +
+                                    //     '<td style="padding: 0;">&nbsp; rans_receipt_no +'</td>' +
                                     // '</tr>' +
                                     // '<tr>' +
                                     //     '<td style="text-align: left; padding: 0;">OR Number :</td>' +
-                                    //     '<td style="padding: 0;">&nbsp; '+ s_trans_or_number +'</td>' +
+                                    //     '<td style="padding: 0;">&nbsp; rans_or_number +'</td>' +
                                     // '</tr>' +
                                     '<tr>' +
                                         '<td style="text-align: left; padding: 0;">CN</td>' +
-                                        '<td style="padding: 0;">&nbsp;:&nbsp; '+ s_trans_customer_no +'</td>' +
+                                        '<td style="padding: 0;">&nbsp;: '+ s_trans_customer_no +'</td>' +
                                     '</tr>' +
                                     '<tr>' +
                                         '<td style="text-align: left; padding: 0;">Transact Date</td>' +
-                                        '<td style="padding: 0;">&nbsp;:&nbsp; '+ s_trans_date +'</td>' +
+                                        '<td style="padding: 0;">&nbsp;: '+ s_trans_date +'</td>' +
                                     '</tr>' +
                                     '<tr>' +
                                         '<td style="text-align: left; padding: 0;">Customer</td>' +
-                                        '<td style="padding: 0;">&nbsp;:&nbsp; '+ s_trans_customer +'</td>' +
+                                        '<td style="padding: 0;">&nbsp;: '+ s_trans_customer +'</td>' +
                                     '</tr>' +
                                     // '<tr>' +
                                     //     '<td style="text-align: left; padding: 0;">Transacted By</td>' +
-                                    //     '<td style="padding: 0;">&nbsp;:&nbsp; '+ s_trans_by +'</td>' +
+                                    //     '<td style="padding: 0;">&nbsp;: '+ s_trans_by +'</td>' +
                                     // '</tr>' +
                                     '<tr>' +
                                         '<td style="text-align: left; padding: 0;">Currency</td>' +
-                                        '<td style="padding: 0;">&nbsp;:&nbsp; '+ s_trans_currency +'</td>' +
+                                        '<td style="padding: 0;">&nbsp;: '+ s_trans_currency +'</td>' +
                                     '</tr>' +
                                     // '<tr>' +
                                     //     '<td style="text-align: left; padding: 0;">Total Amount</td>' +
-                                    //     '<td style="padding: 0;">&nbsp; '+ s_trans_currency +'</td>' +
+                                    //     '<td style="padding: 0;">&nbsp; rans_currency +'</td>' +
                                     // '</tr>' +
                                     '<tr>' +
                                         '<td style="text-align: left; padding: 0;">Currency Amount</td>' +
-                                        '<td style="padding: 0;">&nbsp;:&nbsp; '+ s_trans_curr_amount +'</td>' +
+                                        '<td style="padding: 0;">&nbsp;: '+ s_trans_curr_amount +'</td>' +
                                     '</tr>' +
                                     '<tr>' +
                                         '<td style="text-align: left; padding: 0;">Rate</td>' +
-                                        '<td style="padding: 0;">&nbsp;:&nbsp; '+ s_trans_rate_used.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}) +'</td>' +
+                                        '<td style="padding: 0;">&nbsp;: '+ s_trans_rate_used.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}) +'</td>' +
                                     '</tr>' +
                                     '<tr>' +
                                         '<td style="text-align: left; padding: 0;">Peso Amount</td>' +
-                                        '<td style="padding: 0;">&nbsp;:&nbsp; '+ s_trans_total_amount +'</td>' +
+                                        '<td style="padding: 0;">&nbsp;: '+ s_trans_total_amount +'</td>' +
                                     '</tr>' +
                                 '</tbody>' +
                             '</table>' +
                         '</td>' +
                         '<td style="margin-left: 22pt; padding: 0; width: 285pt;">' +
-                            '<table cellspacing="0" style="font-size:10pt; font-face:\'Arial\'; padding: 0;">' +
+                            '<table cellspacing="0" style="font-size:9pt; font-face:\'Arial\'; padding: 0;">' +
                                 '<tbody>'+
                                     // '<tr>' +
-                                    //     '<td style="font-size:10pt; text-align: left; padding: 0; width: 108pt;"><b>Customer &rsquo s Copy</b></td>';
+                                    //     '<td style="font-size:9pt; text-align: left; padding: 0; width: 108pt;"><b>Customer &rsquo s Copy</b></td>';
                                     //     if (s_trans_rset == 'O') {
                                     //         selling_trans_html +=
-                                    //             '<td style="padding: 0; font-size:8pt; text-align: right; width: 185pt">&nbsp;'+ s_trans_rset +'</td>';
+                                    //             '<td style="padding: 0; font-size:8pt; text-align: right; width: 185pt">&nbsp;'ans_rset +'</td>';
                                     //     } else if (s_trans_rset == 'B') {
                                     //         selling_trans_html +=
-                                    //             '<td style="padding: 0; font-size:8pt; text-align: right; width: 185pt">&nbsp;</td>';
+                                    //             '<td style="padding: 0; font-size:8pt; text-align: right; width: 185pt">&nbsp;<
                                     //     }
                                     // selling_trans_html +=
                                     //     '</tr>';
 
                                     // if (s_trans_rset == 'O') {
                                     //     selling_trans_html +=
-                                            '<tr>' +
-                                                '<td style="text-align: left; padding: 0;">Invoice No.</td>' +
-                                                '<td style="padding: 0;">&nbsp;:&nbsp; '+ String(s_trans_or_number).padStart(11, '0') +'</td>' +
-                                            '</tr>';
+                                            // '<tr>' +
+                                            //     '<td style="text-align: left; padding: 0;">Invoice No.</td>' +
+                                            //     '<td style="padding: 0;">&nbsp;: '+ String(s_trans_or_number).padStart(11, '0') +'</td>' +
+                                            // '</tr>';
                                     // }
+
+                                        '<tr>' +
+                                                '<td style="text-align: left; padding: 0;">Transaction No.</td>' +
+                                                '<td style="padding: 0;">&nbsp;: '+ s_trans_number +'</td>' +
+                                        '</tr>';
 
                                     selling_trans_html +=
                                     // '<tr>' +
-                                    //     '<td style="font-size:10pt; text-align: left; padding: 0;"><b>Customer &rsquo s Copy</b></td>' +
-                                    //     '<td style="padding: 0; font-size:8pt; text-align: right; width: 195pt;">&nbsp;</td>' +
+                                    //     '<td style="font-size:9pt; text-align: left; padding: 0;"><b>Customer &rsquo s Copy</b></td>' +
+                                    //     '<td style="padding: 0; font-size:8pt; text-align: right; width: 195pt;">&nbsp;<+
                                     // '</tr>'+
                                     // '<tr>' +
                                     //     '<td style="text-align: right; padding: 0;">OR Number</td>' +
-                                    //     '<td style="padding: 0;">&nbsp; '+ s_trans_or_number +'</td>' +
+                                    //     '<td style="padding: 0;">&nbsp; rans_or_number +'</td>' +
                                     // '</tr>' +
                                     '<tr>' +
                                         '<td style="text-align: left; padding: 0;">CN</td>' +
-                                        '<td style="padding: 0;">&nbsp;:&nbsp; '+ s_trans_customer_no +'</td>' +
+                                        '<td style="padding: 0;">&nbsp;: '+ s_trans_customer_no +'</td>' +
                                     '</tr>' +
                                     '<tr>' +
                                         '<td style="text-align: left; padding: 0;">Transact Date</td>' +
-                                        '<td style="padding: 0;">&nbsp;:&nbsp; '+ s_trans_date +'</td>' +
+                                        '<td style="padding: 0;">&nbsp;: '+ s_trans_date +'</td>' +
                                     '</tr>' +
                                     '<tr>' +
                                         '<td style="text-align: left; padding: 0;">Customer</td>' +
-                                        '<td style="padding: 0;">&nbsp;:&nbsp; '+ s_trans_customer +'</td>' +
+                                        '<td style="padding: 0;">&nbsp;: '+ s_trans_customer +'</td>' +
                                     '</tr>' +
                                     // '<tr>' +
                                     //     '<td style="text-align: left; padding: 0;">Transacted By</td>' +
-                                    //     '<td style="padding: 0;">&nbsp;:&nbsp; '+ s_trans_by +'</td>' +
+                                    //     '<td style="padding: 0;">&nbsp;: '+ s_trans_by +'</td>' +
                                     // '</tr>' +
                                     '<tr>' +
                                         '<td style="text-align: left; padding: 0;">Currency</td>' +
-                                        '<td style="padding: 0;">&nbsp;:&nbsp; '+ s_trans_currency +'</td>' +
+                                        '<td style="padding: 0;">&nbsp;: '+ s_trans_currency +'</td>' +
                                     '</tr>' +
                                     // '<tr>' +
                                     //     '<td style="text-align: left; padding: 0;">Total Amount</td>' +
-                                    //     '<td style="padding: 0;">&nbsp; '+ s_trans_currency +'</td>' +
+                                    //     '<td style="padding: 0;">&nbsp; rans_currency +'</td>' +
                                     // '</tr>' +
                                     '<tr>' +
                                         '<td style="text-align: left; padding: 0;">Currency Amount</td>' +
-                                        '<td style="padding: 0;">&nbsp;:&nbsp; '+ s_trans_curr_amount +'</td>' +
+                                        '<td style="padding: 0;">&nbsp;: '+ s_trans_curr_amount +'</td>' +
                                     '</tr>' +
                                     '<tr>' +
                                         '<td style="text-align: left; padding: 0;">Rate</td>' +
-                                        '<td style="padding: 0;">&nbsp;:&nbsp; '+ s_trans_rate_used.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}) +'</td>' +
+                                        '<td style="padding: 0;">&nbsp;: '+ s_trans_rate_used.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}) +'</td>' +
                                     '</tr>' +
                                     '<tr>' +
                                         '<td style="text-align: left; padding: 0;">Peso Amount</td>' +
-                                        '<td style="padding: 0;">&nbsp;:&nbsp; '+ s_trans_total_amount +'</td>' +
+                                        '<td style="padding: 0;">&nbsp;: '+ s_trans_total_amount +'</td>' +
                                     '</tr>' +
                                 '</tbody>' +
                             '</table>' +
                         '</td>' +
                     '</tr>' +
-                    '<tr>'+
-                    '</tr>' +
                 '</table>';
             var new_var =
                 '<table>'+
                     '<tr>'+
-                        '<td style="padding: 0; width: width: 285pt;">'+
-                            '<table cellspacing="0" style="font-size:10pt; font-face:\'Arial\'; padding: 0;">' +
+                        '<td style="margin-left: 40pt; padding: 0; width: width: 270pt;">'+
+                            '<table cellspacing="0" style="font-size:9pt; font-face:\'Arial\'; padding: 0;">' +
                                 '<tbody>'+
-                                    // '<tr >'+
-                                    //     '<td style="padding: 0;  font-size:10pt; text-align: right; width: 100pt;"><b>Bill Amount &nbsp; &nbsp;</b></td>'+
-                                    //     '<td style="padding: 0; font-size:10pt; width: 100pt;">&nbsp; &nbsp;<b>Serial</b></td>'+
-                                    // '</tr>';
+                                    '<tr >'+
+                                        '<td style="padding: 0;  font-size:9pt; text-align: right; width: 100pt;"><b>Bill Amount &nbsp; &nbsp;</b></td>'+
+                                        '<td style="padding: 0; font-size:9pt; width: 100pt;">&nbsp; &nbsp;<b>Serial</b></td>'+
+                                    '</tr>';
 
-                                    // var merged_serial_bill_amnt = sold_serials_bill_amnt_array.map(function(serials_val, serials_indx) {
-                                    //     return {
-                                    //         serials: serials_val,
-                                    //         bill_amount: sold_serials_array[serials_indx],
-                                    //     };
-                                    // });
+                                    var merged_serial_bill_amnt = sold_serials_bill_amnt_array.map(function(serials_val, serials_indx) {
+                                        return {
+                                            serials: serials_val,
+                                            bill_amount: sold_serials_array[serials_indx],
+                                        };
+                                    });
 
-                                    // merged_serial_bill_amnt.forEach(function(gar) {
-                                    //     new_var +=
-                                    //         '<tr>'+
-                                    //             '<td style="padding: 0;  font-size:10pt; text-align: right">' + gar.serials + '&nbsp; &nbsp; &nbsp; </td>'+
-                                    //             '<td style="padding: 0; font-size:10pt; ">&nbsp; &nbsp;' + gar.bill_amount + '</td>'
-                                    //         '</tr>';
-                                    // });
+                                    merged_serial_bill_amnt.forEach(function(gar) {
+                                        new_var +=
+                                            '<tr>'+
+                                                '<td style="padding: 0;  font-size:9pt; text-align: right">' + gar.serials + '&nbsp; &nbsp; &nbsp; </td>'+
+                                                '<td style="padding: 0; font-size:9pt; ">&nbsp; &nbsp;' + gar.bill_amount + '</td>'
+                                            '</tr>';
+                                    });
 
-                                    // new_var +=
-                                    // '</tr>'+
+                                    new_var +=
+                                    '</tr>'+
                                 '</tbody>'+
                             '</table>'+
                         '</td>'+
-                        '<td style="padding: 0; width: width: 285pt;">'+
-                            '<table cellspacing="0" style="font-size:10pt; font-face:\'Arial\'; padding: 0;">' +
+                        '<td style="margin-left: 85pt; padding: 0; width: width: 285pt;">'+
+                            '<table cellspacing="0" style="font-size:9pt; font-face:\'Arial\'; padding: 0;">' +
                                 '<tbody>'+
-                                    // '<tr >'+
-                                    //     '<td style="padding: 0; font-size:10pt; text-align: right; width: 100pt;"><b>Bill Amount &nbsp; &nbsp;</b></td>'+
-                                    //     '<td style="padding: 0; font-size:10pt; width: 100pt;">&nbsp; &nbsp;<b>Serial</b></td>'+
-                                    // '</tr>';
+                                    '<tr >'+
+                                        '<td style="padding: 0; font-size:9pt; text-align: right; width: 100pt;"><b>Bill Amount &nbsp; &nbsp;</b></td>'+
+                                        '<td style="padding: 0; font-size:9pt; width: 100pt;">&nbsp; &nbsp;<b>Serial</b></td>'+
+                                    '</tr>';
 
-                                    // var merged_serial_bill_amnt = sold_serials_bill_amnt_array.map(function(serials_val, serials_indx) {
-                                    //     return {
-                                    //         serials: serials_val,
-                                    //         bill_amount: sold_serials_array[serials_indx],
-                                    //     };
-                                    // });
+                                    var merged_serial_bill_amnt = sold_serials_bill_amnt_array.map(function(serials_val, serials_indx) {
+                                        return {
+                                            serials: serials_val,
+                                            bill_amount: sold_serials_array[serials_indx],
+                                        };
+                                    });
 
-                                    // merged_serial_bill_amnt.forEach(function(gar) {
-                                    //     new_var +=
-                                    //         '<tr >'+
-                                    //             '<td style="padding: 0; font-size:10pt; text-align: right">' + gar.serials + '&nbsp; &nbsp; &nbsp; </td>'+
-                                    //             '<td style="padding: 0; font-size:10pt;">&nbsp; &nbsp;' + gar.bill_amount + '</td>'
-                                    //         '</tr>';
-                                    // });
+                                    merged_serial_bill_amnt.forEach(function(gar) {
+                                        new_var +=
+                                            '<tr >'+
+                                                '<td style="padding: 0; font-size:9pt; text-align: right">' + gar.serials + '&nbsp; &nbsp; &nbsp; </td>'+
+                                                '<td style="padding: 0; font-size:9pt;">&nbsp; &nbsp;' + gar.bill_amount + '</td>'
+                                            '</tr>';
+                                    });
 
-                                    // new_var +=
-                                    // '</tr>'+
+                                    new_var +=
+                                    '</tr>'+
                                 '</tbody>'+
                             '</table>'+
                         '</td>'+
@@ -622,8 +625,8 @@
                 '</table>' +
                 '<table>'+
                     '<tr>' +
-                        '<td style="margin-left: 20pt; padding: 0; width: 285pt;">' +
-                            '<table cellspacing="0" style="font-size:10pt; font-face:\'Arial\'; padding: 0;">' +
+                        '<td style="margin-left: 20pt; padding: 0; width: 270pt;">' +
+                            '<table cellspacing="0" style="font-size:9pt; font-face:\'Arial\'; padding: 0;">' +
                                 '<tbody>' +
                                     // '<tr>' +
                                     //     '<td style="text-align: right; padding: 0;"></td>' +
@@ -641,7 +644,7 @@
                                         // '<td style="padding: 0; text-align: center; border-bottom: 1px solid #000; font-size: 8pt;" colspan="2">'+ s_trans_customer +'</td>' +
                                     '</tr>' +
                                     '<tr>' +
-                                        '<td style="text-align: center; padding: 0; font-size:10pt;" colspan="2">' +
+                                        '<td style="text-align: center; padding: 0; font-size:9pt;" colspan="2">' +
                                             // '<span>Signature over printed name</span>' +
                                             '<span>Signature</span>' +
                                         '</td>' +
@@ -651,7 +654,7 @@
                             '</table>' +
                         '</td>' +
                         '<td style="margin-left: 35pt; padding: 0; width: 285pt;">' +
-                            '<table cellspacing="0" style="font-size:10pt; font-face:\'Arial\'; padding: 0;">' +
+                            '<table cellspacing="0" style="font-size:9pt; font-face:\'Arial\'; padding: 0;">' +
                                 '<tbody>' +
                                     // '<tr>' +
                                     //     '<td style="text-align: right; padding: 0;"></td>' +
@@ -669,7 +672,7 @@
                                         // '<td style="padding: 0; text-align: center; border-bottom: 1px solid #000; font-size: 8pt;" colspan="2">'+ s_trans_customer +'</td>' +
                                     '</tr>' +
                                     '<tr>' +
-                                        '<td style="text-align: center; padding: 0; font-size:10pt;" colspan="2">' +
+                                        '<td style="text-align: center; padding: 0; font-size:9pt;" colspan="2">' +
                                             // '<span>Signature over printed name</span>' +
                                             '<span>Signature</span>' +
                                         '</td>' +

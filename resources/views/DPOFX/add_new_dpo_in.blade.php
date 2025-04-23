@@ -36,9 +36,9 @@
                                     <table class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
-                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.transact_date') }}</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Entry Date</th>
                                                 <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.transact_#') }}</th>
-                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Company</th>
+                                                {{-- <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Company</th> --}}
                                                 <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Processed By</th>
                                                 <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Dollar Amount</th>
                                                 <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Exchange Amount</th>
@@ -56,26 +56,26 @@
 
                                                 @forelse ($result['dpo_ins'] as $dpo_ins)
                                                     <tr>
-                                                        <td class="text-center text-sm p-1">
+                                                        <td class="text-center text-xs p-1">
                                                             {{ \Carbon\Carbon::parse($dpo_ins->EntryDate)->format('Y-m-d') }}
                                                         </td>
-                                                        <td class="text-center text-sm p-1">
+                                                        <td class="text-center text-xs p-1">
                                                             {{ $dpo_ins->DPDNo }}
                                                         </td>
-                                                        <td class="text-center text-sm p-1">
+                                                        {{-- <td class="text-center text-xs p-1">
                                                             {{ $dpo_ins->CompanyName }}
-                                                        </td>
-                                                        <td class="text-center text-sm p-1">
+                                                        </td> --}}
+                                                        <td class="text-center text-xs p-1">
                                                             {{ $dpo_ins->Name }}
                                                         </td>
-                                                        <td class="text-right text-sm py-1 px-3">
+                                                        <td class="text-right text-xs py-1 px-3">
                                                             {{ number_format($dpo_ins->DollarAmount, 2, '.', ',') }}
                                                         </td>
-                                                        <td class="text-right text-sm py-1 px-3">
+                                                        <td class="text-right text-xs py-1 px-3">
                                                             {{ number_format($dpo_ins->Amount, 2, '.', ',') }}
                                                         </td>
                                                         @can('access-permission', $menu_id)
-                                                            <td class="text-center text-sm p-1">
+                                                            <td class="text-center text-xs p-1">
                                                                 <button class="btn btn-primary button-edit dpo-in-details text-white pe-2" type="button" data-dpdid="{{ $dpo_ins->DPDID }}" data-bs-toggle="modal" data-bs-target="#dpo-in-details-modal">
                                                                     <i class='bx bx-detail'></i>
                                                                 </button>
@@ -105,7 +105,7 @@
                                                         {{ trans('labels.transact_count') }}: <span class="font-semibold" id="trans-count">{{ count($result['dpo_ins']) }}</span>
                                                     </span>
                                                 </td>
-                                                <td colspan="3"></td>
+                                                <td colspan="2"></td>
                                                 <td class="text-right px-3 py-1 whitespace-nowrap" colspan="1">
                                                     <strong><span class="text-sm">&#36;&nbsp;{{ number_format($total_dollar_amnt, 2, '.', ',') }}</span></strong>
                                                 </td>

@@ -36,25 +36,27 @@ class AdminDPOFXController extends Controller {
 
         $query = DB::connection('forex')->table('tbldpofxcontrol as dpc')
             ->join('accounting.tblcompany as tc', 'dpc.CompanyID', 'tc.CompanyID')
-            ->join('tbldpotype as dt', 'dpc.DPOTID', 'dt.DPOTID');
+            ->leftJoin('tbldpotype as dt', 'dpc.DPOTID', 'dt.DPOTID')
+            ->selectRaw('dpc.DPOCID, dpc.DPOCNo, dt.DPOType, dt.Type, dpc.DollarIn, dpc.DollarOut, tc.CompanyName')
+            ->groupBy('dpc.DPOCID', 'dpc.DPOCNo', 'dt.DPOType', 'dt.Type', 'dpc.DollarIn', 'dpc.DollarOut', 'tc.CompanyName');
 
-        $result['dpo_in'] = $query->clone()->selectRaw('dpc.DPOCID, dpc.DPOCNo, dt.DPOType, dpc.DollarIn, tc.CompanyName')
-            ->groupBy('dpc.DPOCID', 'dpc.DPOCNo', 'dt.DPOType', 'dpc.DollarIn', 'tc.CompanyName')
+        $result['dpo_in'] = $query->clone()->where('dt.Type', 1)
             ->orderBy('dpc.DPOCID', 'DESC')
             ->paginate(10, ['*'], 'dpo_in');
 
-        $result['dpo_out'] = $query->clone()->selectRaw('dpc.DPOCID, dpc.DPOCNo, dt.DPOType, dpc.DollarOut, tc.CompanyName')
-            ->groupBy('dpc.DPOCID', 'dpc.DPOCNo', 'dt.DPOType', 'dpc.DollarOut', 'tc.CompanyName')
+        $result['dpo_out'] = $query->clone()->where('dt.Type', 2)
             ->orderBy('dpc.DPOCID', 'DESC')
             ->paginate(10, ['*'], 'dpo_out');
 
         $result['dollar_in'] = $query->clone()->selectRaw('SUM(dpc.DollarIn) as total_dollar_in')
-            ->where('dpc.EntryDate', '>=',  '2025-01-01')
-            ->value('total_dollar_in');
+            ->where('dpc.EntryDate', '>',  '2025-01-01')
+            ->pluck('total_dollar_in')
+            ->toArray();
             
         $result['dollar_out'] = $query->clone()->selectRaw('SUM(dpc.DollarOut) as total_dollar_out')
-            ->where('dpc.EntryDate', '>=',  '2025-01-01')
-            ->value('total_dollar_out');
+            ->where('dpc.EntryDate', '>',  '2025-01-01')
+            ->pluck('total_dollar_out')
+            ->toArray();
 
         $result['current_balance'] = DB::connection('forex')->table('tbldpofxcontrol as dpc')
             ->selectRaw('SUM(DollarIn - DollarOut) as Balance')
@@ -68,10 +70,9 @@ class AdminDPOFXController extends Controller {
         $menu_id = $this->MenuID;
 
         $result['dpo_ins'] = DB::connection('forex')->table('tbldpoindetails as dd')
-            ->selectRaw('dd.DPDID, dd.EntryDate, dd.DPDNo, tc.CompanyName, tbx.Name, dd.DollarAmount, dd.Amount')
-            ->join('pawnshop.tblxusers as tbx', 'dd.UserID', '=', 'tbx.UserID')
-            ->join('accounting.tblcompany as tc', 'dd.CompanyID', '=', 'tc.CompanyID')
-            ->groupBy('dd.DPDID', 'dd.EntryDate', 'dd.DPDNo', 'tc.CompanyName', 'tbx.Name', 'dd.DollarAmount', 'dd.Amount')
+            ->selectRaw('dd.DPDID, dd.EntryDate, dd.DPDNo, tbx.Name, dd.DollarAmount, dd.Amount')
+            ->join('pawnshop.tblxusers as tbx', 'dd.UserID', 'tbx.UserID')
+            ->groupBy('dd.DPDID', 'dd.EntryDate', 'dd.DPDNo', 'tbx.Name', 'dd.DollarAmount', 'dd.Amount')
             ->orderBy('dd.DPDID', 'DESC')
             ->paginate(15);
 
@@ -88,7 +89,7 @@ class AdminDPOFXController extends Controller {
             ->join('accounting.tblsegmentgroup as asg', 'tbx.BranchID', 'asg.BranchID')
             ->join('accounting.tblcompany as tc', 'asg.CompanyID', 'tc.CompanyID')
             ->join('accounting.tblsegments as sg', 'asg.SegmentID', 'sg.SegmentID')
-            ->where('sg.SegmentID', '=', 3)
+            ->where('sg.SegmentID', 3)
             ->groupBy('tc.CompanyID', 'tc.CompanyName')
             ->orderBy('tc.CompanyID', 'ASC')
             ->get();
@@ -97,31 +98,26 @@ class AdminDPOFXController extends Controller {
     }
 
     public function DPOFXS(Request $request) {
-        $DPO_transacts = DB::connection('forex')->table('tblforextransactiondetails')
-            ->select('tblbranch.BranchCode', 'accounting.tblcompany.CompanyName', 'tblforextransactiondetails.FTDID', 'tblforextransactiondetails.CurrencyAmount', 'tblforextransactiondetails.Amount', 'tblforextransactiondetails.MTCN', 'tblforextransactiondetails.TransactionDate', 'tbldenom.SinagRateBuying', 'tblforextransactiondetails.Rset')
-            ->join('tblforexserials', 'tblforextransactiondetails.FTDID', 'tblforexserials.FTDID')
-            ->join('tbldenom', 'tblforexserials.DenomID', 'tbldenom.DenomID')
-            ->join('tblbranch', 'tblforextransactiondetails.BranchID', 'tblbranch.BranchID')
-            ->join('pawnshop.tblxbranch', 'tblbranch.BranchCode', 'pawnshop.tblxbranch.BranchCode')
-            ->join('accounting.tblsegmentgroup', 'pawnshop.tblxbranch.BranchID', 'accounting.tblsegmentgroup.BranchID')
-            ->join('accounting.tblcompany', 'accounting.tblsegmentgroup.CompanyID', 'accounting.tblcompany.CompanyID')
-            ->join('accounting.tblsegments', 'accounting.tblsegmentgroup.SegmentID', 'accounting.tblsegments.SegmentID')
-            ->when(
-                is_null($request->get('date_to')),
-                function ($query) use ($request) {
-                    return $query->where('tblforextransactiondetails.TransactionDate', '=', $request->get('date_from'));
-                },
-                function ($query) use ($request) {
-                    return $query->whereBetween('tblforextransactiondetails.TransactionDate', [$request->get('date_from'), $request->get('date_to')]);
-                }
-            )
-            ->whereNull('tblforextransactiondetails.DPDID')
-            ->where('accounting.tblsegments.SegmentID', '=', 3)
-            ->where('tblforextransactiondetails.TransType', '=', 4)
-            ->where('tblforextransactiondetails.CompanyID', '=', $request->get('company_id'))
-            // ->groupBy('accounting.tblcompany.CompanyID')
-            ->orderBy('tblforextransactiondetails.TransactionDate', 'ASC')
-            // ->orderBy('pawnshop.tblxbranch.BranchID', 'ASC')
+        $DPO_transacts = DB::connection('forex')->table('tblforextransactiondetails as fd')
+            ->selectRaw('tb.BranchCode, tc.CompanyID, tc.CompanyName, fd.FTDID, fd.CurrencyAmount, fd.Amount, fd.MTCN, fd.TransactionDate, td.SinagRateBuying, fd.Rset')
+            ->join('tblforexserials as fs', 'fd.FTDID', 'fs.FTDID')
+            ->join('tbldenom as td', 'fs.DenomID', 'td.DenomID')
+            ->join('tblbranch as tb', 'fd.BranchID', 'tb.BranchID')
+            ->join('pawnshop.tblxbranch as tbxb', 'tb.BranchCode', 'tbxb.BranchCode')
+            ->join('accounting.tblsegmentgroup as sgt', 'tb.BranchID', 'sgt.BranchID')
+            ->join('accounting.tblcompany as tc', 'sgt.CompanyID', 'tc.CompanyID')
+            ->join('accounting.tblsegments as sgg', 'sgt.SegmentID', 'sgg.SegmentID')
+            ->whereNull('fd.DPDID')
+            ->where('fd.TransType', '=', 4)
+            ->where('sgg.SegmentID', '=', 3)
+            // ->where('fd.CompanyID', '=', $request->get('company_id'))
+            ->when(is_null($request->get('date_to')), function ($query) use ($request) {
+                return $query->where('fd.TransactionDate', '=', $request->get('date_from'));
+            },function ($query) use ($request) {
+                return $query->whereBetween('fd.TransactionDate', [$request->get('date_from'), $request->get('date_to')]);
+            })
+            ->orderBy('fd.TransactionDate', 'ASC')
+            ->groupBy('tb.BranchCode', 'tc.CompanyID', 'tc.CompanyName', 'fd.FTDID', 'fd.CurrencyAmount', 'fd.Amount', 'fd.MTCN', 'fd.TransactionDate', 'td.SinagRateBuying', 'fd.Rset')
             ->get();
 
         $reponse = [
@@ -142,35 +138,17 @@ class AdminDPOFXController extends Controller {
             ->selectRaw('CASE WHEN MAX(DPOCNo) IS NULL THEN 1 ELSE MAX(DPOCNo) + 1 END AS latestDPOControlNo')
             ->value('latestDPOControlNo');
 
-        $current_balance = DB::connection('forex')->table('tbldpofxcontrol')
-            ->select('Balance')
-            ->where('DPOCNo', DB::raw("(SELECT MAX(DPOCNo) FROM tbldpofxcontrol)"))
-            ->value('Balance');
-
-        $new_balance = $current_balance == null ? $request->get('total_dpo_amnt') : floatval($current_balance) + floatval($request->get('total_dpo_amnt'));
-
-        DB::connection('forex')->table('tbldpofxcontrol')
-            ->insert([
-                'DPOCNo' => $get_dpoc_no,
-                'DPOTID' => 1,
-                'DPOCType' => 1,
-                'DollarIn' => $request->get('total_dpo_amnt'),
-                'Balance' => $new_balance,
-                'CompanyID' => $request->input('select-company'),
-                'UserID' => $request->input('matched_user_id'),
-                'EntryDate' => $raw_date->toDateString(),
-            ]);
-
-        $dpofx_transacts = DB::connection('forex')->table('tblforextransactiondetails')
-            ->join('tblforexserials', 'tblforextransactiondetails.FTDID', 'tblforexserials.FTDID')
-            ->join('tbldenom', 'tblforexserials.DenomID', 'tbldenom.DenomID')
+        $query = DB::connection('forex')->table('tblforextransactiondetails as fd')
+            ->join('tblforexserials as fs', 'fd.FTDID', 'fs.FTDID')
+            ->join('tbldenom', 'fs.DenomID', 'tbldenom.DenomID')
             ->when(is_array($trimmed_ftdids), function ($query) use ($trimmed_ftdids) {
-                return $query->whereIn('tblforextransactiondetails.FTDID', $trimmed_ftdids);
+                return $query->whereIn('fd.FTDID', $trimmed_ftdids);
             }, function ($query) use ($trimmed_ftdids) {
-                return $query->where('tblforextransactiondetails.FTDID', $trimmed_ftdids);
+                return $query->where('fd.FTDID', $trimmed_ftdids);
             });
 
-        $get_dpos = $dpofx_transacts->get();
+        $get_dpos = $query->clone()
+            ->get();
 
         $get_dpd_no = DB::connection('forex')->table('tbldpoindetails')
             ->selectRaw('CASE WHEN MAX(DPDNo) IS NULL THEN 1 ELSE MAX(DPDNo) + 1 END AS latestDPDNo')
@@ -182,10 +160,18 @@ class AdminDPOFXController extends Controller {
                 'DollarAmount' => $request->get('total_dpo_amnt'),
                 'Amount' => $request->get('total_peso_amnt'),
                 'UserID' => $request->input('matched_user_id'),
-                'CompanyID' => $request->input('select-company'),
+                // 'CompanyID' => $request->input('select-company'),
             ]);
 
+        $upcoming_bal = 0;
+
         foreach ($get_dpos as $key => $dpo_details) {
+            $raw_balance = DB::connection('forex')->table('tbldpofxcontrol')->selectRaw('Balance')
+                ->where('DPOCNo', DB::raw("(SELECT MAX(DPOCNo) FROM tbldpofxcontrol)"))
+                ->value('Balance');
+
+            $current_balance = $raw_balance == null ? 0 : $raw_balance;
+
             DB::connection('forex')->table('tbldpoin')
                 ->insert([
                     'DPDID' => $insert_dpo_deets_id,
@@ -202,12 +188,23 @@ class AdminDPOFXController extends Controller {
                     'EntryDate' => $raw_date->toDateString(),
                     'EntryTime' => $raw_date->toTimeString(),
                 ]);
+
+            DB::connection('forex')->table('tbldpofxcontrol')
+                ->insert([
+                    'DPOCNo' => $get_dpoc_no++,
+                    'DPOTID' => 1,
+                    'DPOCType' => 1,
+                    'DollarIn' => $dpo_details->CurrencyAmount,
+                    'Balance' => floatval($current_balance) + floatval($dpo_details->CurrencyAmount),
+                    'CompanyID' => $dpo_details->CompanyID,
+                    'UserID' => $request->input('matched_user_id'),
+                    'EntryDate' => $raw_date->toDateString(),
+                ]);
         }
 
-        $get_dpos = $dpofx_transacts->update([
+        $query->clone()->update([
             'DPDID' => $insert_dpo_deets_id
         ]);
-
     }
 
     public function inDetails(Request $request) {
@@ -275,41 +272,19 @@ class AdminDPOFXController extends Controller {
     public function save(Request $request) {
         $raw_date = Carbon::now('Asia/Manila');
 
-        $get_dpoc_no = DB::connection('forex')->table('tbldpofxcontrol')
-            ->selectRaw('CASE WHEN MAX(DPOCNo) IS NULL THEN 1 ELSE MAX(DPOCNo) + 1 END AS latestDPOControlNo')
-            ->value('latestDPOControlNo');
+        $max_dpo_out_no = DB::connection('forex')->table('tbldpooutdetails')
+            ->selectRaw('CASE WHEN MAX(DPOSellingNo) IS NULL THEN 1 ELSE MAX(DPOSellingNo) + 1 END AS max_dpo_out_no')
+            ->value('max_dpo_out_no');
 
-        $current_balance = DB::connection('forex')->table('tbldpofxcontrol')
-            ->select('Balance')
-            ->where('DPOCNo', DB::raw("(SELECT MAX(DPOCNo) FROM tbldpofxcontrol)"))
-            ->value('Balance');
-
-        $get_latest_fc_series = DB::connection('forex')->table('tblfcformseries')
-            ->where('tblfcformseries.RSet', '=', $request->get('recept_set'))
-            ->where('tblfcformseries.CompanyID', '=', 1)
-            ->selectRaw('CASE WHEN MAX(FormSeries) IS NULL THEN 1 ELSE MAX(FormSeries) + 1 END AS latestFCSeries')
-            ->value('latestFCSeries');
-
-        $new_balance = $current_balance == null ? $request->get('dollar_amnt') : floatval($current_balance) - floatval($request->get('dollar_amnt'));
-
-        DB::connection('forex')->table('tbldpofxcontrol')
-            ->insert([
-                'DPOCNo' => $get_dpoc_no,
-                'DPOTID' => 2,
-                'DPOCType' => 2,
-                'DollarOut' => $request->get('dollar_amnt'),
-                'Balance' => $new_balance,
-                'UserID' => $request->input('matched_user_id'),
-                'EntryDate' => $raw_date->toDateString()
-            ]);
-
-        $get_dpo_selling_no = DB::connection('forex')->table('tbldpooutdetails')
-            ->selectRaw('CASE WHEN MAX(DPOSellingNo) IS NULL THEN 1 ELSE MAX(DPOSellingNo) + 1 END AS latestDPOSellingControlNo')
-            ->value('latestDPOSellingControlNo');
+        // $get_latest_fc_series = DB::connection('forex')->table('tblfcformseries as fc')
+        //     ->where('fc.CompanyID', 1)
+        //     ->where('fc.RSet', $request->get('recept_set'))
+        //     ->selectRaw('CASE WHEN MAX(FormSeries) IS NULL THEN 1 ELSE MAX(FormSeries) + 1 END AS FCSeries')
+        //     ->value('FCSeries');
 
         $get_dpodoid = DB::connection('forex')->table('tbldpooutdetails')
             ->insertGetId([
-                'DPOSellingNo' => $get_dpo_selling_no,
+                'DPOSellingNo' => $max_dpo_out_no,
                 'CustomerID' => $request->input('customer-id-selected'),
                 'DollarAmount' => $request->get('dollar_amnt'),
                 'SellingRate' => $request->get('selling_rate'),
@@ -318,10 +293,32 @@ class AdminDPOFXController extends Controller {
                 'GainLoss' => $request->get('gain_loss'),
                 'Rset' => $request->get('recept_set'),
                 'Remarks' => $request->get('remarks'),
-                'FormSeries' => $get_latest_fc_series,
+                'FormSeries' => DB::raw("(SELECT MAX(DPOCNo) FROM tbldpofxcontrol)"),
                 'UserID' => $request->input('matched_user_id'),
                 'EntryDate' => $raw_date->toDateTimeString(),
             ]);
+
+        $max_dpoc_no = DB::connection('forex')->table('tbldpofxcontrol')
+            ->selectRaw('CASE WHEN MAX(DPOCNo) IS NULL THEN 1 ELSE MAX(DPOCNo) + 1 END AS latestDPOControlNo')
+            ->value('latestDPOControlNo');
+
+        // $current_balance = DB::connection('forex')->table('tbldpofxcontrol as dc')
+        //     ->selectRaw('Balance')
+        //     ->where('DPOCNo', DB::raw("(SELECT MAX(DPOCNo) FROM tbldpofxcontrol)"))
+        //     ->value('Balance');
+
+        // $new_balance = $current_balance == null ? $request->get('dollar_amnt') : floatval($current_balance) - floatval($request->get('dollar_amnt'));
+
+        // DB::connection('forex')->table('tbldpofxcontrol')
+        //     ->insert([
+        //         'DPOCNo' => $max_dpoc_no,
+        //         'DPOTID' => 2,
+        //         'DPOCType' => 2,
+        //         'DollarOut' => $request->get('dollar_amnt'),
+        //         'Balance' => $new_balance,
+        //         'UserID' => $request->input('matched_user_id'),
+        //         'EntryDate' => $raw_date->toDateString()
+        //     ]);
 
         $exploded_dpoiids = explode(",", trim($request->input('selected_dpoins')));
         $trimmed_dpoiids = array_map('trim', $exploded_dpoiids);
@@ -378,7 +375,7 @@ class AdminDPOFXController extends Controller {
             ->where('tblfcformseries.RSet', '=', $request->get('recept_set'))
             ->where('tblfcformseries.CompanyID', '=', 1)
             ->update([
-                'FormSeries' => $get_latest_fc_series
+                'FormSeries' => DB::raw("(SELECT MAX(DPOCNo) FROM tbldpofxcontrol)")
             ]);
     }
 

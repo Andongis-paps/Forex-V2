@@ -732,7 +732,7 @@ return [
     'dpo_transact_date' => 'Transaction Date',
     'dpo_transact_mtcn' => 'MTCN',
     'dpo_transact_branch' => 'Branch',
-    'dpo_transact_amnt' => 'Amount',
+    'dpo_transact_amnt' => 'Peso Amount',
     'dpo_add_transact_generate' => 'Generate',
 
     // Bill Tagging

@@ -96,7 +96,7 @@
                 url: "{{ route('admin_transactions.dpofx.DPOFXS') }}",
                 type: "POST",
                 data: {
-                    company_id: $('#select-company').val(),
+                    // company_id: $('#select-company').val(),
                     date_to: date_to,
                     date_from: date_from,
                     raw_dates: raw_dates,
@@ -127,7 +127,7 @@
                                 total_peso_amnt += dpo.Amount;
                                 total_dpo_amnt += dpo.CurrencyAmount;
 
-                                DPOFXtransacts(dpo.FTDID, dpo.BranchCode, dpo.CompanyName, dpo.MTCN, dpo.CurrencyAmount, dpo.Amount, dpo.TransactionDate, dpo.SinagRateBuying, dpo.Rset, total_peso_amnt, total_dpo_amnt);
+                                DPOFXtransacts(dpo.FTDID, dpo.BranchCode, dpo.CompanyID, dpo.CompanyName, dpo.MTCN, dpo.CurrencyAmount, dpo.Amount, dpo.TransactionDate, dpo.SinagRateBuying, dpo.Rset, total_peso_amnt, total_dpo_amnt);
                             });
                         }, 200);
                     }
@@ -135,13 +135,13 @@
             });
         });
 
-        function DPOFXtransacts(FTDID, BranchCode, CompanyName, MTCN, CurrencyAmount, Amount, TransactionDate, SinagRateBuying, Rset, total_peso_amnt, total_dpo_amnt) {
+        function DPOFXtransacts(FTDID, BranchCode, CompanyID, CompanyName, MTCN, CurrencyAmount, Amount, TransactionDate, SinagRateBuying, Rset, total_peso_amnt, total_dpo_amnt) {
             var dpo_table = $('#dpofx-transacts-table');
             var new_row = $('<tr class="text-center text-sm">');
             var select_dpo = $('<td class="p-1"><div class="row align-items-center"><div class="text-rate-maintenance col-12 px-0"><input class="form-check-input dpofx-select-one" type="checkbox" id="dpofx-select-one" name="dpofx-select-one" data-ftdid="'+ FTDID +'" checked></div></div></td>');
             var branch = $('<td class="text-center text-sm p-1">'+ BranchCode +'</td>');
             var company = $('<td class="text-center text-sm p-1">'+ CompanyName +'</td>');
-            var curr_amount = $('<td class="text-right text-sm py-1 px-3">'+ CurrencyAmount.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}) +'</td>');
+            var curr_amount = $(`<td class="text-right text-sm py-1 px-3">${CurrencyAmount.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2})}<input type="hidden" name="company-id[]" value="${CompanyID}"></td>`);
             var amount = $('<td class="text-right text-sm py-1 px-3"><strong>'+ Amount.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}) +'</strong></td>');
             var mtcn = $('<td class="text-center text-sm p-1">'+ MTCN +'</td>');
             var transact_date = $('<td class="text-center text-sm p-1">'+ TransactionDate +'</td>');
