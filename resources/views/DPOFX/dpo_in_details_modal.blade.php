@@ -8,13 +8,14 @@
             <table class="table table-bordered table-hover mb-0" id="dpo-in-details-table">
                 <thead>
                     <tr>
-                        <th class="text-center text-sm font-extrabold text-black p-1 whitespace-nowrap">Entry Date</th>
-                        <th class="text-center text-sm font-extrabold text-black p-1 whitespace-nowrap">Branch</th>
-                        <th class="text-center text-sm font-extrabold text-black p-1 whitespace-nowrap">Receipt Set</th>
-                        <th class="text-center text-sm font-extrabold text-black p-1 whitespace-nowrap">MTCN</th>
-                        <th class="text-center text-sm font-extrabold text-black p-1 whitespace-nowrap">Dollar Amount</th>
-                        <th class="text-center text-sm font-extrabold text-black p-1 whitespace-nowrap">Rate Used</th>
-                        <th class="text-center text-sm font-extrabold text-black p-1 whitespace-nowrap">Amount</th>
+                        <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Entry Date</th>
+                        <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Branch</th>
+                        <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Company</th>
+                        <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Receipt Set</th>
+                        <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">MTCN</th>
+                        <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Dollar Amount</th>
+                        <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Rate Used</th>
+                        <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Amount</th>
                     </tr>
                 </thead>
                 <tbody>

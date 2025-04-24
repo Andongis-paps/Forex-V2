@@ -92,7 +92,7 @@
                                                             @if (count($result['dollar_in']) == 0)
                                                                 + {{ number_format(0, 2, '.', ',') }}
                                                             @else
-                                                                + {{ number_format($result['dollar_in'][0], 2, '.', ',') }}
+                                                                + {{ number_format(array_sum($result['dollar_in']), 2, '.', ',') }}
                                                             @endif
                                                         </span>
                                                     </td>
@@ -179,7 +179,7 @@
                                                             @if (count($result['dollar_out']) == 0)
                                                                 - {{ number_format(0, 2, '.', ',') }}
                                                             @else
-                                                                - {{ number_format($result['dollar_out'][0], 2, '.', ',') }}
+                                                                - {{ number_format(array_sum($result['dollar_out']), 2, '.', ',') }}
                                                             @endif
                                                         </span>
                                                     </td>

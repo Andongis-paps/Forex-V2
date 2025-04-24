@@ -131,8 +131,9 @@ class AdminDPOFXController extends Controller {
         $raw_date = Carbon::now('Asia/Manila');
         $receipt_set_array = $request->input('receipt-set');
 
-        $exploded_ftdids = explode(",", trim($request->input('FTDIDs')));
-        $trimmed_ftdids = array_map('trim', $exploded_ftdids);
+        $FTDIDs = array_map('trim', explode(",", trim($request->input('FTDIDs'))));
+        $DPOs = array_map('trim', explode(',', trim($request->input('total_dpo_amnt'))));
+        $peso_amount = array_map('trim', explode(',', trim($request->input('total_peso_amnt'))));
 
         $get_dpoc_no = DB::connection('forex')->table('tbldpofxcontrol')
             ->selectRaw('CASE WHEN MAX(DPOCNo) IS NULL THEN 1 ELSE MAX(DPOCNo) + 1 END AS latestDPOControlNo')
@@ -141,10 +142,10 @@ class AdminDPOFXController extends Controller {
         $query = DB::connection('forex')->table('tblforextransactiondetails as fd')
             ->join('tblforexserials as fs', 'fd.FTDID', 'fs.FTDID')
             ->join('tbldenom', 'fs.DenomID', 'tbldenom.DenomID')
-            ->when(is_array($trimmed_ftdids), function ($query) use ($trimmed_ftdids) {
-                return $query->whereIn('fd.FTDID', $trimmed_ftdids);
-            }, function ($query) use ($trimmed_ftdids) {
-                return $query->where('fd.FTDID', $trimmed_ftdids);
+            ->when(is_array($FTDIDs), function ($query) use ($FTDIDs) {
+                return $query->whereIn('fd.FTDID', $FTDIDs);
+            }, function ($query) use ($FTDIDs) {
+                return $query->where('fd.FTDID', $FTDIDs);
             });
 
         $get_dpos = $query->clone()
@@ -157,10 +158,9 @@ class AdminDPOFXController extends Controller {
         $insert_dpo_deets_id = DB::connection('forex')->table('tbldpoindetails')
             ->insertGetId([
                 'DPDNo' => $get_dpd_no,
-                'DollarAmount' => $request->get('total_dpo_amnt'),
-                'Amount' => $request->get('total_peso_amnt'),
+                'DollarAmount' => array_sum($DPOs),
+                'Amount' => array_sum($peso_amount),
                 'UserID' => $request->input('matched_user_id'),
-                // 'CompanyID' => $request->input('select-company'),
             ]);
 
         $upcoming_bal = 0;
@@ -208,11 +208,12 @@ class AdminDPOFXController extends Controller {
     }
 
     public function inDetails(Request $request) {
-        $dpo_in_details = DB::connection('forex')->table('tbldpoin')
-            ->select('pawnshop.tblxbranch.BranchCode', 'tbldpoin.MTCN', 'tbldpoin.DollarAmount', 'tbldpoin.RateUsed', 'tbldpoin.Amount', 'tbldpoin.Rset', 'tbldpoin.EntryDate')
-            ->join('tblbranch', 'tbldpoin.BranchID', 'tblbranch.BranchID')
-            ->join('pawnshop.tblxbranch', 'tblbranch.BranchCode', 'pawnshop.tblxbranch.BranchCode')
-            ->where('tbldpoin.DPDID', $request->get('DPDID'))
+        $dpo_in_details = DB::connection('forex')->table('tbldpoin as di')
+            ->select('tc.CompanyName', 'tbx.BranchCode', 'di.MTCN', 'di.DollarAmount', 'di.RateUsed', 'di.Amount', 'di.Rset', 'di.EntryDate')
+            ->join('tblbranch as tb', 'di.BranchID', 'tb.BranchID')
+            ->join('pawnshop.tblxbranch as tbx', 'tb.BranchCode', 'tbx.BranchCode')
+            ->join('accounting.tblcompany as tc', 'di.CompanyID', 'tc.CompanyID')
+            ->where('di.DPDID', $request->get('DPDID'))
             ->get();
 
         $response = [
@@ -226,11 +227,11 @@ class AdminDPOFXController extends Controller {
         $this->MenuID = $request->attributes->get('MenuID');
         $menu_id = $this->MenuID;
 
-        $result['dpo_out'] = DB::connection('forex')->table('tbldpooutdetails')
-            ->select('tbldpooutdetails.DPODOID', 'tbldpooutdetails.DPOSellingNo', 'pawnshop.tblxcustomer.FullName', 'tbldpooutdetails.DollarAmount', 'tbldpooutdetails.SellingRate', 'tbldpooutdetails.Principal', 'tbldpooutdetails.ExchangeAmount', 'tbldpooutdetails.GainLoss', 'pawnshop.tblxusers.Name', 'tbldpooutdetails.EntryDate', 'tbldpooutdetails.Remarks')
-            ->join('pawnshop.tblxcustomer', 'tbldpooutdetails.CustomerID', 'pawnshop.tblxcustomer.CustomerID')
-            ->join('pawnshop.tblxusers', 'tbldpooutdetails.UserID', 'pawnshop.tblxusers.UserID')
-            ->orderBy('tbldpooutdetails.DPODOID', 'DESC')
+        $result['dpo_out'] = DB::connection('forex')->table('tbldpooutdetails as did')
+            ->select('did.DPODOID', 'did.DPOSellingNo', 'tcx.FullName', 'did.DollarAmount', 'did.SellingRate', 'did.Principal', 'did.ExchangeAmount', 'did.GainLoss', 'tbx.Name', 'did.EntryDate', 'did.Remarks')
+            ->join('pawnshop.tblxcustomer as tcx', 'did.CustomerID', 'tcx.CustomerID')
+            ->join('pawnshop.tblxusers as tbx', 'did.UserID', 'tbx.UserID')
+            ->orderBy('did.DPODOID', 'DESC')
             ->paginate(20);
 
         return view('DPOFX.add_new_dpo_out', compact('result', 'menu_id'));
@@ -246,20 +247,20 @@ class AdminDPOFXController extends Controller {
     public function DPOFXINS(Request $request) {
         $selling_rate = floatval($request->get('selling_rate'));
 
-        $DPO_in_transacts = DB::connection('forex')->table('tbldpoin')
-            ->selectRaw('tbldpoin.DPOIID, accounting.tblcompany.CompanyName, tbldpoin.MTCN, tbldpoin.DollarAmount, tbldpoin.RateUsed, tbldpoin.Amount')
-            ->selectRaw('SUM(tbldpoin.DollarAmount) * ? as exchange_amount', [$selling_rate])
-            ->selectRaw('(SUM(tbldpoin.DollarAmount) * ?) - SUM(tbldpoin.Amount) as gain_loss', [$selling_rate])
-            ->join('tbldpoindetails', 'tbldpoin.DPDID', 'tbldpoindetails.DPDID')
-            ->join('tblbranch', 'tbldpoin.BranchID', 'tblbranch.BranchID')
-            ->join('pawnshop.tblxbranch', 'tblbranch.BranchCode', 'pawnshop.tblxbranch.BranchCode')
-            ->join('accounting.tblsegmentgroup', 'pawnshop.tblxbranch.BranchID', 'accounting.tblsegmentgroup.BranchID')
-            ->join('accounting.tblcompany', 'accounting.tblsegmentgroup.CompanyID', 'accounting.tblcompany.CompanyID')
-            ->join('accounting.tblsegments', 'accounting.tblsegmentgroup.SegmentID', 'accounting.tblsegments.SegmentID')
-            ->where('tbldpoin.Sold', 0)
-            ->where('accounting.tblsegments.SegmentID', '=', 3)
-            ->where('tbldpoin.Rset', $request->get('receipt_set'))
-            ->groupBy('tbldpoin.DPOIID', 'accounting.tblcompany.CompanyName', 'tbldpoin.MTCN', 'tbldpoin.DollarAmount', 'tbldpoin.RateUsed', 'tbldpoin.Amount')
+        $DPO_in_transacts = DB::connection('forex')->table('tbldpoin as di')
+            ->selectRaw('di.DPOIID, tc.CompanyName, di.MTCN, di.DollarAmount, di.RateUsed, di.Amount')
+            ->selectRaw('SUM(di.DollarAmount) * ? as exchange_amount', [$selling_rate])
+            ->selectRaw('(SUM(di.DollarAmount) * ?) - SUM(di.Amount) as gain_loss', [$selling_rate])
+            ->join('tbldpoindetails as did', 'di.DPDID', 'did.DPDID')
+            ->join('tblbranch as tb', 'di.BranchID', 'tb.BranchID')
+            ->join('pawnshop.tblxbranch as tbx', 'tb.BranchCode', 'tbx.BranchCode')
+            ->join('accounting.tblsegmentgroup as sgt', 'tbx.BranchID', 'sgt.BranchID')
+            ->join('accounting.tblcompany as tc', 'sgt.CompanyID', 'tc.CompanyID')
+            ->join('accounting.tblsegments as sgg', 'sgt.SegmentID', 'sgg.SegmentID')
+            ->where('di.Sold', 0)
+            ->where('sgg.SegmentID', '=', 3)
+            ->where('di.Rset', $request->get('receipt_set'))
+            ->groupBy('di.DPOIID', 'tc.CompanyName', 'di.MTCN', 'di.DollarAmount', 'di.RateUsed', 'di.Amount')
             ->get();
 
         $response = [

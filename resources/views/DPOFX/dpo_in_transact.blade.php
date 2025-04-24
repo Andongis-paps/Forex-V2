@@ -75,7 +75,7 @@
                                             <table class="table table-bordered table-hover mb-0" id="dpofx-transacts-table">
                                                 <thead>
                                                     <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">
-                                                        <input class="form-check-input" type="checkbox" id="dpofx-select-all" name="dpofx-select-all" checked>
+                                                        <input class="form-check-input" type="checkbox" id="dpofx-select-all" name="dpofx-select-all">
                                                     </th>
                                                     <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.dpo_transact_date') }}</th>
                                                     <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.dpo_transact_branch') }}</th>

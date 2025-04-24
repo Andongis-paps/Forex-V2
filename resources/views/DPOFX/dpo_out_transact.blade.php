@@ -76,7 +76,7 @@
         
                                     <div class="row align-items-center justify-content-center mt-2">
                                         <div class="col-12">
-                                            <textarea class="form-control" id="remarks" name="remarks" rows="2" disabled></textarea>
+                                            <textarea class="form-control" id="remarks" name="remarks" rows="2" disabled placeholder="Remarks"></textarea>
                                         </div>
                                     </div>
 

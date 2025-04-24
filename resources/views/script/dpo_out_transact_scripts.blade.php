@@ -99,7 +99,7 @@
                 gain_loss_formatted = '-' + gain_loss_formatted.substring(1);
             }
 
-            var badgeColor = gain_loss >= 0 ? 'success-badge-custom' : 'danger-badge-custom';
+            var text_color = gain_loss >= 0 ? '#00A65A' : '#DC3545';
             var icon_gain_loss = gain_loss >= 0 ? `<i class='bx bxs-up-arrow' style="font-size: .5rem;"></i>` : `<i class='bx bxs-down-arrow' style="font-size: .5rem;"></i>`;
 
             var table = $('#dpoin-transacts-table');
@@ -111,7 +111,7 @@
             var rate_used = $('<td class="text-right text-sm py-1 pe-2">'+ RateUsed.toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) +'</td>');
             var peso_amnt = $('<td class="text-right text-sm py-1 pe-2">'+ Amount.toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) +'</td>');
             var exchange_amnt = $('<td class="text-right text-sm py-1 pe-2">'+ exchange_amount.toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) +'</td>');
-            var processed_gain_loss = $('<td class="text-right text-sm py-1 pe-2"><span class="badge '+ badgeColor +'"><text>'+ gain_loss_formatted +' &nbsp; '+ icon_gain_loss +'</text></span></td>');
+            var processed_gain_loss = $(`<td class="text-right text-sm py-1 pe-2"><span class="text-[${text_color}] font-bold text-xs"><text> ${gain_loss_formatted} ${icon_gain_loss}</text></span></td>`);
 
             row.append(select_dpoin);
             row.append(company);
