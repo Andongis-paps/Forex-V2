@@ -163,8 +163,6 @@ class AdminDPOFXController extends Controller {
                 'UserID' => $request->input('matched_user_id'),
             ]);
 
-        $upcoming_bal = 0;
-
         foreach ($get_dpos as $key => $dpo_details) {
             $raw_balance = DB::connection('forex')->table('tbldpofxcontrol')->selectRaw('Balance')
                 ->where('DPOCNo', DB::raw("(SELECT MAX(DPOCNo) FROM tbldpofxcontrol)"))
@@ -303,58 +301,39 @@ class AdminDPOFXController extends Controller {
             ->selectRaw('CASE WHEN MAX(DPOCNo) IS NULL THEN 1 ELSE MAX(DPOCNo) + 1 END AS latestDPOControlNo')
             ->value('latestDPOControlNo');
 
-        // $current_balance = DB::connection('forex')->table('tbldpofxcontrol as dc')
-        //     ->selectRaw('Balance')
-        //     ->where('DPOCNo', DB::raw("(SELECT MAX(DPOCNo) FROM tbldpofxcontrol)"))
-        //     ->value('Balance');
+        $trimmed_dpoiids = array_map('trim', explode(",", trim($request->input('selected_dpoins'))));
 
-        // $new_balance = $current_balance == null ? $request->get('dollar_amnt') : floatval($current_balance) - floatval($request->get('dollar_amnt'));
-
-        // DB::connection('forex')->table('tbldpofxcontrol')
-        //     ->insert([
-        //         'DPOCNo' => $max_dpoc_no,
-        //         'DPOTID' => 2,
-        //         'DPOCType' => 2,
-        //         'DollarOut' => $request->get('dollar_amnt'),
-        //         'Balance' => $new_balance,
-        //         'UserID' => $request->input('matched_user_id'),
-        //         'EntryDate' => $raw_date->toDateString()
-        //     ]);
-
-        $exploded_dpoiids = explode(",", trim($request->input('selected_dpoins')));
-        $trimmed_dpoiids = array_map('trim', $exploded_dpoiids);
-
-        DB::connection('forex')->table('tbldpoin')
-            ->when(is_array($trimmed_dpoiids), function ($query) use ($trimmed_dpoiids) {
-                return $query->whereIn('tbldpoin.DPOIID', $trimmed_dpoiids);
-            }, function ($query) use ($trimmed_dpoiids) {
-                return $query->where('tbldpoin.DPOIID', $trimmed_dpoiids);
-            })
-            ->update([
-                'Sold' => 1
-            ]);
-
-        $selling_rate = $request->get('selling_rate');
-
-        $DPO_in_transacts = DB::connection('forex')->table('tbldpoin')
-            ->selectRaw('tbldpoin.DPOIID, tbldpoin.CompanyID, tbldpoin.MTCN, tbldpoin.DollarAmount, tbldpoin.RateUsed, tbldpoin.Amount')
-            ->selectRaw('ROUND(SUM(tbldpoin.DollarAmount) * ?) as exchange_amount', [$selling_rate])
-            ->selectRaw('ROUND((SUM(tbldpoin.DollarAmount) * ?) - SUM(tbldpoin.Amount)) as gain_loss', [$selling_rate])
-            ->join('tbldpoindetails', 'tbldpoin.DPDID', 'tbldpoindetails.DPDID')
-            ->join('tblbranch', 'tbldpoin.BranchID', 'tblbranch.BranchID')
+        $query = DB::connection('forex')->table('tbldpoin as di')
+            ->join('tbldpoindetails', 'di.DPDID', 'didetails.DPDID')
+            ->join('tblbranch', 'di.BranchID', 'tblbranch.BranchID')
             ->join('pawnshop.tblxbranch', 'tblbranch.BranchCode', 'pawnshop.tblxbranch.BranchCode')
             ->join('accounting.tblsegmentgroup', 'pawnshop.tblxbranch.BranchID', 'accounting.tblsegmentgroup.BranchID')
             ->join('accounting.tblcompany', 'accounting.tblsegmentgroup.CompanyID', 'accounting.tblcompany.CompanyID')
             ->join('accounting.tblsegments', 'accounting.tblsegmentgroup.SegmentID', 'accounting.tblsegments.SegmentID')
             ->when(is_array($trimmed_dpoiids), function ($query) use ($trimmed_dpoiids) {
-                return $query->whereIn('tbldpoin.DPOIID', $trimmed_dpoiids);
+                return $query->whereIn('di.DPOIID', $trimmed_dpoiids);
             }, function ($query) use ($trimmed_dpoiids) {
-                return $query->where('tbldpoin.DPOIID', $trimmed_dpoiids);
-            })
-            ->groupBy('tbldpoin.DPOIID', 'accounting.tblcompany.CompanyName', 'tbldpoin.MTCN', 'tbldpoin.DollarAmount', 'tbldpoin.RateUsed', 'tbldpoin.Amount')
+                return $query->where('di.DPOIID', $trimmed_dpoiids);
+            });
+
+            $query->update([
+                'Sold' => 1
+            ]);
+
+        $DPO_in_transacts = $query->clone()
+            ->selectRaw('di.DPOIID, di.CompanyID, di.MTCN, di.DollarAmount, di.RateUsed, di.Amount')
+            ->selectRaw('ROUND(SUM(di.DollarAmount) * ?) as exchange_amount', [$request->get('selling_rate')])
+            ->selectRaw('ROUND((SUM(di.DollarAmount) * ?) - SUM(di.Amount)) as gain_loss', [$request->get('selling_rate')])
+            ->groupBy('di.DPOIID', 'accounting.tblcompany.CompanyName', 'di.MTCN', 'di.DollarAmount', 'di.RateUsed', 'di.Amount')
             ->get();
 
         foreach ($DPO_in_transacts as $dpo_in_details) {
+            $raw_balance = DB::connection('forex')->table('tbldpofxcontrol')->selectRaw('Balance')
+                ->where('DPOCNo', DB::raw("(SELECT MAX(DPOCNo) FROM tbldpofxcontrol)"))
+                ->value('Balance');
+
+            $current_balance = $raw_balance == null ? 0 : $raw_balance;
+
             DB::connection('forex')->table('tbldpoout')
                 ->insert([
                     'DPODOID' => $get_dpodoid,
@@ -369,6 +348,18 @@ class AdminDPOFXController extends Controller {
                     'UserID' => $request->input('matched_user_id'),
                     'EntryDate' => $raw_date->toDateString(),
                     'EntryTime' => $raw_date->toTimeString(),
+                ]);
+
+            DB::connection('forex')->table('tbldpofxcontrol')
+                ->insert([
+                    'DPOCNo' => $max_dpoc_no++,
+                    'DPOTID' => 2,
+                    'DPOCType' => 2,
+                    'DollarOut' => $dpo_in_details->CurrencyAmount,
+                    'Balance' => floatval($current_balance) - floatval($dpo_in_details->CurrencyAmount),
+                    'CompanyID' => $dpo_in_details->CompanyID,
+                    'UserID' => $request->input('matched_user_id'),
+                    'EntryDate' => $raw_date->toDateString()
                 ]);
         }
 

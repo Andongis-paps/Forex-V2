@@ -39,12 +39,15 @@
                                         <thead>
                                             <tr>
                                                 <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.receive_buffer_branch') }}</th>
-                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Date Received</th>
                                                 {{-- <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.receive_buffer_buffer_no') }}</th> --}}
-                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Currency</th>
+                                                {{-- <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Currency</th> --}}
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Transf. Fx. No.</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Transf. Date</th>
                                                 <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Tracking No.</th>
                                                 <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Type</th>
-                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.receive_buffer_dollar_amnt') }}</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Date Received</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Received By</th>
+                                                {{-- <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.receive_buffer_dollar_amnt') }}</th> --}}
                                                 <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.receive_buffer_status') }}</th>
                                                 @can('access-permission', $menu_id)
                                                     <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Action</th>
@@ -62,21 +65,24 @@
                                                 @endphp
 
                                                 <tr>
-                                                    <td class="text-center text-xs py-2 whitespace-nowrap">
+                                                    <td class="text-center text-xs p-1 whitespace-nowrap">
                                                         {{ $received_buffers->BranchCode }}
                                                     </td>
-                                                    <td class="text-center text-xs py-2 whitespace-nowrap">
-                                                        {{ $received_buffers->RDate }}
+                                                    <td class="text-center text-xs p-1 whitespace-nowrap">
+                                                        {{ $received_buffers->TransferForexNo }}
                                                     </td>
-                                                    {{-- <td class="text-center text-xs py-2 whitespace-nowrap">
+                                                    <td class="text-center text-xs p-1 whitespace-nowrap">
+                                                        {{ $received_buffers->BufferDate }}
+                                                    </td>
+                                                    {{-- <td class="text-center text-xs p-1 whitespace-nowrap">
                                                         {{ $received_buffers->BufferNo }}
                                                     </td> --}}
-                                                    <td class="text-center text-xs py-2 whitespace-nowrap">
+                                                    {{-- <td class="text-center text-xs p-1 whitespace-nowrap">
                                                         <strong>
                                                             {{ $received_buffers->CurrAbbv }}
                                                         </strong>
-                                                    </td>
-                                                    <td class="text-center text-xs py-2 whitespace-nowrap">
+                                                    </td> --}}
+                                                    <td class="text-center text-xs p-1 whitespace-nowrap">
                                                         @if ($received_buffers->ITNo == null || $received_buffers->ITNo == '')
                                                             <strong>
                                                                 {{-- <span>No Tracking No.</span> --}}
@@ -86,7 +92,7 @@
                                                             {{ $received_buffers->ITNo }}
                                                         @endif
                                                     </td>
-                                                    <td class="text-center text-xs py-2 whitespace-nowrap">
+                                                    <td class="text-center text-xs p-1 whitespace-nowrap">
                                                         @if ($received_buffers->BufferType == 1)
                                                             <span class="text-black">
                                                                 For Selling
@@ -97,12 +103,18 @@
                                                             </span>
                                                         @endif
                                                     </td>
-                                                    <td class="text-right text-xs py-2 px-3 whitespace-nowrap">
+                                                    {{-- <td class="text-right text-xs p-1 px-3 whitespace-nowrap">
                                                         <span>
                                                             {{ number_format($received_buffers->DollarAmount, 2, '.', ',') }}
                                                         </span>
+                                                    </td> --}}
+                                                    <td class="text-center text-xs p-1 whitespace-nowrap">
+                                                        {{ $received_buffers->RDate }}
                                                     </td>
-                                                    <td class="text-center text-xs py-2 whitespace-nowrap">
+                                                    <td class="text-center text-xs p-1 whitespace-nowrap">
+                                                        {{ $received_buffers->Name }}
+                                                    </td>
+                                                    <td class="text-center text-xs p-1 whitespace-nowrap">
                                                         @if ($received_buffers->BufferTransfer == 0)
                                                             <span class="badge rounded-pill bg-warning warning-badge-custom font-bold">
                                                                 <strong>
@@ -123,9 +135,8 @@
                                                             </span>
                                                         @endif
                                                     </td>
-                                                   
                                                     @can('access-permission', $menu_id)
-                                                        <td class="text-center text-xs py-1 whitespace-nowrap">
+                                                        <td class="text-center text-xs p-1 whitespace-nowrap">
                                                             @if ($received_buffers->BufferTransfer == 0)
                                                                 {{-- <span class="badge rounded-pill bg-warning warning-badge-custom font-bold">
                                                                     <strong>
@@ -150,7 +161,7 @@
                                                 </tr>
                                             @endforelse
                                         </tbody>
-                                        <tfoot>
+                                        {{-- <tfoot>
                                             <tr>
                                                 <td class="text-right text-xs p-1 whitespace-nowrap" colspan="6">
                                                     <span class="font-bold">
@@ -166,7 +177,7 @@
                                                 </td>
                                                 <td></td>
                                             </tr>
-                                        </tfoot>
+                                        </tfoot> --}}
                                     </table>
 
                                     <div class="col-12 px-3 border border-gray-300 rounded-bl rounded-br py-2">
@@ -192,8 +203,9 @@
                                             <tr>
                                                 <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.receive_buffer_branch') }}</th>
                                                 {{-- <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.receive_buffer_tf_no') }}</th> --}}
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Transf. Date</th>
                                                 <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Tracking No.</th>
-                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.receive_buffer_dollar_amnt') }}</th>
+                                                {{-- <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.receive_buffer_dollar_amnt') }}</th> --}}
                                                 <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Type</th>
                                                 <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.receive_buffer_status') }}</th>
                                                 @can('add-permission', $menu_id)
@@ -213,30 +225,32 @@
                                                 @endphp
 
                                                 <tr>
-                                                    <td class="text-center text-xs py-2 whitespace-nowrap">
+                                                    <td class="text-center text-xs px-1 py-2 whitespace-nowrap">
                                                         {{ $incoming_buffers->BranchCode }}
                                                     </td>
-                                                    {{-- <td class="text-center text-xs py-2 whitespace-nowrap">
-                                                        {{ $incoming_buffers->TransferForexNo }}
-                                                    </td> --}}
-                                                    <td class="text-center text-xs py-2 whitespace-nowrap">
+                                                    <td class="text-center text-xs px-1 py-2 whitespace-nowrap">
+                                                        {{ $incoming_buffers->BufferDate }}
+                                                    </td>
+                                                    <td class="text-center text-xs px-1 py-2 whitespace-nowrap">
                                                         @if ($incoming_buffers->ITNo == null || $incoming_buffers->ITNo == '')
                                                             <strong>
-                                                                {{-- <span>No Tracking No.</span> --}}
                                                                 <span>-</span>
                                                             </strong>
                                                         @else
                                                             {{ $incoming_buffers->ITNo }}
                                                         @endif
                                                     </td>
-                                                    <td class="text-right text-xs py-2 px-3 whitespace-nowrap">
+                                                    {{-- <td class="text-center text-xs px-1 py-2 whitespace-nowrap">
+                                                        {{ $incoming_buffers->TransferForexNo }}
+                                                    </td> --}}
+                                                    {{-- <td class="text-right text-xs px-1 py-2 whitespace-nowrap">
                                                         <strong>
                                                             <span>
                                                                 {{ number_format($incoming_buffers->DollarAmount, 2, '.', ',') }}
                                                             </span>
                                                         </strong>
-                                                    </td>
-                                                    <td class="text-center text-xs py-2 whitespace-nowrap">
+                                                    </td> --}}
+                                                    <td class="text-center text-xs px-1 py-2 whitespace-nowrap">
                                                         @if ($incoming_buffers->BufferType == 1)
                                                             <span class="text-black">
                                                                 For Selling
@@ -247,7 +261,7 @@
                                                             </span>
                                                         @endif
                                                     </td>
-                                                    <td class="text-center text-xs py-2 whitespace-nowrap">
+                                                    <td class="text-center text-xs px-1 py-2 whitespace-nowrap">
                                                         @if ($incoming_buffers->BufferTransfer == 0)
                                                             <span class="badge rounded-pill bg-warning warning-badge-custom font-bold text-xs">
                                                                 <strong>
@@ -296,7 +310,7 @@
                                                 </tr>
                                             @endforelse
                                         </tbody>
-                                        <tfoot>
+                                        {{-- <tfoot>
                                             <tr>
                                                 <td class="text-right text-xs py-1 whitespace-nowrap" colspan="2">
                                                     <span class="font-bold">
@@ -312,10 +326,10 @@
                                                 </td>
                                                 <td colspan="3"></td>
                                             </tr>
-                                        </tfoot>
+                                        </tfoot> --}}
                                     </table>
 
-                                    <div class="col-12 px-3 border border-gray-300 rounded-bl rounded-br py-2">
+                                    <div class="col-12 px-3 border border-gray-300 rounded-bl rounded-br p-2">
                                         {{ $result['incoming_buffers']->links() }}
                                     </div>
                                 </div>
