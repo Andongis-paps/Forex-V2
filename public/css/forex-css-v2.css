@@ -804,6 +804,16 @@ div:where(.swal2-container) button:where(.swal2-styled).swal2-confirm:hover {
     background-color: #00A65A !important;
 }
 
+div:where(.swal2-container) button:where(.swal2-styled):where(.swal2-cancel) {
+    background-color: #8592a3 !important;
+    color: #FFF !important;
+}
+
+div:where(.swal2-container) button:where(.swal2-styled):where(.swal2-cancel):hover {
+    background-color: #79808a !important;
+    color: #FFF !important;
+}
+
 .swal2-container {
     /* z-index: 10001!important; */
     z-index: 2000!important;
