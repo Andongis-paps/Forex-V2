@@ -51,7 +51,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <div id="transaction-details">
+                                            <div id="">
                                                 @if (count($result['transact_details']) > 0)
                                                     @foreach ($result['transact_details'] as $transact_details)
                                                         @php

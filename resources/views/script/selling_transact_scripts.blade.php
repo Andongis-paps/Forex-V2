@@ -359,7 +359,7 @@
                             popup: 'my-swal-popup',
                         }
                     });
-                } else if (selected_serial_serial.length > 10) {
+                } else if (selected_serial_serial.length > 40) {
                     Swal.fire({
                         icon: 'error',
                         text: 'Selected serials limit has been reached.',
@@ -367,7 +367,7 @@
                             popup: 'my-swal-popup',
                         }
                     });
-                } else if (serial_count + selected_serial_serial.length > 10) {
+                } else if (serial_count + selected_serial_serial.length > 40) {
                     Swal.fire({
                         icon: 'error',
                         text: 'Selected serials limit has been reached.',

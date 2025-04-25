@@ -52,7 +52,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <div id="transaction-details">
+                                            <div id="">
                                                 @if (count($result['transfer_forex']) > 0)
                                                     @php
                                                         $tracking_array = [];

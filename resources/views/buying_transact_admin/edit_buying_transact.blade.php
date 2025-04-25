@@ -199,7 +199,7 @@
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ trans('labels.cancel_action') }}</button>
-                                                        <button type="button" class="btn btn-primary" id="save-buying-transaction-details">{{ trans('labels.proceed_action') }}</button>
+                                                        <button type="button" class="btn btn-primary" id="save-buying-">{{ trans('labels.proceed_action') }}</button>
                                                     </div>
                                                 </div>
                                             </div>

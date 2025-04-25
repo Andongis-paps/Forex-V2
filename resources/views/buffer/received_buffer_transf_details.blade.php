@@ -85,7 +85,7 @@
                                 </div>
 
                                 <div class="card mt-3">
-                                    <div class="col-12 transaction-details p-2 ps-3 border border-gray-300 rounded-tl rounded-tr">
+                                    <div class="col-12  p-2 ps-3 border border-gray-300 rounded-tl rounded-tr">
                                         <div class="row">
                                             <div class="col-12">
                                                 <span class="text-lg font-bold p-1 text-black">
@@ -135,7 +135,7 @@
 
                                 <div class="col-12 mt-3">
                                     <div class="card">
-                                        <div class="col-12 transaction-details p-2 ps-3 border border-gray-300 rounded-tl rounded-tr">
+                                        <div class="col-12  p-2 ps-3 border border-gray-300 rounded-tl rounded-tr">
                                             <div class="row">
                                                 <div class="col-12">
                                                     <span class="text-lg font-bold p-1 text-black">

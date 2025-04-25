@@ -51,7 +51,7 @@
 
                                                 @can('edit-permission', $menu_id)
                                                     <button class="btn btn-primary btn-sm btn-edit-details" id="update-s-transact-details" type="button">
-                                                    {{-- <button class="btn btn-primary btn-sm btn-edit-details" type="button" data-bs-toggle="modal" data-bs-target="#transaction-details-modal"> --}}
+                                                    {{-- <button class="btn btn-primary btn-sm btn-edit-details" type="button" data-bs-toggle="modal" data-bs-target="#-modal"> --}}
                                                         Edit &nbsp;<i class='bx bx-edit-alt'></i>
                                                     </button>
                                                 @endcan
@@ -308,66 +308,64 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <table class="table table-hover table-bordered" id="sold-serials-table">
-                                        <thead>
-                                            <tr>
-                                                <th class="text-center text-xs font-extrabold text-black p-1">{{ trans('labels.sold_serials_currency') }}</th>
-                                                <th class="text-center text-xs font-extrabold text-black p-1">{{ trans('labels.serials_serials') }}</th>
-                                                {{-- <th class="text-center text-xs font-extrabold text-black p-1">{{ trans('labels.sold_serials_rset') }}</th> --}}
-                                                <th class="text-center text-xs font-extrabold text-black p-1">{{ trans('labels.sold_serials_bill_amnt') }}</th>
-                                                <th class="text-center text-xs font-extrabold text-black p-1">Selling Rate</th>
-                                                {{-- <th class="text-center text-xs font-extrabold text-black p-1">SC Rate</th> --}}
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @if (count($result['sold_serial']) > 0)
-                                                @foreach ($result['sold_serial'] as $sold_serials)
-                                                    <div id="transaction-details">
-                                                        <tr class="transact-details-list-table" id="transact-details-list-table">
-                                                            <td class="text-center text-sm p-1 serials-sold-currency">
-                                                                {{ $sold_serials->Currency }}
-                                                                <input type="hidden" class="form-control serials-sold-currency-input" id="serials-sold-currency-input" value="{{ Str::title($sold_serials->Currency) }}">
-                                                            </td>
-                                                            <td class="text-center text-sm p-1 serials-sold">
-                                                                <strong>
-                                                                    {{ $sold_serials->Serials }}
-                                                                </strong>
-                                                                <input type="hidden" class="form-control serials-sold-input" id="serials-sold-input" value="{{ $sold_serials->Serials }}">
-                                                            </td>
-                                                            {{-- <td class="text-center text-sm p-1 serials-sold-rset"> --}}
-                                                                {{-- {{ $sold_serials->Rset }} --}}
-                                                                <input type="hidden" class="form-control serials-sold-rset-input" id="serials-sold-rset-input" value="{{  $sold_serials->Rset }}">
-                                                                <input type="hidden" class="form-control serials-sold-scid-input" id="serials-sold-scid-input" value="{{  $sold_serials->SCID }}">
-                                                                <input type="hidden" class="form-control serials-sold-date-input" id="serials-sold-date-input" value="{{  $sold_serials->DateSold }}">
-                                                                <input type="hidden" class="form-control serials-sold-time-input" id="serials-sold-time-input" value="{{  $sold_serials->TimeSold }}">
-                                                            {{-- </td> --}}
-                                                            <td class="text-right text-sm py-1 px-3 serials-sold-bill-amnt">
-                                                                {{ number_format($sold_serials->BillAmount, 2, '.', ',') }}
-                                                                <input type="hidden" class="form-control serials-sold-bill-amnt-input" id="serials-sold-bill-amnt-input" value="{{ number_format($sold_serials->BillAmount, 2, '.', ',') }}">
-                                                            </td>
-                                                            <td class="text-right text-sm py-1 px-3 serials-sold-bill-amnt">
-                                                                <strong>{{ number_format(floor($sold_serials->RateUsed * 10000) / 10000, 4, '.', ',') }}</strong>
-                                                            </td>
-                                                            {{-- <td class="text-right text-sm py-1 px-3 serials-sold-bill-amnt">
-                                                                <strong>{{ number_format($sold_serials->RIBRate, 2, '.', ',') }}</strong>
-                                                            </td> --}}
+                                    <div class="col-12" @if (count($result['sold_serial']) > 10) id="transaction-details" @endif>
+                                        <table class="table table-hover table-bordered" id="sold-serials-table">
+                                            <thead class="sticky-header">
+                                                <tr>
+                                                    <th class="text-center text-xs font-extrabold text-black p-1">{{ trans('labels.sold_serials_currency') }}</th>
+                                                    <th class="text-center text-xs font-extrabold text-black p-1">{{ trans('labels.serials_serials') }}</th>
+                                                    {{-- <th class="text-center text-xs font-extrabold text-black p-1">{{ trans('labels.sold_serials_rset') }}</th> --}}
+                                                    <th class="text-center text-xs font-extrabold text-black p-1">{{ trans('labels.sold_serials_bill_amnt') }}</th>
+                                                    <th class="text-center text-xs font-extrabold text-black p-1">Selling Rate</th>
+                                                    {{-- <th class="text-center text-xs font-extrabold text-black p-1">SC Rate</th> --}}
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @forelse ($result['sold_serial'] as $sold_serials)
+                                                    <tr>
+                                                        <td class="text-center text-sm p-1 serials-sold-currency">
+                                                            {{ $sold_serials->Currency }}
+                                                            <input type="hidden" class="form-control serials-sold-currency-input" id="serials-sold-currency-input" value="{{ Str::title($sold_serials->Currency) }}">
+                                                        </td>
+                                                        <td class="text-center text-sm p-1 serials-sold">
+                                                            <strong>
+                                                                {{ $sold_serials->Serials }}
+                                                            </strong>
+                                                            <input type="hidden" class="form-control serials-sold-input" id="serials-sold-input" value="{{ $sold_serials->Serials }}">
+                                                        </td>
+                                                        {{-- <td class="text-center text-sm p-1 serials-sold-rset"> --}}
+                                                            {{-- {{ $sold_serials->Rset }} --}}
+                                                            <input type="hidden" class="form-control serials-sold-rset-input" id="serials-sold-rset-input" value="{{  $sold_serials->Rset }}">
+                                                            <input type="hidden" class="form-control serials-sold-scid-input" id="serials-sold-scid-input" value="{{  $sold_serials->SCID }}">
+                                                            <input type="hidden" class="form-control serials-sold-date-input" id="serials-sold-date-input" value="{{  $sold_serials->DateSold }}">
+                                                            <input type="hidden" class="form-control serials-sold-time-input" id="serials-sold-time-input" value="{{  $sold_serials->TimeSold }}">
+                                                        {{-- </td> --}}
+                                                        <td class="text-right text-sm py-1 px-3 serials-sold-bill-amnt">
+                                                            {{ number_format($sold_serials->BillAmount, 2, '.', ',') }}
+                                                            <input type="hidden" class="form-control serials-sold-bill-amnt-input" id="serials-sold-bill-amnt-input" value="{{ number_format($sold_serials->BillAmount, 2, '.', ',') }}">
+                                                        </td>
+                                                        <td class="text-right text-sm py-1 px-3 serials-sold-bill-amnt">
+                                                            <strong>{{ number_format(floor($sold_serials->RateUsed * 10000) / 10000, 4, '.', ',') }}</strong>
+                                                        </td>
+                                                        {{-- <td class="text-right text-sm py-1 px-3 serials-sold-bill-amnt">
+                                                            <strong>{{ number_format($sold_serials->RIBRate, 2, '.', ',') }}</strong>
+                                                        </td> --}}
 
-                                                            <input type="hidden" id="forex-scid" value="{{ $sold_serials->SCID }}">
-                                                        </tr>
-                                                    </div>
-                                                @endforeach
-                                            @endif
-                                            <input type="hidden" name="currency-name" value="{{ $sold_serials->CurrencyID }}">
-                                        </tbody>
-                                    </table>
+                                                        <input type="hidden" id="forex-scid" value="{{ $sold_serials->SCID }}">
+                                                    </tr>
+                                                @empty
+                                                
+                                                @endforelse
+                                                <input type="hidden" name="currency-name" value="{{ $sold_serials->CurrencyID }}">
+                                            </tbody>
+                                        </table>
+                                    </div>
 
                                     <input type="hidden" id="sold-serials-url" data-soldserials="{{ route('branch_transactions.selling_transaction.details', ['id' => $sold_serials->SCID]) }}">
 
                                     <div class="col-12 text-end p-2 border border-gray-300 rounded-bl rounded-br">
                                         <div class="row">
-                                            <div class="col-lg-6 offset-1 text-end pe-0">
-                                            </div>
-                                            <div class="col-lg-5 text-end ps-0">
+                                            <div class="col-lg-12">
                                                 {{-- <a class="btn btn-primary text-white" type="button" href="{{ route('pendingserials', ['id' => $sold_serials->SCID]) }}">
                                                     {{ trans('labels.sold_serials_add_serial') }}
                                                     <i class='menu-icon tf-icons bx bx-edit-alt text-white ms-1 me-0'></i>

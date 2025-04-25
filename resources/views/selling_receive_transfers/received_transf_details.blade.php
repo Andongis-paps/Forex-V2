@@ -72,7 +72,7 @@
 
                                 <div class="col-12 mt-3">
                                     <div class="card">
-                                        <div class="col-12 transaction-details p-2 border border-gray-300 rounded-tl rounded-tr">
+                                        <div class="col-12  p-2 border border-gray-300 rounded-tl rounded-tr">
                                             <div class="row">
                                                 <div class="col-12">
                                                     <span class="text-lg font-bold text-black">
@@ -123,7 +123,7 @@
 
                                 <div class="col-12 mt-3">
                                     <div class="card">
-                                        <div class="col-12 transaction-details p-2 border border-gray-300 rounded-tl rounded-tr">
+                                        <div class="col-12  p-2 border border-gray-300 rounded-tl rounded-tr">
                                             <div class="row">
                                                 <div class="col-12">
                                                     <span class="text-lg font-bold text-black">

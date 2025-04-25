@@ -24,7 +24,7 @@
                                             <div class="col-6 text-end">
                                                 @can('edit-permission', $menu_id)
                                                     <button class="btn btn-primary btn-sm btn-edit-details" id="update-dpo-out-details" type="button">
-                                                    {{-- <button class="btn btn-primary btn-sm btn-edit-details" type="button" data-bs-toggle="modal" data-bs-target="#transaction-details-modal"> --}}
+                                                    {{-- <button class="btn btn-primary btn-sm btn-edit-details" type="button" data-bs-toggle="modal" data-bs-target="#-modal"> --}}
                                                         Edit &nbsp;<i class='bx bx-edit-alt'></i>
                                                     </button>
                                                 @endcan

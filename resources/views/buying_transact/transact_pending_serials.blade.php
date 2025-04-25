@@ -56,7 +56,7 @@
                                             <tbody>
                                                 @if (count($result['pending_serials']) > 0)
                                                     @foreach ($result['pending_serials'] as $pending_serials)
-                                                        <div id="transaction-details">
+                                                        <div id="">
                                                             <tr class="transact-details-list-table" id="transact-details-list-table">
                                                                 <td class="text-center text-sm font-semibold p-1">
                                                                     {{ $pending_serials->Currency }}

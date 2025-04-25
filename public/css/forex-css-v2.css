@@ -442,6 +442,12 @@ tr.search-highlight {
     border-bottom: 1px #d9dee3 solid!important;
 }
 
+#transaction-details {
+    height: 450px;
+    overflow: hidden;
+    overflow-y: scroll;
+}
+
 /* Rate Report */
 .search-filter-headers {
     font-family: Nunito-Medium;

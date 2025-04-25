@@ -60,7 +60,7 @@ class SellingTransactController extends Controller {
                 }
             })
             ->groupBy('sc.DateSold', 'sc.SellingNo', 'sc.ReceiptNo', 'sc.ORNo', 'tc.Currency', 'sc.CurrencyID', 'sc.CurrAmount', 'whole_rate', 'sc.RateUsed', 'decimal_rate', 'sc.AmountPaid', 'sc.Rset', 'sc.SCID', 'sc.Voided', 'sc.HasTicket', 'txc.FullName', 'encoder')
-            ->orderBy('sc.SellingNo' , 'ASC')
+            ->orderBy('sc.SellingNo' , 'DESC')
             ->paginate(30);
 
         return view('selling_transact.add_new_selling_transact', compact('result', 'menu_id'));

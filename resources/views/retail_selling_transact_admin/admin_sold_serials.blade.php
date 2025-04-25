@@ -34,7 +34,7 @@
 
                                                 @can('edit-permission', $menu_id)
                                                     <button class="btn btn-primary btn-sm btn-edit-details" id="update-admin-s-transact-details" type="button">
-                                                    {{-- <button class="btn btn-primary btn-sm btn-edit-details" type="button" data-bs-toggle="modal" data-bs-target="#transaction-details-modal"> --}}
+                                                    {{-- <button class="btn btn-primary btn-sm btn-edit-details" type="button" data-bs-toggle="modal" data-bs-target="#-modal"> --}}
                                                         Edit &nbsp;<i class='bx bx-edit-alt'></i>
                                                     </button>
                                                 @endcan
@@ -288,7 +288,7 @@
                                         <tbody>
                                             @if (count($result['sold_serial']) > 0)
                                                 @foreach ($result['sold_serial'] as $sold_serials)
-                                                    <div id="transaction-details">
+                                                    <div id="">
                                                         <tr class="transact-details-list-table" id="transact-details-list-table">
                                                             <td class="text-center text-sm p-1 serials-sold-currency">
                                                                 {{ $sold_serials->Currency }}

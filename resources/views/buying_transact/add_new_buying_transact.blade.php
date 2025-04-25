@@ -114,7 +114,6 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <div id="transaction-details">
                                                 @php
                                                     $count = [];
                                                 @endphp

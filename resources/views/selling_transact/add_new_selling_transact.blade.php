@@ -113,190 +113,188 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <div id="transaction-details">
-                                                @if (count($result['selling_transact_details']) > 0)
-                                                    @foreach ($result['selling_transact_details'] as $selling_transact_details)
-                                                        @php
-                                                            $report_status = $selling_transact_details->HasTicket == 0 && $selling_transact_details->Voided == 0;
+                                            @if (count($result['selling_transact_details']) > 0)
+                                                @foreach ($result['selling_transact_details'] as $selling_transact_details)
+                                                    @php
+                                                        $report_status = $selling_transact_details->HasTicket == 0 && $selling_transact_details->Voided == 0;
 
-                                                            $formatted_rate = '';
-                                                            $yes = '';
-                                                            $rate_used = $selling_transact_details->whole_rate + $selling_transact_details->decimal_rate;
-                                                            $decimal_places = (strpos((string) $rate_used, '.') !== false) ? strlen(explode('.', $rate_used)[1]) : 0;
+                                                        $formatted_rate = '';
+                                                        $yes = '';
+                                                        $rate_used = $selling_transact_details->whole_rate + $selling_transact_details->decimal_rate;
+                                                        $decimal_places = (strpos((string) $rate_used, '.') !== false) ? strlen(explode('.', $rate_used)[1]) : 0;
 
-                                                            if ($decimal_places <= 2 && !in_array($selling_transact_details->CurrencyID, [12, 14, 31])) {
-                                                                $formatted_rate = number_format(floor($rate_used * 100) / 100, 2);
-                                                            } else if ($decimal_places <= 4 && in_array($selling_transact_details->CurrencyID, [12, 14, 31])) {
-                                                                $yes = "yes";
-                                                                $formatted_rate = number_format(floor($rate_used * 10000) / 10000, 4, '.', ',');
-                                                            }
-                                                        @endphp
+                                                        if ($decimal_places <= 2 && !in_array($selling_transact_details->CurrencyID, [12, 14, 31])) {
+                                                            $formatted_rate = number_format(floor($rate_used * 100) / 100, 2);
+                                                        } else if ($decimal_places <= 4 && in_array($selling_transact_details->CurrencyID, [12, 14, 31])) {
+                                                            $yes = "yes";
+                                                            $formatted_rate = number_format(floor($rate_used * 10000) / 10000, 4, '.', ',');
+                                                        }
+                                                    @endphp
 
-                                                        @if(session('time_toggle_status') == 1)
-                                                            <tr class="selling-transact-details-list-table  @if($selling_transact_details->Voided == 1) !bg-red-100 @else @endif"" id="selling-transact-details-list-table">
-                                                                <td class="text-center text-sm p-1">
-                                                                    {{ $selling_transact_details->DateSold }}
+                                                    @if(session('time_toggle_status') == 1)
+                                                        <tr class="selling-transact-details-list-table  @if($selling_transact_details->Voided == 1) !bg-red-100 @else @endif"" id="selling-transact-details-list-table">
+                                                            <td class="text-center text-sm p-1">
+                                                                {{ $selling_transact_details->DateSold }}
+                                                            </td>
+                                                            <td class="text-center text-sm p-1">
+                                                                {{ $selling_transact_details->SellingNo }}
+                                                            </td>
+                                                            <td class="text-center text-sm p-1">
+                                                                @if ($selling_transact_details->Rset == 'O')
+                                                                    {{ $selling_transact_details->ORNo }}
+                                                                @else
+                                                                    0
+                                                                @endif
+                                                            </td>
+                                                            <td class="text-center text-sm p-1 whitespace-nowrap">
+                                                                {{ $selling_transact_details->FullName }}
+                                                            </td>
+                                                            <td class="text-center text-sm p-1">
+                                                                {{ $selling_transact_details->Currency }}
+                                                            </td>
+                                                            <td class="text-right text-sm py-1 px-3">
+                                                                {{ number_format($selling_transact_details->CurrAmount, 2, '.', ',') }}
+                                                            </td>
+                                                            <td class="text-right text-sm py-1 px-3">
+                                                                {{ $formatted_rate }}
+                                                            </td>
+                                                            <td class="text-right text-sm py-1 px-3">
+                                                                {{ number_format($selling_transact_details->AmountPaid, 2, '.', ',') }}
+                                                                @if ($selling_transact_details->Voided == 0)
+                                                                    <input type="hidden" class="total-amountpaid-selling" id="total-amountpaid-selling" value="{{ $selling_transact_details->AmountPaid }}">
+                                                                @else
+                                                                    <input type="hidden" class="total-amountpaid-selling" id="total-amountpaid-selling" value="0">
+                                                                @endif
+                                                            </td>
+                                                            @can('edit-permission', $menu_id)
+                                                                <td class="text-center text-xs p-1">
+                                                                    {{ $selling_transact_details->encoder }}
                                                                 </td>
-                                                                <td class="text-center text-sm p-1">
-                                                                    {{ $selling_transact_details->SellingNo }}
-                                                                </td>
-                                                                <td class="text-center text-sm p-1">
-                                                                    @if ($selling_transact_details->Rset == 'O')
-                                                                        {{ $selling_transact_details->ORNo }}
-                                                                    @else
-                                                                        0
-                                                                    @endif
-                                                                </td>
-                                                                <td class="text-center text-sm p-1 whitespace-nowrap">
-                                                                    {{ $selling_transact_details->FullName }}
-                                                                </td>
-                                                                <td class="text-center text-sm p-1">
-                                                                    {{ $selling_transact_details->Currency }}
-                                                                </td>
-                                                                <td class="text-right text-sm py-1 px-3">
-                                                                    {{ number_format($selling_transact_details->CurrAmount, 2, '.', ',') }}
-                                                                </td>
-                                                                <td class="text-right text-sm py-1 px-3">
-                                                                    {{ $formatted_rate }}
-                                                                </td>
-                                                                <td class="text-right text-sm py-1 px-3">
-                                                                    {{ number_format($selling_transact_details->AmountPaid, 2, '.', ',') }}
+                                                            @endcan
+                                                            <td class="text-center text-sm p-1">
+                                                                @if ($selling_transact_details->Voided == 1)
+                                                                    <span class="badge bg-label-danger font-bold">
+                                                                        Void
+                                                                    </span>
+                                                                @else
+                                                                    <span class="badge bg-label-success font-bold">
+                                                                        <i class='bx bx-check-double'></i>
+                                                                    </span>
+                                                                @endif
+                                                            </td>
+                                                            <td class="text-center text-sm p-1">
+                                                                @can('access-permission', $menu_id)
                                                                     @if ($selling_transact_details->Voided == 0)
-                                                                        <input type="hidden" class="total-amountpaid-selling" id="total-amountpaid-selling" value="{{ $selling_transact_details->AmountPaid }}">
-                                                                    @else
-                                                                        <input type="hidden" class="total-amountpaid-selling" id="total-amountpaid-selling" value="0">
+                                                                        <a class="btn btn-primary button-edit button-edit-trans-details text-white btn-popover btn-details pe-2" href="{{ route('branch_transactions.selling_transaction.details', ['id' => $selling_transact_details->SCID]) }}">
+                                                                            <i class='bx bx-detail'></i>
+                                                                        </a>
                                                                     @endif
-                                                                </td>
-                                                                @can('edit-permission', $menu_id)
-                                                                    <td class="text-center text-xs p-1">
-                                                                        {{ $selling_transact_details->encoder }}
-                                                                    </td>
                                                                 @endcan
-                                                                <td class="text-center text-sm p-1">
-                                                                    @if ($selling_transact_details->Voided == 1)
-                                                                        <span class="badge bg-label-danger font-bold">
-                                                                            Void
-                                                                        </span>
-                                                                    @else
-                                                                        <span class="badge bg-label-success font-bold">
-                                                                            <i class='bx bx-check-double'></i>
-                                                                        </span>
-                                                                    @endif
-                                                                </td>
-                                                                <td class="text-center text-sm p-1">
-                                                                    @can('access-permission', $menu_id)
-                                                                        @if ($selling_transact_details->Voided == 0)
-                                                                            <a class="btn btn-primary button-edit button-edit-trans-details text-white btn-popover btn-details pe-2" href="{{ route('branch_transactions.selling_transaction.details', ['id' => $selling_transact_details->SCID]) }}">
-                                                                                <i class='bx bx-detail'></i>
-                                                                            </a>
-                                                                        @endif
-                                                                    @endcan
 
-                                                                    @if ($report_status)
-                                                                        <button class="btn btn-primary pe-2 btn-warning report-error-modal-btn btn-popover btn-css-report" data-id="{{ $selling_transact_details->SCID }}"  data-menuid="{{ $menu_id }}" type="button" data-bs-toggle="modal" data-bs-target="#report-error-modal">
-                                                                            <i class='bx bx-error'></i>
-                                                                        </button>
-                                                                    @endif
+                                                                @if ($report_status)
+                                                                    <button class="btn btn-primary pe-2 btn-warning report-error-modal-btn btn-popover btn-css-report" data-id="{{ $selling_transact_details->SCID }}"  data-menuid="{{ $menu_id }}" type="button" data-bs-toggle="modal" data-bs-target="#report-error-modal">
+                                                                        <i class='bx bx-error'></i>
+                                                                    </button>
+                                                                @endif
 
-                                                                    @can('delete-permission', $menu_id)
-                                                                        @if ($selling_transact_details->Voided == 0)
-                                                                            <a class="btn btn-primary button-delete button-delete-selling-trans-details btn-popover btn-delete pe-2" data-bs-toggle="modal" data-bs-target="#deleteSellingTransactModal" data-sellingtransdetailsid="{{ $selling_transact_details->SCID }}">
-                                                                                <i class='bx bx-trash text-white'></i>
-                                                                            </a>
-                                                                        @endif
-                                                                    @endcan
-                                                                </td>
-                                                            </tr>
-                                                        @else
-                                                            <tr class="selling-transact-details-list-table  @if($selling_transact_details->Voided == 1) !bg-red-100 @else @endif"" id="selling-transact-details-list-table">
-                                                                <td class="text-center text-sm p-1">
-                                                                    {{ $selling_transact_details->DateSold }}
-                                                                </td>
-                                                                <td class="text-center text-sm p-1">
-                                                                    {{ $selling_transact_details->SellingNo }}
-                                                                </td>
-                                                                <td class="text-center text-sm p-1">
-                                                                    @if ($selling_transact_details->Rset == 'O')
-                                                                        {{ $selling_transact_details->ORNo }}
-                                                                    @else
-                                                                        0
-                                                                    @endif
-                                                                </td>
-                                                                <td class="text-center text-sm p-1">
-                                                                    {{ $selling_transact_details->FullName }}
-                                                                </td>
-                                                                <td class="text-center text-sm p-1">
-                                                                    {{ $selling_transact_details->Currency }}
-                                                                </td>
-                                                                <td class="text-right text-sm py-1 px-3">
-                                                                    {{ number_format($selling_transact_details->CurrAmount, 2, '.', ',') }}
-                                                                </td>
-                                                                <td class="text-right text-sm py-1 px-3">
-                                                                    {{ $formatted_rate }}
-                                                                </td>
-                                                                <td class="text-right text-sm py-1 px-3">
-                                                                    {{ number_format($selling_transact_details->AmountPaid, 2, '.', ',') }}
+                                                                @can('delete-permission', $menu_id)
                                                                     @if ($selling_transact_details->Voided == 0)
-                                                                        <input type="hidden" class="total-amountpaid-selling" id="total-amountpaid-selling" value="{{ $selling_transact_details->AmountPaid }}">
-                                                                    @else
-                                                                        <input type="hidden" class="total-amountpaid-selling" id="total-amountpaid-selling" value="0">
+                                                                        <a class="btn btn-primary button-delete button-delete-selling-trans-details btn-popover btn-delete pe-2" data-bs-toggle="modal" data-bs-target="#deleteSellingTransactModal" data-sellingtransdetailsid="{{ $selling_transact_details->SCID }}">
+                                                                            <i class='bx bx-trash text-white'></i>
+                                                                        </a>
                                                                     @endif
-                                                                </td>
-                                                                {{-- <td class="text-center text-sm p-1">
-                                                                    {{ $selling_transact_details->Rset }}
-                                                                </td> --}}
-                                                                @can('edit-permission', $menu_id)
-                                                                    <td class="text-center text-xs p-1">
-                                                                        {{ $selling_transact_details->encoder }}
-                                                                    </td>
                                                                 @endcan
-                                                                <td class="text-center text-sm p-1">
-                                                                    @if ($selling_transact_details->Voided == 1)
-                                                                        <span class="badge bg-label-danger font-bold">
-                                                                            Void
-                                                                        </span>
-                                                                    @else
-                                                                        <span class="badge bg-label-success font-bold">
-                                                                            <i class='bx bx-check-double'></i>
-                                                                        </span>
-                                                                    @endif
+                                                            </td>
+                                                        </tr>
+                                                    @else
+                                                        <tr class="selling-transact-details-list-table  @if($selling_transact_details->Voided == 1) !bg-red-100 @else @endif"" id="selling-transact-details-list-table">
+                                                            <td class="text-center text-sm p-1">
+                                                                {{ $selling_transact_details->DateSold }}
+                                                            </td>
+                                                            <td class="text-center text-sm p-1">
+                                                                {{ $selling_transact_details->SellingNo }}
+                                                            </td>
+                                                            <td class="text-center text-sm p-1">
+                                                                @if ($selling_transact_details->Rset == 'O')
+                                                                    {{ $selling_transact_details->ORNo }}
+                                                                @else
+                                                                    0
+                                                                @endif
+                                                            </td>
+                                                            <td class="text-center text-sm p-1">
+                                                                {{ $selling_transact_details->FullName }}
+                                                            </td>
+                                                            <td class="text-center text-sm p-1">
+                                                                {{ $selling_transact_details->Currency }}
+                                                            </td>
+                                                            <td class="text-right text-sm py-1 px-3">
+                                                                {{ number_format($selling_transact_details->CurrAmount, 2, '.', ',') }}
+                                                            </td>
+                                                            <td class="text-right text-sm py-1 px-3">
+                                                                {{ $formatted_rate }}
+                                                            </td>
+                                                            <td class="text-right text-sm py-1 px-3">
+                                                                {{ number_format($selling_transact_details->AmountPaid, 2, '.', ',') }}
+                                                                @if ($selling_transact_details->Voided == 0)
+                                                                    <input type="hidden" class="total-amountpaid-selling" id="total-amountpaid-selling" value="{{ $selling_transact_details->AmountPaid }}">
+                                                                @else
+                                                                    <input type="hidden" class="total-amountpaid-selling" id="total-amountpaid-selling" value="0">
+                                                                @endif
+                                                            </td>
+                                                            {{-- <td class="text-center text-sm p-1">
+                                                                {{ $selling_transact_details->Rset }}
+                                                            </td> --}}
+                                                            @can('edit-permission', $menu_id)
+                                                                <td class="text-center text-xs p-1">
+                                                                    {{ $selling_transact_details->encoder }}
                                                                 </td>
-                                                                <td class="text-center text-sm p-1">
-                                                                    @can('access-permission', $menu_id)
-                                                                        @if ($selling_transact_details->Voided == 0)
-                                                                            <a class="btn btn-primary button-edit button-edit-trans-details text-white btn-popover btn-details pe-2" href="{{ route('branch_transactions.selling_transaction.details', ['id' => $selling_transact_details->SCID]) }}">
-                                                                                <i class='bx bx-detail'></i>
-                                                                            </a>
-                                                                        @endif
-                                                                    @endcan
-
-                                                                    @if ($report_status)
-                                                                        <button class="btn btn-primary pe-2 btn-warning report-error-modal-btn btn-popover btn-css-report" data-id="{{ $selling_transact_details->SCID }}"  data-menuid="{{ $menu_id }}" type="button" data-bs-toggle="modal" data-bs-target="#report-error-modal">
-                                                                            <i class='bx bx-error'></i>
-                                                                        </button>
+                                                            @endcan
+                                                            <td class="text-center text-sm p-1">
+                                                                @if ($selling_transact_details->Voided == 1)
+                                                                    <span class="badge bg-label-danger font-bold">
+                                                                        Void
+                                                                    </span>
+                                                                @else
+                                                                    <span class="badge bg-label-success font-bold">
+                                                                        <i class='bx bx-check-double'></i>
+                                                                    </span>
+                                                                @endif
+                                                            </td>
+                                                            <td class="text-center text-sm p-1">
+                                                                @can('access-permission', $menu_id)
+                                                                    @if ($selling_transact_details->Voided == 0)
+                                                                        <a class="btn btn-primary button-edit button-edit-trans-details text-white btn-popover btn-details pe-2" href="{{ route('branch_transactions.selling_transaction.details', ['id' => $selling_transact_details->SCID]) }}">
+                                                                            <i class='bx bx-detail'></i>
+                                                                        </a>
                                                                     @endif
+                                                                @endcan
 
-                                                                    @can('delete-permission', $menu_id)
-                                                                        @if ($selling_transact_details->Voided == 0)
-                                                                            <a class="btn btn-primary button-delete button-delete-selling-trans-details btn-popover btn-delete pe-2" data-bs-toggle="modal" data-bs-target="#deleteSellingTransactModal" data-sellingtransdetailsid="{{ $selling_transact_details->SCID }}">
-                                                                                <i class='bx bx-trash text-white'></i>
-                                                                            </a>
-                                                                        @endif
-                                                                    @endcan
-                                                                </td>
-                                                            </tr>
-                                                        @endif
-                                                    @endforeach
-                                                @else
-                                                    <tr>
-                                                        <td class="text-center text-td-buying text-sm py-3" colspan="12">
-                                                            <span class="buying-no-transactions text-lg">
-                                                                <strong>NO AVAILABLE TRANSACTIONS FOR TODAY</strong>
-                                                            </span>
-                                                        </td>
-                                                    </tr>
-                                                @endif
-                                            </div>
+                                                                @if ($report_status)
+                                                                    <button class="btn btn-primary pe-2 btn-warning report-error-modal-btn btn-popover btn-css-report" data-id="{{ $selling_transact_details->SCID }}"  data-menuid="{{ $menu_id }}" type="button" data-bs-toggle="modal" data-bs-target="#report-error-modal">
+                                                                        <i class='bx bx-error'></i>
+                                                                    </button>
+                                                                @endif
+
+                                                                @can('delete-permission', $menu_id)
+                                                                    @if ($selling_transact_details->Voided == 0)
+                                                                        <a class="btn btn-primary button-delete button-delete-selling-trans-details btn-popover btn-delete pe-2" data-bs-toggle="modal" data-bs-target="#deleteSellingTransactModal" data-sellingtransdetailsid="{{ $selling_transact_details->SCID }}">
+                                                                            <i class='bx bx-trash text-white'></i>
+                                                                        </a>
+                                                                    @endif
+                                                                @endcan
+                                                            </td>
+                                                        </tr>
+                                                    @endif
+                                                @endforeach
+                                            @else
+                                                <tr>
+                                                    <td class="text-center text-td-buying text-sm py-3" colspan="12">
+                                                        <span class="buying-no-transactions text-lg">
+                                                            <strong>NO AVAILABLE TRANSACTIONS FOR TODAY</strong>
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            @endif
                                         </tbody>
                                         <tfoot>
                                             <tr>

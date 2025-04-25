@@ -49,7 +49,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <div id="transaction-details">
+                                            <div id="">
                                                 @if (count($result['received_transfers']) > 0)
                                                     @foreach ($result['received_transfers'] as $received_transfers)
                                                         <tr class="selling-transact-details-list-table" id="selling-transact-details-list-table">
@@ -172,7 +172,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <div id="transaction-details">
+                                            <div id="">
                                                 @if (count($result['transfers']) > 0)
                                                     @foreach ($result['transfers'] as $tranfer_forex)
                                                         <tr class="transact-details-list-table" id="transact-details-list-table">

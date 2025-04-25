@@ -35,7 +35,7 @@
 
                                                 @can('edit-permission', $menu_id)
                                                     <button class="btn btn-primary btn-sm btn-edit-details" id="update-admin-b-transact-details" type="button">
-                                                    {{-- <button class="btn btn-primary btn-sm btn-edit-details" type="button" data-bs-toggle="modal" data-bs-target="#transaction-details-modal"> --}}
+                                                    {{-- <button class="btn btn-primary btn-sm btn-edit-details" type="button" data-bs-toggle="modal" data-bs-target="#-modal"> --}}
                                                         Edit &nbsp;<i class='bx bx-edit-alt'></i>
                                                     </button>
                                                 @endcan
@@ -292,7 +292,7 @@
                                         </thead>
                                         <tbody>
                                             @forelse ($result['forex_serials'] as $forex_serials)
-                                                <div id="transaction-details">
+                                                <div id="">
                                                     <tr class="transact-details-list-table" id="transact-details-list-table">
                                                         <td class="text-center text-sm p-1">
                                                             {{ $forex_serials->Currency }}
@@ -362,7 +362,7 @@
                                             <div class="col-6 text-end">
                                                 @can('edit-permission', $menu_id)
                                                     <button class="btn btn-primary btn-sm btn-edit-details" id="update-b-rate" type="button">
-                                                    {{-- <button class="btn btn-primary btn-sm btn-edit-details" type="button" data-bs-toggle="modal" data-bs-target="#transaction-details-modal"> --}}
+                                                    {{-- <button class="btn btn-primary btn-sm btn-edit-details" type="button" data-bs-toggle="modal" data-bs-target="#-modal"> --}}
                                                         Edit &nbsp;<i class='bx bx-edit-alt'></i>
                                                     </button>
                                                 @endcan

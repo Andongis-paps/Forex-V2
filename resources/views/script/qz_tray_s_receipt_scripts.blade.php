@@ -484,7 +484,7 @@
                                 '</tbody>' +
                             '</table>' +
                         '</td>' +
-                        '<td style="margin-left: 30pt; padding: 0; width: 285pt;">' +
+                        '<td style="margin-left: 45pt; padding: 0; width: 285pt;">' +
                             '<table cellspacing="0" style="font-size:9pt; font-face:\'Arial\'; padding: 0;">' +
                                 '<tbody>'+
                                     // '<tr>' +
@@ -562,67 +562,202 @@
                         '</td>' +
                     '</tr>' +
                 '</table>';
-            var new_var =
-                '<table>'+
-                    '<tr>'+
-                        '<td style="margin-left: 40pt; padding: 0; width: width: 270pt;">'+
-                            '<table cellspacing="0" style="font-size:9pt; font-face:\'Arial\'; padding: 0;">' +
-                                '<tbody>'+
-                                    '<tr >'+
-                                        '<td style="padding: 0;  font-size:9pt; text-align: right; width: 100pt;"><b>Bill Amount &nbsp; &nbsp;</b></td>'+
-                                        '<td style="padding: 0; font-size:9pt; width: 100pt;">&nbsp; &nbsp;<b>Serial</b></td>'+
-                                    '</tr>';
 
-                                    var merged_serial_bill_amnt = sold_serials_bill_amnt_array.map(function(serials_val, serials_indx) {
-                                        return {
-                                            serials: serials_val,
-                                            bill_amount: sold_serials_array[serials_indx],
-                                        };
-                                    });
+                var merged_serial_bill_amnt = sold_serials_bill_amnt_array.map(function(serials_val, serials_indx) {
+                    return {
+                        serials: serials_val,
+                        bill_amount: sold_serials_array[serials_indx],
+                    };
+                });
+
+            var new_var = '';
+                if (merged_serial_bill_amnt.length <= 20) {
+                    new_var +=
+                        '<table cellspacing="0" cellpadding="0" border="0">'+
+                            '<tr>'+
+                                '<td style="margin-left: 58pt; padding: 0; width: 270pt;">'+
+                                    '<table style="font-size:9pt; font-face:\'Arial\'; padding: 0; border-collapse: collapse;" cellspacing="0" cellpadding="0">' +
+                                        '<tbody>'+
+                                            '<tr>'+
+                                                '<td style="padding: 0; text-align: center;"><b>Bill Amount</b></td>'+
+                                                '<td style="padding: 0; text-align: center;"><b>Serial</b></td>'+
+                                            '</tr>';
 
                                     merged_serial_bill_amnt.forEach(function(gar) {
                                         new_var +=
                                             '<tr>'+
-                                                '<td style="padding: 0;  font-size:9pt; text-align: right">' + gar.serials + '&nbsp; &nbsp; &nbsp; </td>'+
-                                                '<td style="padding: 0; font-size:9pt; ">&nbsp; &nbsp;' + gar.bill_amount + '</td>'
+                                                '<td style="padding: 0; text-align: right;">' + gar.serials + '&nbsp;</td>'+
+                                                '<td style="padding: 0; text-align: center;">' + gar.bill_amount + '</td>'+
                                             '</tr>';
                                     });
 
                                     new_var +=
-                                    '</tr>'+
-                                '</tbody>'+
-                            '</table>'+
-                        '</td>'+
-                        '<td style="margin-left: 90pt; padding: 0; width: width: 285pt;">'+
-                            '<table cellspacing="0" style="font-size:9pt; font-face:\'Arial\'; padding: 0;">' +
-                                '<tbody>'+
-                                    '<tr >'+
-                                        '<td style="padding: 0; font-size:9pt; text-align: right; width: 100pt;"><b>Bill Amount &nbsp; &nbsp;</b></td>'+
-                                        '<td style="padding: 0; font-size:9pt; width: 100pt;">&nbsp; &nbsp;<b>Serial</b></td>'+
-                                    '</tr>';
-
-                                    var merged_serial_bill_amnt = sold_serials_bill_amnt_array.map(function(serials_val, serials_indx) {
-                                        return {
-                                            serials: serials_val,
-                                            bill_amount: sold_serials_array[serials_indx],
-                                        };
-                                    });
+                                        '</tbody>'+
+                                    '</table>'+
+                                '</td>'+
+                                '<td style="margin-left: 85pt; padding: 0; width: 285pt;">'+
+                                    '<table style="font-size:9pt; font-face:\'Arial\'; padding: 0; border-collapse: collapse;" cellspacing="0" cellpadding="0">' +
+                                        '<tbody>'+
+                                            '<tr>'+
+                                                '<td style="padding: 0; text-align: center;"><b>Bill Amount</b></td>'+
+                                                '<td style="padding: 0; text-align: center;"><b>Serial</b></td>'+
+                                            '</tr>';
 
                                     merged_serial_bill_amnt.forEach(function(gar) {
                                         new_var +=
-                                            '<tr >'+
-                                                '<td style="padding: 0; font-size:9pt; text-align: right">' + gar.serials + '&nbsp; &nbsp; &nbsp; </td>'+
-                                                '<td style="padding: 0; font-size:9pt;">&nbsp; &nbsp;' + gar.bill_amount + '</td>'
+                                            '<tr>'+
+                                                '<td style="padding: 0; text-align: right;">' + gar.serials + '&nbsp;</td>'+
+                                                '<td style="padding: 0; text-align: center;">' + gar.bill_amount + '</td>'+
                                             '</tr>';
                                     });
 
                                     new_var +=
-                                    '</tr>'+
-                                '</tbody>'+
-                            '</table>'+
-                        '</td>'+
-                    '</tr>'+
-                '</table>' +
+                                        '</tbody>'+
+                                    '</table>'+
+                                '</td>'+
+                            '</tr>'+
+                        '</table>';
+                } else {
+                    var first_20 = merged_serial_bill_amnt.slice(0, 20);
+                    var rest = merged_serial_bill_amnt.slice(20);
+
+                    new_var +=
+                        '<table cellspacing="0" cellpadding="0" border="0">'+
+                            '<tr>'+
+                                '<td style="padding: 0; margin-left: 10pt;">'+
+                                    '<td style="margin-right: 10pt;">'+
+                                        '<table style="font-size:9pt; font-face:\'Arial\'; padding: 0; border-collapse: collapse;" cellspacing="0" cellpadding="0">' +
+                                            '<tbody>'+
+                                                '<tr>'+
+                                                    '<td style="padding: 0; text-align: center; margin-right: 7pt;"><b>Bill Amnt.</b></td>'+
+                                                    '<td style="padding: 0; text-align: center;"><b>Serial</b></td>'+
+                                                '</tr>';
+                                                
+                                            first_20.forEach(function(gar) {
+                                                new_var +=
+                                                    '<tr>'+
+                                                        '<td style="padding: 0; text-align: right; margin-right: 7pt;">' + gar.serials + '&nbsp;</td>'+
+                                                        '<td style="padding: 0; text-align: center;">' + gar.bill_amount + '</td>'+
+                                                    '</tr>';
+                                            });
+                                        new_var +=
+                                            '</tbody>'+
+                                        '</table>'+
+                                    '</td>'+
+                                    '<td>'+
+                                        '<table style="font-size:9pt; font-face:\'Arial\'; padding: 0; border-collapse: collapse;" cellspacing="0" cellpadding="0">' +
+                                            '<tbody>'+
+                                                '<tr>'+
+                                                    '<td style="padding: 0; text-align: center; margin-right: 7pt;"><b>Bill Amnt.</b></td>'+
+                                                    '<td style="padding: 0; text-align: center;"><b>Serial</b></td>'+
+                                                '</tr>';
+
+                                            rest.forEach(function(gar) {
+                                                new_var +=
+                                                    '<tr>'+
+                                                        '<td style="padding: 0; text-align: right; margin-right: 7pt;">' + gar.serials + '&nbsp;</td>'+
+                                                        '<td style="padding: 0; text-align: center;">' + gar.bill_amount + '</td>'+
+                                                    '</tr>';
+                                            });
+
+                                            new_var +=
+                                            '</tbody>'+
+                                        '</table>'+
+                                    '</td>'+
+                                '</td>'+
+                                '<td style="padding: 0; margin-left: 39pt;" valign="top">'+
+                                    '<td style="margin-right: 10pt;"  valign="top">'+
+                                        '<table style="font-size:9pt; font-face:\'Arial\'; padding: 0; border-collapse: collapse;" cellspacing="0" cellpadding="0">' +
+                                            '<tbody>'+
+                                                '<tr>'+
+                                                    '<td style="padding: 0; text-align: center; margin-right: 7pt;"><b>Bill Amnt.</b></td>'+
+                                                    '<td style="padding: 0; text-align: center;"><b>Serial</b></td>'+
+                                                '</tr>';
+                                                
+                                            first_20.forEach(function(gar) {
+                                                new_var +=
+                                                    '<tr>'+
+                                                        '<td style="padding: 0; text-align: right; margin-right: 7pt;">' + gar.serials + '&nbsp;</td>'+
+                                                        '<td style="padding: 0; text-align: center;">' + gar.bill_amount + '</td>'+
+                                                    '</tr>';
+                                            });
+                                        new_var +=
+                                            '</tbody>'+
+                                        '</table>'+
+                                    '</td>'+
+                                    '<td  valign="top">'+
+                                        '<table style="font-size:9pt; font-face:\'Arial\'; padding: 0; border-collapse: collapse;" cellspacing="0" cellpadding="0">' +
+                                            '<tbody>'+
+                                                '<tr>'+
+                                                    '<td style="padding: 0; text-align: center; margin-right: 7pt;"><b>Bill Amnt.</b></td>'+
+                                                    '<td style="padding: 0; text-align: center;"><b>Serial</b></td>'+
+                                                '</tr>';
+
+                                            rest.forEach(function(gar) {
+                                                new_var +=
+                                                    '<tr>'+
+                                                        '<td style="padding: 0; text-align: right; margin-right: 7pt;">' + gar.serials + '&nbsp;</td>'+
+                                                        '<td style="padding: 0; text-align: center;">' + gar.bill_amount + '</td>'+
+                                                    '</tr>';
+                                            });
+
+                                            new_var +=
+                                            '</tbody>'+
+                                        '</table>'+
+                                    '</td>'+
+                                '</td>'+
+                            '</tr>'+
+                        '</table>';
+
+                    // Remaining entries
+                    // new_var +=
+                    //     '<br>'+
+                    //     '<table cellspacing="0" cellpadding="0" border="0">'+
+                    //         '<tr>'+
+                    //             '<td style="margin-left: 100pt; padding: 0; width: 270pt;">'+
+                    //                 '<table style="font-size:9pt; font-face:\'Arial\'; padding: 0; border-collapse: collapse;" cellspacing="0" cellpadding="0">' +
+                    //                     '<tbody>'+
+                    //                         '<tr>'+
+                    //                             '<td style="border: 1pt solid #c3c6c9; padding: 0; text-align: center;"><b>Bill Amount</b></td>'+
+                    //                             '<td style="border: 1pt solid #c3c6c9; padding: 0; text-align: center;"><b>Serial</b></td>'+
+                    //                         '</tr>';
+
+                    // rest.forEach(function(gar) {
+                    //     new_var +=
+                    //         '<tr>'+
+                    //             '<td style="border: 1pt solid #c3c6c9; padding: 0; text-align: right;">' + gar.serials + '&nbsp;</td>'+
+                    //             '<td style="border: 1pt solid #c3c6c9; padding: 0; text-align: center;">' + gar.bill_amount + '</td>'+
+                    //         '</tr>';
+                    // });
+
+                    // new_var +=
+                    //                     '</tbody>'+
+                    //                 '</table>'+
+                    //             '</td>'+
+                    //             '<td style="margin-left: 73pt; padding: 0; width: 285pt;">'+
+                    //                 '<table style="font-size:9pt; font-face:\'Arial\'; padding: 0; border-collapse: collapse;" cellspacing="0" cellpadding="0">' +
+                    //                     '<tbody>'+
+                    //                         '<tr>'+
+                    //                             '<td style="border: 1pt solid #c3c6c9; padding: 0; text-align: center;"><b>Bill Amount</b></td>'+
+                    //                             '<td style="border: 1pt solid #c3c6c9; padding: 0; text-align: center;"><b>Serial</b></td>'+
+                    //                         '</tr>';
+
+                    // rest.forEach(function(gar) {
+                    //     new_var +=
+                    //         '<tr>'+
+                    //             '<td style="border: 1pt solid #c3c6c9; padding: 0; text-align: right;">' + gar.serials + '&nbsp;</td>'+
+                    //             '<td style="border: 1pt solid #c3c6c9; padding: 0; text-align: center;">' + gar.bill_amount + '</td>'+
+                    //         '</tr>';
+                    // });
+
+                    // new_var +=
+                    //                     '</tbody>'+
+                    //                 '</table>'+
+                    //             '</td>'+
+                    //         '</tr>'+
+                    //     '</table>';
+                }
+                new_var +=
                 '<table>'+
                     '<tr>' +
                         '<td style="margin-left: 20pt; padding: 0; width: 270pt;">' +

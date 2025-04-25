@@ -108,7 +108,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <div id="transaction-details">
+                                            <div id="">
                                                 @if (count($result['selling_transact_details']) > 0)
                                                     @if(session('time_toggle_status') == 1)
                                                         @foreach ($result['selling_transact_details'] as $selling_transact_details)

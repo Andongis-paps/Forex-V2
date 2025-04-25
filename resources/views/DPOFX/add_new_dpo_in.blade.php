@@ -48,7 +48,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <div id="transaction-details">
+                                            <div id="">
                                                 @php
                                                     $total_dollar_amnt = 0;
                                                     $total_peso_amnt = 0;
