@@ -97,6 +97,8 @@
         var _token = $('input[name="_token"]').val();
         var on_page_final_printing = $('#security-code').val();
 
+        $('#proceed-transaction').prop('disabled', true);
+
         $.ajax({
             url: "{{ route('user_info') }}",
             type: "GET",
@@ -170,6 +172,8 @@
                         customClass: {
                             popup: 'my-swal-popup',
                         }
+                    }).then(() => {
+                        $('#proceed-transaction').prop('disabled', false);
                     });
                 }
             }

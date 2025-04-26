@@ -96,7 +96,7 @@
                                                             </td>
                                                             <td class="text-center text-xs p-1">
                                                                 @if ($received_transfers->ReceivedStatus == 1)
-                                                                    <span class="badge rounded-pill success-badge-custom pt-2 font-bold">
+                                                                    <span class="badge rounded-pill success-badge-custom p-1 font-bold">
                                                                         <strong>
                                                                             {{ trans('labels.status_received') }}
                                                                         </strong>
@@ -201,7 +201,7 @@
                                                             {{-- <td class="text-center text-xs p-1">
                                                                 {{ $tranfer_forex->TFDate }}
                                                             </td> --}}
-                                                            <td class="text-center text-xs p-1">
+                                                            <td class="text-center text-sm p-1">
                                                                 @php
                                                                     $date = \Carbon\Carbon::now('Asia/Manila');
                                                                     $date_now = $date->toDateString();
@@ -209,35 +209,31 @@
                                                                 @endphp
 
                                                                 @if (($tranfer_forex->RTReceived === null) && ($tranfer_forex->TFDate == $date_now))
-                                                                    <span class="badge rounded-pill primary-badge-custom pt-2">
+                                                                    <span class="badge rounded-pill primary-badge-custom p-1">
                                                                         <strong>
                                                                             {{ trans('labels.status_transfer_forex_in_transit') }} &nbsp; <i class='bx bxs-truck badge-icons bx-fade-right'></i>
                                                                         </strong>
                                                                     </span>
                                                                 @elseif (($tranfer_forex->RTReceived === null) && ($tranfer_forex->TFDate != $date_now))
-                                                                    <span class="badge rounded-pill warning-badge-custom pt-2">
+                                                                    <span class="badge rounded-pill font-bold warning-badge-custom pb-1">
                                                                         {{-- <strong> --}}
                                                                             {{-- {{ trans('labels.status_pending') }} &nbsp; <i class='bx bx-time-five badge-icons bx-tada'></i> --}}
                                                                             {{-- {{ trans('labels.status_transfer_forex_in_transit') }} &nbsp; <i class='bx bxs-truck badge-icons'></i> --}}
-                                                                            {{ trans('labels.status_transfer_forex_in_transit') }} &nbsp; <i class='bx bxs-truck badge-icons'></i>
+                                                                            {{ trans('labels.status_transfer_forex_in_transit') }}
 
                                                                             @if ($date_now_parse->diffInDays($tranfer_forex->TFDate) == 1)
                                                                                 <span class="badge rounded-pill danger-badge-custom">
-                                                                                    <span class="text-number-of-days-pending">
-                                                                                        {{ $date_now_parse->diffInDays($tranfer_forex->TFDate) }}&nbsp;{{ trans('labels.selling_admin_received_pending_day') }}
-                                                                                    </span>
+                                                                                    {{ $date_now_parse->diffInDays($tranfer_forex->TFDate) }}&nbsp;{{ trans('labels.selling_admin_received_pending_day') }}
                                                                                 </span>
                                                                             @elseif ($date_now_parse->diffInDays($tranfer_forex->TFDate) > 1)
                                                                                 <span class="badge rounded-pill danger-badge-custom">
-                                                                                    <span class="text-number-of-days-pending">
-                                                                                        {{ $date_now_parse->diffInDays($tranfer_forex->TFDate) }}&nbsp;{{ trans('labels.selling_admin_received_pending_days') }}
-                                                                                    </span>
+                                                                                    {{ $date_now_parse->diffInDays($tranfer_forex->TFDate) }}&nbsp;{{ trans('labels.selling_admin_received_pending_days') }}
                                                                                 </span>
                                                                             @endif
                                                                         {{-- </strong> --}}
                                                                     </span>
                                                                 @else
-                                                                    <span class="badge rounded-pill primary-badge-custom pt-2">
+                                                                    <span class="badge rounded-pill primary-badge-custom">
                                                                         <strong>
                                                                             {{ trans('labels.status_received') }} &nbsp; <i class='bx bx-archive-in badge-icons'></i>
                                                                         </strong>
