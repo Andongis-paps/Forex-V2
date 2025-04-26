@@ -323,8 +323,31 @@
                     $('#proceed-transfer').prop('disabled', false);
                 });
             }
+        });
 
-            // $('#proceed-transfer').prop('disabled', true);
+        $('#proceed-transfer').click(function() {
+            var amount_to_cut = isNaN(parseFloat($('#selected-bill-total-amount').val())) ? 0 : parseFloat($('#selected-bill-total-amount').val());
+
+            if (amount_to_cut == 0 || amount_to_cut == '') {
+                $('#proceed-transfer').prop('disabled', true);
+
+                Swal.fire({
+                    text: 'Buffer amount is required.',
+                    icon: 'error',
+                    showConfirmButton: true
+                }).then(() => {
+                    clear();
+
+                    $(this).val('');
+                });
+            } else {
+                if ($('input[name="buffer-type"]:checked').val() == 1) {
+                    validation(amount_to_cut, branch_id, currency_id);
+                } else {
+                    $('#buffer-cut-details').modal("hide");
+                    $('#security-code-modal').modal("show");
+                }
+            }
         });
 
         $('#compute-buffer').click(function() {
@@ -342,84 +365,10 @@
                     $('#proceed-transfer').prop('disabled', true);
                 });
             } else {
-                $('#container-test').fadeIn("fast");
-                $('#container-test').css('display', 'block');
-
-                setTimeout(function() {
-                    $.ajax({
-                        url: "{{ route('admin_transactions.buffer.b_cut_validation') }}",
-                        type: "POST",
-                        data: {
-                            _token: "{{ csrf_token() }}",
-                            buffer_type: $('input[name="buffer-type"]:checked').val(),
-                            amount: amount_to_cut,
-                            branch_id: branch_id,
-                            currency_id: currency_id,
-                            selling_rate: selling_rate,
-                        },
-                        success: function(data) {
-                            $('#container-test').fadeOut("fast");
-                            $('#proceed-transfer').prop('disabled', false);
-
-                            var total_gain_loss = 0;
-                            const response = data[0];
-                            const response_1 = data[1];
-
-                            if (data.validity == 0 && data.buffer_type == 1) {
-                                Swal.fire({
-                                    text: 'No exact amount in buffer stocks.',
-                                    icon: 'error',
-                                    showConfirmButton: true
-                                }).then(() => {
-                                    clear();
-
-                                    $('#proceed-transfer').prop('disabled', true);
-                                });
-                            } else if (data.validity_branch == 0 && data.buffer_type == 1) {
-                                Swal.fire({
-                                    text: 'No exact amount in branch stocks.',
-                                    icon: 'error',
-                                    showConfirmButton: true
-                                }).then(() => {
-                                    clear();
-
-                                    $('#proceed-transfer').prop('disabled', true);
-                                });
-                            } else if (data.validity == 0 && data.buffer_type == 2) {
-                                Swal.fire({
-                                    text: 'No exact amount in branch stocks.',
-                                    icon: 'error',
-                                    showConfirmButton: true
-                                }).then(() => {
-                                    clear();
-
-                                    $('#proceed-transfer').prop('disabled', true);
-                                });
-                            } else {
-                                $('#by-rate-breakdown').find('tbody').empty();
-
-                                Object.values(response_1.grouped_by_rates).forEach(function(gar) {
-                                    breakdownByRate(gar.SinagRateBuying, gar.gain_loss, gar.principal, gar.selling_rate, gar.total_bill_amount, gar.total_bill_count, gar.total_exchange_amount);
-
-                                    total_gain_loss += gar.gain_loss;
-
-                                    breakdownFooter(total_gain_loss);
-                                });
-
-                                $('#income').val(response.income.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}));
-                                $('#true-income').val(response.income.toFixed(2));
-
-                                $('#principal').val(response.principal.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}));
-                                $('#true-principal').val(response.principal.toFixed(2));
-
-                                $('#exch-amount').val(response.exchange_amnt.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}));
-                                $('#true-exch-amount').val(response.exchange_amnt.toFixed(2));
-                            }
-                        }
-                    });
-                }, 700);
+                validation(amount_to_cut, branch_id, currency_id, selling_rate);
             }
         });
+        
 
         function BranchPrompt($mgs, $branchid) {
             socket.emit('branchPrompt', {msg: $mgs, branchid: $branchid});
@@ -441,25 +390,88 @@
             $('#true-exch-amount').val(0);
         }
 
-        $('#proceed-transfer').click(function() {
-            if ($('#selected-bill-total-amount').val() == 0 || $('#selected-bill-total-amount').val() == '') {
-                $('#proceed-transfer').prop('disabled', true);
+        function validation(amount_to_cut, branch_id, currency_id, selling_rate) {
+            $('#container-test').fadeIn("fast");
+            $('#container-test').css('display', 'block');
 
-                Swal.fire({
-                    text: 'Buffer amount is required.',
-                    icon: 'error',
-                    showConfirmButton: true
-                }).then(() => {
-                    clear();
+            setTimeout(function() {
+                $.ajax({
+                    url: "{{ route('admin_transactions.buffer.b_cut_validation') }}",
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        buffer_type: $('input[name="buffer-type"]:checked').val(),
+                        amount: amount_to_cut,
+                        branch_id: branch_id,
+                        currency_id: currency_id,
+                        selling_rate: selling_rate,
+                    },
+                    success: function(data) {
+                        $('#container-test').fadeOut("fast");
+                        $('#proceed-transfer').prop('disabled', false);
 
-                    $(this).val('');
-                    $('#proceed-transfer').prop('disabled', false);
+                        var total_gain_loss = 0;
+                        const response = data[0];
+                        const response_1 = data[1];
+
+                        if (data.validity == 0 && data.buffer_type == 1) {
+                            Swal.fire({
+                                text: 'No exact amount in buffer stocks.',
+                                icon: 'error',
+                                showConfirmButton: true
+                            }).then(() => {
+                                clear();
+
+                                $('#proceed-transfer').prop('disabled', false);
+                            });
+                        } else if (data.validity_branch == 0 && data.buffer_type == 1) {
+                            Swal.fire({
+                                text: 'No exact amount in branch stocks.',
+                                icon: 'error',
+                                showConfirmButton: true
+                            }).then(() => {
+                                clear();
+
+                                $('#proceed-transfer').prop('disabled', false);
+                            });
+                        } else if (data.validity == 0 && data.buffer_type == 2) {
+                            Swal.fire({
+                                text: 'No exact amount in branch stocks.',
+                                icon: 'error',
+                                showConfirmButton: true
+                            }).then(() => {
+                                clear();
+
+                                $('#proceed-transfer').prop('disabled', false);
+                            });
+                        } else {
+                            if (data.buffer_type == 1) {
+                                $('#proceed-transfer').prop('disabled', false);
+                            } else {
+                                $('#by-rate-breakdown').find('tbody').empty();
+
+                                Object.values(response_1.grouped_by_rates).forEach(function(gar) {
+                                    breakdownByRate(gar.SinagRateBuying, gar.gain_loss, gar.principal, gar.selling_rate, gar.total_bill_amount, gar.total_bill_count, gar.total_exchange_amount);
+
+                                    total_gain_loss += gar.gain_loss;
+
+                                    breakdownFooter(total_gain_loss);
+                                });
+
+                                $('#income').val(response.income.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}));
+                                $('#true-income').val(response.income.toFixed(2));
+
+                                $('#principal').val(response.principal.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}));
+                                $('#true-principal').val(response.principal.toFixed(2));
+
+                                $('#exch-amount').val(response.exchange_amnt.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}));
+                                $('#true-exch-amount').val(response.exchange_amnt.toFixed(2));
+                            }
+                        }
+                    }
                 });
-            } else {
-                $('#buffer-cut-details').modal("hide");
-                $('#security-code-modal').modal("show");
-            }
-        });
+            }, 700);
+        }
 
         $('#halt-transaction').click(function() {
             $('#buffer-cut-details').modal("show");
@@ -501,6 +513,9 @@
                             timer: 900,
                             showConfirmButton: false
                         }).then(() => {
+                            $('#container-test').fadeIn("fast");
+                            $('#container-test').css('display', 'block');
+
                             var form_data = new FormData($('#declare-buffer-form')[0]);
 
                             form_data.append('matched_user_id', matched_user_id);
@@ -552,7 +567,9 @@
         });
 
         function breakdownByRate(SinagRateBuying, gain_loss, principal, selling_rate, total_bill_amount, total_bill_count, total_exchange_amount) {
-            var gain_loss_formatted = gain_loss.toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            var gain_loss_formatted = parseFloat(gain_loss).toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+            console.log(gain_loss);
 
             if (gain_loss > 1) {
                 gain_loss_formatted = '+' + gain_loss_formatted;
