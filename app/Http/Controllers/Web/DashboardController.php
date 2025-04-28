@@ -326,6 +326,18 @@ class DashboardController extends Controller {
             ->orderBy('fs.BillAmount', 'DESC')
             ->get();
 
+        $response = [
+            'stocks_set_o' => $stocks_set_o
+        ];
+
+        return response()->json($response);
+    }
+
+    public function buffer(Request $request) {
+        $stocks = $this->queries()['stocks'];
+
+        // DATEDIFF(CURDATE(), MAX(fd.TransactionDate)) AS max_days
+
         $buffer_o = $stocks->clone()
             ->selectRaw('fs.BillAmount, tc.Currency, fd.Rset, COUNT(fs.BillAmount) as bill_amount_count, GROUP_CONCAT(fs.Serials) as serials, SUM(fs.BillAmount) as sub_total')
             ->join('tbltransferforex as tf', 'fs.TFID', '=', 'tf.TransferForexID')
@@ -343,7 +355,6 @@ class DashboardController extends Controller {
 
         $response = [
             'buffer_o' => $buffer_o,
-            'stocks_set_o' => $stocks_set_o
         ];
 
         return response()->json($response);

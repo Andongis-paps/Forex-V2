@@ -33,7 +33,6 @@
                 success: function(data) {
                     clear();
                     loader();
-                    var buffer = data.buffer_o;
                     var regular = data.stocks_set_o;
 
                     if (regular.length > 0) {
@@ -47,17 +46,6 @@
                     } else {
                         $('#regular').hide();
                         $('#buffer').removeClass('mt-2');
-                    }
-
-                    if (buffer.length > 0) {
-                        clearLoader();
-                        $('#buffer').show();
-
-                        buffer.forEach(function(gar) {
-                            populateBuffer(gar.Currency, gar.BillAmount, gar.bill_amount_count, gar.Rset, gar.serials, gar.sub_total);
-                        });
-                    } else {
-                        $('#buffer').hide();
                     }
                 }
             });
@@ -84,6 +72,32 @@
 
             table.append(row);
         }
+
+        $('#buffer-button').click(function() {
+            $.ajax({
+                url: "{{ route('branch_transactions.dashbooard.buffer') }}",
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                },
+                success: function(data) {
+                    clear();
+                    loader();
+                    var buffer = data.buffer_o;
+
+                    if (buffer.length > 0) {
+                        clearLoader();
+                        $('#buffer').show();
+
+                        buffer.forEach(function(gar) {
+                            populateBuffer(gar.Currency, gar.BillAmount, gar.bill_amount_count, gar.Rset, gar.serials, gar.sub_total);
+                        });
+                    } else {
+                        $('#buffer').hide();
+                    }
+                }
+            });
+        });
 
         function populateBuffer(Currency, BillAmount, bill_amount_count, Rset, serials, sub_total) {
             var table = $('#buffer-stocks-table');

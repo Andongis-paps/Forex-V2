@@ -108,8 +108,8 @@ class AdminInitializeSetup {
         // Collect warnings
         if ($warning = prepareWarning($break_down, "BreakDown")) {
             $warnings['pending_serials'] = ['route' => [
-                'admin_transactions.buffer.buffer_serials',
-                'admin_transactions.buffer.break_d_finance'
+                'admin_transactions.buffer.break_d_finance',
+                'admin_transactions.buffer.buffer_serials'
             ],
             'message' => $warning];
         }
@@ -117,8 +117,8 @@ class AdminInitializeSetup {
         // Collect warnings
         if ($warning = prepareWarning($pending_serial, "PendingSerials")) {
             $warnings['pending_serials'] = ['route' => [
-                    'admin_transactions.buffer.buffer_serials',
-                    'admin_transactions.buffer.break_d_finance'
+                    'admin_transactions.buffer.break_d_finance',
+                    'admin_transactions.buffer.buffer_serials'
                 ],
             'message' => $warning];
         }

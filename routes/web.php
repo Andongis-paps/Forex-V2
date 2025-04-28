@@ -143,6 +143,7 @@ Route::group(['middleware' => ['auth', 'PreventBackHistory']], function () {
             Route::get('/', [DashboardController::class, 'branchdDashboard'])->name('branch_transactions.dashboard');
             Route::post('buyingSalesBreakdown', [DashboardController::class, 'buyingSalesBreakdown'])->name('branch_transactions.dashbooard.b_sales_breakd_down');
             Route::post('/stocks', [DashboardController::class, 'stocks'])->name('branch_transactions.dashbooard.stocks');
+            Route::post('/buffer', [DashboardController::class, 'buffer'])->name('branch_transactions.dashbooard.buffer');
             // Route::post('sendEmail', [DashboardController::class, 'sendEmail'])->name('dashbooard.send_email');
             // Route::get('userData', [DashboardController::class, 'userData'])->name('dashbooard.user_data');
         });

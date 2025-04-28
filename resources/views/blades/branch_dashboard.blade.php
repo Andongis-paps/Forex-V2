@@ -609,7 +609,7 @@
                                     </div>
 
                                     <div class="row" id="stocks-card">
-                                        <div class="col-12 px-0">
+                                        <div class="col-6 ps-0">
                                             <div class="card dahsboard-cards">
                                                 <div class="card-header pb-1 pt-3 mb-2 align-items-center ">
                                                     <div class="row align-items-center text-left">
@@ -617,7 +617,7 @@
                                                             <span class="font-semibold">Available Stocks</span>
                                                         </div>
                                                         <div class="col-6 pe-3 text-end">
-                                                            @if (count($result['buffer_stocks']) != 0 || count($result['available_stocks']) != 0)
+                                                            @if (count($result['available_stocks']) != 0)
                                                                 <a class="text-xs hover:!text-[#0D6EFD] hover:font-semibold cursor-pointer" id="stocks-button" data-bs-toggle="modal" data-bs-target="#stocks-modal"><span>See All</span></a>
                                                             @endif
                                                         </div>
@@ -626,7 +626,7 @@
                                                 <div class="card-body">
                                                     <div class="col-12 @if (count($result['available_stocks']) > 4) shadow-[inset_0_-7px_7px_-6px_rgba(0,0,0,0.3)] @endif" @if (count($result['available_stocks']) > 4) id="available-stocks-container" @endif>
                                                         <ul class="ps-2  @if (count($result['available_stocks']) > 4) pe-1 @endif m-0">
-                                                            @if (count($result['buffer_stocks']) > 0 || count($result['available_stocks']) > 0)
+                                                            @if (count($result['available_stocks']) > 0)
                                                                 @foreach ($result['available_stocks'] as $available_stocks)
                                                                     <li class="d-flex align-items-center mb-2">
                                                                         <div class="row align-items-center avatar me-3 text-xs">
@@ -676,33 +676,6 @@
                                                                         </div>
                                                                     </li>
                                                                 @endforeach
-
-                                                                @if (count($result['buffer_stocks']) > 0)
-                                                                    <li class="d-flex align-items-center mb-2">
-                                                                        <div class="row align-items-center avatar me-3 text-xs">
-                                                                            <div class="col-1 ps-2 pe-0">
-                                                                                <div class="avatar flex-shrink-0">
-                                                                                    <span class="avatar-initial rounded bg-label-secondary"><i class='bx bx-money'></i></span>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                                                                            @foreach ($result['buffer_stocks'] as $buffer_stocks)
-                                                                                <div class="me-2">
-                                                                                    <small class="text-muted d-block"><strong>{{ $buffer_stocks->CurrAbbv }}</strong></small>
-                                                                                    <small class="text-muted d-block"><span class="badge success-badge-custom font-bold text-xs p-1">Buffer</span></small>
-                                                                                    {{-- <span class="text-xs mb-0">{{ $buffer_stocks->Currency }}</span> --}}
-                                                                                </div>
-                                                                                <div class="user-progress d-flex align-items-center gap-2">
-                                                                                    <span class="text-xs font-bold mb-0">{{ number_format($buffer_stocks->total_amount, 2, '.', ',') }}</span>
-                                                                                    {{-- <span class="text-xs text-blue-500">
-                                                                                        <span class="badge primary-badge-custom"><text class="font-bold">{{ $buffer_stocks->count }}</text>@if ($buffer_stocks->count > 1) pcs.@else pc.@endif</span>
-                                                                                    </span> --}}
-                                                                                </div>
-                                                                            @endforeach
-                                                                        </div>
-                                                                    </li>
-                                                                @endif
                                                             @else
                                                                 <li class="d-flex align-items-center">
                                                                     {{-- <div class="row align-items-center avatar me-3 text-xs">
@@ -722,70 +695,64 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {{-- <div class="col-6 pe-0">
+                                        <div class="col-6 pe-0">
                                             <div class="card dahsboard-cards">
                                                 <div class="card-header pb-1 pt-3 mb-2 align-items-center ">
                                                     <div class="row align-items-center text-left">
-                                                        <div class="col-12">
-                                                            <span class="mb-2 font-semibold">Old Stocks</span>
+                                                        <div class="col-6 ps-3">
+                                                            <span class="font-semibold">Processed Buffer</span>
+                                                        </div>
+                                                        <div class="col-6 pe-3 text-end">
+                                                            @if (count($result['buffer_stocks']) != 0)
+                                                                <a class="text-xs hover:!text-[#0D6EFD] hover:font-semibold cursor-pointer" id="buffer-button" data-bs-toggle="modal" data-bs-target="#buffer-modal"><span>See Breakdown</span></a>
+                                                            @endif
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="card-body">
-                                                    <div class="col-12" @if (count($result['old_stocks']) > 4) id="old-stocks-container" @endif>
-                                                        <ul class="p-0 m-0">
-                                                            @forelse ($result['old_stocks'] as $old_stocks)
+                                                <div class="card-body pb-2">
+                                                    <div class="col-12">
+                                                        <ul class="@if (count($result['buffer_stocks']) > 0) ps-2 @else ps-0 @endif">
+                                                            @if (count($result['buffer_stocks']) > 0)
                                                                 <li class="d-flex align-items-center mb-2">
                                                                     <div class="row align-items-center avatar me-3 text-xs">
-                                                                        <div class="row align-items-center avatar me-3 text-xs">
-                                                                            <div class="col-1 ps-2 pe-0">
-                                                                                <div class="avatar flex-shrink-0">
-                                                                                    <span class="avatar-initial rounded bg-label-secondary"><i class='bx bx-money'></i></span>
-                                                                                </div>
+                                                                        <div class="col-1 ps-2 pe-0">
+                                                                            <div class="avatar flex-shrink-0">
+                                                                                <span class="avatar-initial rounded bg-label-secondary"><i class='bx bx-money'></i></span>
                                                                             </div>
                                                                         </div>
                                                                     </div>
                                                                     <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                                                                        <div class="me-2">
-                                                                            <small class="text-muted d-block"><strong>{{ $old_stocks->CurrAbbv }}</strong></small>
-                                                                            <span class="text-xs mb-0">{{ $old_stocks->Currency }}</span>
-                                                                        </div>
-                                                                        <div class="user-progress d-flex align-items-center gap-2">
-                                                                            <span class="text-xs font-bold mb-0">{{ number_format($old_stocks->TotalCurrencyAmount, 2, '.', ',') }}</span>
-                                                                            <span class="text-xs text-red-500">
-                                                                                <span class="badge danger-badge-custom">
-                                                                                    @if ($old_stocks->min_days > 3 && $old_stocks->min_days == $old_stocks->max_days)
-                                                                                        <text class="font-bold">{{ $old_stocks->min_days }}</text>
-                                                                                    @elseif ($old_stocks->min_days > 3 )
-                                                                                        <text class="font-bold">{{ $old_stocks->max_days }} - {{ $old_stocks->min_days }}</text>
-                                                                                    @elseif ($old_stocks->min_days < 3)
-                                                                                        <text class="font-bold">{{ $old_stocks->max_days }}</text>
-                                                                                    @elseif ($old_stocks->min_days == $old_stocks->min_days)
-                                                                                        <text class="font-bold">{{ $old_stocks->max_days }}</text>
-                                                                                    @endif
-
-                                                                                    @if ($old_stocks->Cnt > 1) days @else day @endif
-                                                                                </span>
-                                                                            </span>
-                                                                        </div>
+                                                                        @foreach ($result['buffer_stocks'] as $buffer_stocks)
+                                                                            <div class="me-2">
+                                                                                <small class="text-muted d-block"><strong>{{ $buffer_stocks->CurrAbbv }}</strong></small>
+                                                                                <small class="text-muted d-block"><span class="badge success-badge-custom font-bold text-xs p-1">Buffer</span></small>
+                                                                                {{-- <span class="text-xs mb-0">{{ $buffer_stocks->Currency }}</span> --}}
+                                                                            </div>
+                                                                            <div class="user-progress d-flex align-items-center gap-2">
+                                                                                <span class="text-xs font-bold mb-0">{{ number_format($buffer_stocks->total_amount, 2, '.', ',') }}</span>
+                                                                                {{-- <span class="text-xs text-blue-500">
+                                                                                    <span class="badge primary-badge-custom"><text class="font-bold">{{ $buffer_stocks->count }}</text>@if ($buffer_stocks->count > 1) pcs.@else pc.@endif</span>
+                                                                                </span> --}}
+                                                                            </div>
+                                                                        @endforeach
                                                                     </div>
                                                                 </li>
-                                                            @empty
+                                                            @else
                                                                 <li class="d-flex align-items-center">
                                                                     <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                                                         <div class="me-2">
-                                                                            <h6 class="fw-normal mb-0">No old stock(s) available.</h6>
+                                                                            <h6 class="fw-normal mb-0">No available stock.</h6>
                                                                         </div>
                                                                         <div class="user-progress d-flex align-items-center gap-2">
                                                                         </div>
                                                                     </div>
                                                                 </li>
-                                                            @endforelse
+                                                            @endif
                                                         </ul>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div> --}}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -796,6 +763,7 @@
         </div>
     </div>
 
+    @include('blades.buffer_modal')
     @include('blades.stocks_modal')
 @endsection
 
