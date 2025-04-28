@@ -368,7 +368,6 @@
                 validation(amount_to_cut, branch_id, currency_id, selling_rate);
             }
         });
-        
 
         function BranchPrompt($mgs, $branchid) {
             socket.emit('branchPrompt', {msg: $mgs, branchid: $branchid});

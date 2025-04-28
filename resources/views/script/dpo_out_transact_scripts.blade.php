@@ -67,6 +67,7 @@
 
                         $('#container-test').fadeIn(300);
                         $('#container-test').css('display', 'block');
+                        $('#dpoin-select-all').prop('checked', true);
 
                         setTimeout(function() {
                             DPO_in_transacts.forEach(function(gar) {

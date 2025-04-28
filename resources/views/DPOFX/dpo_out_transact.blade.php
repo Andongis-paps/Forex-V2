@@ -24,7 +24,7 @@
                                     <div class="row align-items-center">
                                         <div class="col-12">
                                             <span class="text-lg font-bold p-2 text-black">
-                                                <i class='bx bxs-badge-dollar'></i>&nbsp;{{ trans('labels.dpo_transact_out') }}
+                                                <i class="bx bx-select-multiple"></i>&nbsp;{{ trans('labels.dpo_transact_out') }}
                                             </span>
                                         </div>
                                     </div>
@@ -119,14 +119,17 @@
 
                         <div class="col-8">
                             <div class="card">
-                                <div class="col-12 p-1 border border-gray-300 rounded-tl rounded-tr">
+                                <div class="col-12 p-2 border border-gray-300 rounded-tl rounded-tr">
+                                    <span class="text-lg font-bold p-2 text-black">
+                                        <i class="bx bx-list-check"></i>&nbsp;{{ trans('labels.dpo_transact_out') }}
+                                    </span>
                                 </div>
 
                                 <div class="col-12">
                                     <table class="table table-bordered table-hover py-1" id="dpoin-transacts-table">
                                         <thead class="sticky-header">
                                             <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">
-                                                <input class="form-check-input" type="checkbox" id="dpoin-select-all" name="dpoin-select-all" checked>
+                                                <input class="form-check-input" type="checkbox" id="dpoin-select-all" name="dpoin-select-all">
                                             </th>
                                             <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Company</th>
                                             <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.dpo_transact_mtcn') }}</th>
