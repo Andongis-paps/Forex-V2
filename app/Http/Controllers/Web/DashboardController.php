@@ -322,7 +322,8 @@ class DashboardController extends Controller {
             ->where('fs.FSStat' , '=' , 1)
             ->where('fs.Transfer' , '=' , 0)
             ->groupBy('fs.BillAmount' , 'tc.Currency', 'fd.Rset', 'max_days')
-            ->orderBy('tc.Currency', 'ASC')
+            // ->orderBy('tc.Currency', 'ASC')
+            ->orderBy('max_days', 'DESC')
             ->orderBy('fs.BillAmount', 'DESC')
             ->get();
 

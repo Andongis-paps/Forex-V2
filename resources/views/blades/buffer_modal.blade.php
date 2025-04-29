@@ -14,7 +14,7 @@
                     <table class="table table-bordered table-hover m-0" id="buffer-stocks-table">
                         <thead>
                             <tr>
-                                <th class="text-center text-xs font-extrabold text-black p-1 w-50">{{ trans('labels.selling_currency') }}</th>
+                                <th class="text-center text-xs font-extrabold text-black p-1">{{ trans('labels.selling_currency') }}</th>
                                 <th class="text-center text-xs font-extrabold text-black p-1">Denomination</th>
                                 <th class="text-center text-xs font-extrabold text-black p-1">Count</th>
                                 <th class="text-center text-xs font-extrabold text-black p-1">Total</th>

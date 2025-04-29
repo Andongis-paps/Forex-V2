@@ -625,7 +625,7 @@
                                                 </div>
                                                 <div class="card-body">
                                                     <div class="col-12 @if (count($result['available_stocks']) > 4) shadow-[inset_0_-7px_7px_-6px_rgba(0,0,0,0.3)] @endif" @if (count($result['available_stocks']) > 4) id="available-stocks-container" @endif>
-                                                        <ul class="ps-2  @if (count($result['available_stocks']) > 4) pe-1 @endif m-0">
+                                                        <ul class="ps-2 @if (count($result['available_stocks']) > 4) pe-2 @endif m-0">
                                                             @if (count($result['available_stocks']) > 0)
                                                                 @foreach ($result['available_stocks'] as $available_stocks)
                                                                     <li class="d-flex align-items-center mb-2">
@@ -638,6 +638,9 @@
                                                                         </div>
                                                                         <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                                                             <div class="me-2">
+                                                                                @if ($available_stocks->stock_days > 3)
+                                                                                    <input class="old-stock-currency" type="hidden" value="{{ $available_stocks->Currency }}">
+                                                                                @endif
                                                                                 <small class="text-muted d-block"><strong>{{ $available_stocks->CurrAbbv }}</strong></small>
                                                                                 <span class="text-xs mb-0">{{ $available_stocks->Currency }}</span>
                                                                             </div>

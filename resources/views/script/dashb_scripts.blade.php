@@ -20,9 +20,55 @@
             updateClock();
             setInterval(updateClock, 60000);
         }, delay);
-    });
 
-    $(document).ready(function () {
+        if ($('.old-stock-currency').val()) {
+            let gar = '';
+            let array = [];
+            let height = '';
+            let currency = '';
+            let plural_form = '';
+
+            $('.old-stock-currency').each(function() {
+                array.push($(this).val());
+            });
+
+            array.forEach(function(test) {
+                currency +=   `<tr><td class="p-2 text-center text-xs border-t-gray-300">`+ test + `</td></tr>`;
+            })
+
+            gar = array.length > 1? 'are' : 'is';
+            ff = array.length > 1? 'from the' : 'from the following';
+            plural_form = array.length > 1? 'currency' : 'currencies';
+            height = array.length > 9? 'height: 300px!important;' : 'height: auto; ';
+
+            Swal.fire({
+                html:
+                `<div class="mb-3">
+                    <span class="text-sm text-black">Overdue stocks `+ gar +` seen `+ ff +` `+ plural_form +` listed below</span>:
+                </div>
+                <div class="row px-2">
+                    <div class="col-12 border border-gray-300 p-0" style="${height} overflow: hidden; overflow-y: scroll;">
+                        <table class="table table-hover mb-0">
+                            <thead style="position: sticky; top: 0; background: #fff; z-index: 3;">
+                                <tr>
+                                    <th class="border-gray-300 py-1 text-black font-bold text-center">Branch</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                `+ currency +`
+                            </tbody>
+                        </table>
+                    </div>
+                </div>`,
+                icon: 'warning',
+                showConfirmButton: true,
+                confirmButtonText: 'Proceed',
+                showClass: {
+                    popup: 'swal2-zoom-in'
+                },
+            });
+        }
+
         $('#stocks-button').click(function() {
             $.ajax({
                 url: "{{ route('branch_transactions.dashbooard.stocks') }}",
@@ -38,14 +84,12 @@
                     if (regular.length > 0) {
                         clearLoader();
                         $('#regular').show();
-                        $('#buffer').addClass('mt-2');
 
                         regular.forEach(function(gar) {
                             populateRegular(gar.Currency, gar.BillAmount, gar.bill_amount_count, gar.Rset, gar.serials, gar.sub_total, gar.max_days);
                         });
                     } else {
                         $('#regular').hide();
-                        $('#buffer').removeClass('mt-2');
                     }
                 }
             });
