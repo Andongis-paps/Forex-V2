@@ -189,7 +189,7 @@
                                     </div>
 
                                     <div class="col-12 p-2 border border-gray-300 rounded-bl rounded-br py-2">
-                                        {{ $result['dpo_in']->links() }}
+                                        {{ $result['dpo_out']->links() }}
                                     </div>
                                 </div>
                             </div>

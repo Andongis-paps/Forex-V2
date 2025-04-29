@@ -122,8 +122,8 @@
                                                         </thead>
                                                         <tbody id="rate-config-table-body">
                                                             <tr id="update-rate-config-banner">
-                                                                <td class="text-center text-td-buying text-sm py-3" colspan="13">
-                                                                    <span class="buying-no-transactions text-lg">
+                                                                <td class="text-center text-td-buying text-sm py-2" colspan="13">
+                                                                    <span class="buying-no-transactions">
                                                                         <strong>UPDATE RATE CONFIGURATION</strong>
                                                                     </span>
                                                                 </td>

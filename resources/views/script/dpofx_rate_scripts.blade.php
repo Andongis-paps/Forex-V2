@@ -54,22 +54,8 @@
                     }
                 });
             } else {
-                Swal.fire({
-                    title: 'Are you sure?',
-                    html: 'Selected branches?',
-                    icon: 'question',
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#8592a3',
-                    showCancelButton: true,
-                    confirmButtonText: 'Proceed',
-                    allowOutsideClick: false,
-                    allowEscapeKey: false,
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $('#security-code-modal').modal("show");
-                        $('#dpo-rate-maint-update-modal').modal("hide");
-                    }
-                });
+                $('#security-code-modal').modal("show");
+                $('#dpo-rate-maint-update-modal').modal("hide");
             }
         });
     });

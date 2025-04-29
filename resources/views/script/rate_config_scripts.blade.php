@@ -359,24 +359,10 @@
                         }
                     });
                 } else {
+                    $('#security-code-modal').modal('show');
+
                     var processed_branch_array = selected_branch_id.join(", ");
                     $('#rate-config-selected-branch').val(processed_branch_array);
-
-                    Swal.fire({
-                        title: 'Are you sure?',
-                        html: 'Apply rates to branches selected?<br>You can still change branches before applying.',
-                        icon: 'question',
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#8592a3',
-                        showCancelButton: true,
-                        confirmButtonText: 'Proceed',
-                        allowOutsideClick: false,
-                        allowEscapeKey: false,
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            $('#security-code-modal').modal('show');
-                        }
-                    });
                 }
             }
         });

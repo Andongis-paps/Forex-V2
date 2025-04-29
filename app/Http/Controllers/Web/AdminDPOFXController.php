@@ -99,25 +99,25 @@ class AdminDPOFXController extends Controller {
 
     public function DPOFXS(Request $request) {
         $DPO_transacts = DB::connection('forex')->table('tblforextransactiondetails as fd')
-            ->selectRaw('tb.BranchCode, tc.CompanyID, tc.CompanyName, fd.FTDID, fd.CurrencyAmount, fd.Amount, fd.MTCN, fd.TransactionDate, td.SinagRateBuying, fd.Rset')
+            ->selectRaw('tbx.BranchCode, tc.CompanyID, tc.CompanyName, fd.FTDID, fd.CurrencyAmount, fd.Amount, fd.MTCN, fd.TransactionDate, td.SinagRateBuying, fd.Rset')
             ->join('tblforexserials as fs', 'fd.FTDID', 'fs.FTDID')
             ->join('tbldenom as td', 'fs.DenomID', 'td.DenomID')
             ->join('tblbranch as tb', 'fd.BranchID', 'tb.BranchID')
-            ->join('pawnshop.tblxbranch as tbxb', 'tb.BranchCode', 'tbxb.BranchCode')
-            ->join('accounting.tblsegmentgroup as sgt', 'tb.BranchID', 'sgt.BranchID')
-            ->join('accounting.tblcompany as tc', 'sgt.CompanyID', 'tc.CompanyID')
-            ->join('accounting.tblsegments as sgg', 'sgt.SegmentID', 'sgg.SegmentID')
+            ->join('pawnshop.tblxbranch as tbx', 'tb.BranchCode', 'pawnshop.tbx.BranchCode')
+            ->join('accounting.tblsegmentgroup as sgt', 'pawnshop.tbx.BranchID', 'accounting.sgt.BranchID')
+            ->join('accounting.tblcompany as tc', 'accounting.sgt.CompanyID', 'tc.CompanyID')
+            ->join('accounting.tblsegments as sgg', 'accounting.sgt.SegmentID', 'accounting.sgg.SegmentID')
             ->whereNull('fd.DPDID')
-            ->where('fd.TransType', '=', 4)
-            ->where('sgg.SegmentID', '=', 3)
-            // ->where('fd.CompanyID', '=', $request->get('company_id'))
+            ->where('sgg.SegmentID', 3) 
+            ->where('fd.TransType', 4)
+            ->where('fd.BranchID', '<>', 10)
             ->when(is_null($request->get('date_to')), function ($query) use ($request) {
-                return $query->where('fd.TransactionDate', '=', $request->get('date_from'));
+                return $query->where('fd.TransactionDate', $request->get('date_from'));
             },function ($query) use ($request) {
                 return $query->whereBetween('fd.TransactionDate', [$request->get('date_from'), $request->get('date_to')]);
             })
-            ->orderBy('fd.TransactionDate', 'ASC')
-            ->groupBy('tb.BranchCode', 'tc.CompanyID', 'tc.CompanyName', 'fd.FTDID', 'fd.CurrencyAmount', 'fd.Amount', 'fd.MTCN', 'fd.TransactionDate', 'td.SinagRateBuying', 'fd.Rset')
+            ->orderBy('fd.TransactionDate', 'DESC')
+            ->groupBy('tbx.BranchCode', 'tc.CompanyID', 'tc.CompanyName', 'fd.FTDID', 'fd.CurrencyAmount', 'fd.Amount', 'fd.MTCN', 'fd.TransactionDate', 'td.SinagRateBuying', 'fd.Rset')
             ->get();
 
         $reponse = [
@@ -207,11 +207,15 @@ class AdminDPOFXController extends Controller {
 
     public function inDetails(Request $request) {
         $dpo_in_details = DB::connection('forex')->table('tbldpoin as di')
-            ->select('tc.CompanyName', 'tbx.BranchCode', 'di.MTCN', 'di.DollarAmount', 'di.RateUsed', 'di.Amount', 'di.Rset', 'di.EntryDate')
+            ->selectRaw('tc.CompanyName, tbx.BranchCode, di.MTCN, di.DollarAmount, di.RateUsed, di.Amount, di.Rset, di.EntryDate')
             ->join('tblbranch as tb', 'di.BranchID', 'tb.BranchID')
             ->join('pawnshop.tblxbranch as tbx', 'tb.BranchCode', 'tbx.BranchCode')
+            ->join('accounting.tblsegmentgroup as sgt', 'tbx.BranchID', 'sgt.BranchID')
             ->join('accounting.tblcompany as tc', 'di.CompanyID', 'tc.CompanyID')
+            ->join('accounting.tblsegments as sgg', 'sgt.SegmentID', 'sgg.SegmentID')
+            ->where('sgg.SegmentID', 3)
             ->where('di.DPDID', $request->get('DPDID'))
+            ->groupBy('tc.CompanyName', 'tbx.BranchCode', 'di.MTCN', 'di.DollarAmount', 'di.RateUsed', 'di.Amount', 'di.Rset', 'di.EntryDate')
             ->get();
 
         $response = [
@@ -252,10 +256,11 @@ class AdminDPOFXController extends Controller {
             ->join('tbldpoindetails as did', 'di.DPDID', 'did.DPDID')
             ->join('tblbranch as tb', 'di.BranchID', 'tb.BranchID')
             ->join('pawnshop.tblxbranch as tbx', 'tb.BranchCode', 'tbx.BranchCode')
-            ->join('accounting.tblsegmentgroup as sgt', 'tbx.BranchID', 'sgt.BranchID')
+            ->join('accounting.tblsegmentgroup as sgt', 'di.BranchID', 'sgt.BranchID')
             ->join('accounting.tblcompany as tc', 'sgt.CompanyID', 'tc.CompanyID')
             ->join('accounting.tblsegments as sgg', 'sgt.SegmentID', 'sgg.SegmentID')
             ->where('di.Sold', 0)
+            ->where('di.Inserted', 1)
             ->where('sgg.SegmentID', '=', 3)
             ->where('di.Rset', $request->get('receipt_set'))
             ->groupBy('di.DPOIID', 'tc.CompanyName', 'di.MTCN', 'di.DollarAmount', 'di.RateUsed', 'di.Amount')
@@ -358,7 +363,7 @@ class AdminDPOFXController extends Controller {
                     'DPOTID' => 2,
                     'DPOCType' => 2,
                     'DollarOut' => $value->DollarAmount,
-                    'Balance' =>  floatval($value->DollarAmount) - floatval($current_balance),
+                    'Balance' =>   floatval($current_balance) - floatval($value->DollarAmount),
                     'CompanyID' => $value->CompanyID,
                     'UserID' => $request->input('matched_user_id'),
                     'EntryDate' => $raw_date->toDateString()
@@ -406,7 +411,7 @@ class AdminDPOFXController extends Controller {
                     'trdate' => $raw_date->toDateString(),
                     'tramount' => $details->TranscapAmount,
                     'tobranchid' => $details->BranchID,
-                    'tremarks' => 'TRANSCAP - FOREX',
+                    'tremarks' => 'TRANSCAP - FOREX (DPOFX)',
                     'tbranchid' => 1,
                     'tappraiserid' => Auth::user()->UserID,
                     'tuserid' => $request->input('matched_user_id'),

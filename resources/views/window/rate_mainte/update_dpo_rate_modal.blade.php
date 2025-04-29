@@ -3,7 +3,7 @@
     @csrf
 
     <div class="modal-header ps-3">
-        <span class="modal-title text-lg font-bold" id="exampleModalLabel">{{ trans('labels.dpofx_update_rate') }}</span>
+        <span class="modal-title text-lg font-bold" id="exampleModalLabel"><i class='bx bx-save pe-1'></i>{{ trans('labels.dpofx_update_rate') }}</span>
     </div>
     
     <div class="modal-body px-4 py-2">

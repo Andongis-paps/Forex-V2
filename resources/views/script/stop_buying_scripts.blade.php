@@ -379,22 +379,8 @@
 
                 var joined_b_codes_aray = selected_branch_codes.join(", ");
                 $('#stop-buying-selected-b-codes').val(joined_b_codes_aray);
-
-                Swal.fire({
-                    title: 'Are you sure?',
-                    html: 'Apply rates to branches selected?<br>You can still change branches before applying.',
-                    icon: 'question',
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#8592a3',
-                    showCancelButton: true,
-                    confirmButtonText: 'Proceed',
-                    allowOutsideClick: false,
-                    allowEscapeKey: false,
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $('#security-code-modal').modal('show');
-                    }
-                });
+                
+                $('#security-code-modal').modal('show');
             }
         });
 

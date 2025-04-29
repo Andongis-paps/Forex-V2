@@ -43,8 +43,8 @@
 
             Swal.fire({
                 html:
-                `<div class="mb-3">
-                    <span class="text-sm text-black">Overdue stocks `+ gar +` seen `+ ff +` `+ plural_form +` listed below</span>:
+                `<div class="mb-2">
+                    <span class="text-sm text-black">Overdue stocks `+ gar +` seen `+ ff +` `+ plural_form +` listed below</span>:                                                   
                 </div>
                 <div class="row px-2">
                     <div class="col-12 border border-gray-300 p-0" style="${height} overflow: hidden; overflow-y: scroll;">
@@ -59,6 +59,9 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
+                <div class="my-2">
+                    <span><small><i class="bx bx-info-circle me-1"></i>Note: Stocks that are <strong>3 days old or older</strong> are considered <strong>overdue stocks</strong>.</small></span>
                 </div>`,
                 icon: 'warning',
                 showConfirmButton: true,
@@ -96,9 +99,9 @@
         });
 
         function populateRegular(Currency, BillAmount, bill_amount_count, Rset, serials, sub_total, max_days) {
-            var days = max_days == 1 ? `Day` : `Days`;
+            var days = max_days <= 1 ? `Day` : `Days`;
 
-            var days_badge = max_days <= 3 ? `<span class="badge primary-badge-custom">${max_days} ${days}</span>` : `<span class="badge warning-badge-custom">${max_days} ${days}</span>`;
+            var days_badge = max_days <= 3 ? `<span class="badge primary-badge-custom">${max_days <= 0 ? `New` : `${max_days} ${days}`} </span>` : `<span class="badge warning-badge-custom">${max_days} ${days}</span>`;
 
             var table = $('#reg-stocks-o-table');
             var row = $('<tr>');
@@ -106,7 +109,7 @@
             var denomination = $(`<td class="text-center text-black text-sm p-1">${BillAmount.toFixed(2)}</td>`);
             var count = $(`<td class="text-center text-black text-sm p-1">${bill_amount_count}</td>`);
             var sub_total = $(`<td class="text-end text-black text-sm py-1 pe-2"><strong>${sub_total.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2})}</strong></td>`);
-            var days_old = $(`<td class="text-center text-black text-sm py-1 pe-2"><strong>${days_badge}</strong></td>`);
+            var days_old = $(`<td class="text-center text-black text-sm py-1"><strong>${days_badge}</strong></td>`);
             
             row.append(currency);
             row.append(denomination);

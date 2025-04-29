@@ -68,7 +68,11 @@
                                             </div>
                                         </div>
 
-                                        <div class="row align-items-center justify-content-center mt-3 mb-1">
+                                        <div class="col-12 mt-2 mb-0" id="c-searching-label">
+                                            <span class="text-muted"><small><i class="bx bx-info-circle me-1"></i>Note: The selected denominations will no longer be available for buying transaction at branches.</small></span>
+                                        </div>
+
+                                        <div class="row align-items-center justify-content-center mt-2 mb-1">
                                             <div class="col-2">
                                                 <div class="row px-1">
                                                     @can('add-permission', $menu_id)
@@ -76,10 +80,6 @@
                                                     @endcan
                                                 </div>
                                             </div>
-                                        </div>
-
-                                        <div class="col-12 mt-2" id="c-searching-label">
-                                            <span class="text-muted"><small><i class="bx bx-info-circle me-1"></i>Note: The selected denominations will no longer be available for both buying and selling transactions at branches.</small></span>
                                         </div>
                                     </div>
 
@@ -100,8 +100,8 @@
                                                         </thead>
                                                         <tbody id="stop-buying-table-body">
                                                             <tr id="update-stop-buying-banner">
-                                                                <td class="text-center text-td-buying text-sm py-3" colspan="13">
-                                                                    <span class="buying-no-transactions text-lg">
+                                                                <td class="text-center text-td-buying text-sm py-2" colspan="13">
+                                                                    <span class="buying-no-transactions">
                                                                         <strong>UPDATE STOP BUYING</strong>
                                                                     </span>
                                                                 </td>

@@ -85,7 +85,7 @@ class User extends Authenticatable {
                 'accounting.tblcompany.CompanyID',
                 'accounting.tblcompany.CompanyName'
             )
-            ->where('accounting.tblsegments.SegmentID', '=', 3)
+            ->where('accounting.tblsegments.SegmentID', 3)
             ->where('tblbranch.BranchCode', Auth::user()->BranchCode)
             ->first();
 
