@@ -285,6 +285,7 @@ class SellingTransactController extends Controller {
             'ReceiptNo' => $get_receipt_selling->updatedReceiptNo,
             'ORNo' => $request->input('or-number-selling'),
             'Rset' => $radio_rset,
+            'CompanyID' => Auth::user()->getBranch()->CompanyID,
             'RIBRate' => $RIB_selling_variance,
             'RIBAmount' => $RIB_selling_variance * array_sum($request->input('currency-amnt-selling')),
         );

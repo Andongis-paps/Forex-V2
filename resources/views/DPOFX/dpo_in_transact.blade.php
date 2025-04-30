@@ -90,7 +90,7 @@
                                                 <tbody id="dpofx-transacts-table-tbody">
 
                                                 </tbody>
-                                                <tfoot class="sticky-footer">
+                                                <tfoot>
                                                     <tr>
                                                         <td colspan="6"></td>
                                                         <td class="text-right text-sm py-1 px-3">

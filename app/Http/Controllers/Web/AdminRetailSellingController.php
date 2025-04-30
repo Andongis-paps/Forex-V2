@@ -308,7 +308,8 @@ class AdminRetailSellingController extends Controller {
             'SellingNo' => $get_transaction_no,
             'ReceiptNo' => $get_receipt_no,
             'ORNo' => $request->input('or-number-selling'),
-            'Rset' => $radio_rset
+            'Rset' => $radio_rset,
+            'CompanyID' => Auth::user()->getBranch()->CompanyID,
         );
 
         $validator = Validator::make($request->all(), [
