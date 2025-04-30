@@ -43,7 +43,7 @@
                                         </div>
 
                                         <div class="col-12 pb-0 border border-l border-r border-gray-400 border-opacity-100" id="selling-container-set-o">
-                                            <div class="row align-items-center justify-content-center mt-3">
+                                            <div class="row align-items-center justify-content-center mt-2">
                                                 {{-- <div class="col-2 offset-2">
                                                     <strong>
                                                         {{ trans('labels.selling_trans_date') }}: &nbsp;<span class="required-class">*</span>

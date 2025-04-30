@@ -40,8 +40,8 @@
                                                 <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.transact_#') }}</th>
                                                 {{-- <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Company</th> --}}
                                                 <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Processed By</th>
-                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Dollar Amount</th>
-                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Exchange Amount</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Total Amount</th>
+                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Total Principal</th>
                                                 @can('access-permission', $menu_id)
                                                     <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Action</th>
                                                 @endcan
@@ -72,7 +72,7 @@
                                                             {{ number_format($dpo_ins->DollarAmount, 2, '.', ',') }}
                                                         </td>
                                                         <td class="text-right text-xs py-1 px-3">
-                                                            {{ number_format($dpo_ins->Amount, 2, '.', ',') }}
+                                                            {{ number_format($dpo_ins->TotalPrincipalAmount, 2, '.', ',') }}
                                                         </td>
                                                         @can('access-permission', $menu_id)
                                                             <td class="text-center text-xs p-1">
@@ -85,7 +85,7 @@
 
                                                     @php
                                                         $total_dollar_amnt += $dpo_ins->DollarAmount;
-                                                        $total_peso_amnt += $dpo_ins->Amount;
+                                                        $total_peso_amnt += $dpo_ins->TotalPrincipalAmount;
                                                     @endphp
                                                 @empty
                                                     <tr>

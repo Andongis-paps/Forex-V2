@@ -85,7 +85,7 @@
                                     </div>
         
                                     <div class="row justify-content-center align-items-center justify-content-center mb-2">
-                                        <div class="col-6">
+                                        <div class="col-12">
                                             <div class="input-group">
                                                 <span class="input-group-text font-bold">$</span>
                                                 {{-- <span class="input-group-text">Selling Rate</span> --}}
@@ -96,7 +96,7 @@
                                     </div>
         
                                     <div class="row justify-content-center align-items-center mt-2">
-                                        <div class="col-4 text-center">
+                                        <div class="col-6 text-center">
                                             <div class="row">
                                                 @can('add-permission', $menu_id)
                                                     <button class="btn btn-primary btn-sm" type="button" id="generate-dpo-in-data">Generate</button>
@@ -134,9 +134,10 @@
                                             <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Company</th>
                                             <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.dpo_transact_mtcn') }}</th>
                                             <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Dollar Amount</th>
-                                            <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Rate</th>
-                                            <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.dpo_transact_amnt') }}</th>
+                                            <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Selling Rate</th>
+                                            <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Rate Used</th>
                                             <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Exch. Amount</th>
+                                            <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">{{ trans('labels.dpo_transact_amnt') }}</th>
                                             <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Gain/Loss</th>
                                         </thead>
                                         <tbody id="dpoin-transacts-table-tbody">
@@ -149,7 +150,7 @@
                                                     <strong><span class="text-sm font-extrabold text-black">&#36;</span>&nbsp; <span id="total-dpofx-amount">0.00</span></strong>
                                                     <input type="hidden" id="true-total-dpofx-amnt" value="">
                                                 </td>
-                                                <td colspan="1"></td>
+                                                <td colspan="2"></td>
                                                 <td class="text-right text-sm py-1 pe-2">
                                                     <strong><span class="text-sm font-extrabold text-black">PHP</span>&nbsp; <span id="total-peso-amount">0.00</span></strong>
                                                     <input type="hidden" id="true-total-peso-amount" value="">

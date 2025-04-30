@@ -71,12 +71,12 @@
 
                         setTimeout(function() {
                             DPO_in_transacts.forEach(function(gar) {
-                                dpoInDetails(gar.DPOIID, gar.CompanyName, gar.MTCN, gar.DollarAmount, gar.RateUsed, gar.Amount, gar.exchange_amount, gar.gain_loss);
+                                dpoInDetails(gar.DPOIID, gar.CompanyName, gar.MTCN, gar.DollarAmount, gar.SinagRateBuying, gar.PrincipalAmount, gar.exchange_amount, gar.gain_loss, $('#petnet-selling-rate').val());
 
                                 total_dollar_amnt += parseFloat(gar.DollarAmount);
                                 total_gain_loss += parseFloat(gar.gain_loss);
 
-                                total_capital += parseFloat(gar.Amount);
+                                total_capital += parseFloat(gar.PrincipalAmount);
                                 total_exchange_amnt += parseFloat(gar.exchange_amount);
                             });
 
@@ -91,7 +91,7 @@
             });
         });
 
-        function dpoInDetails(DPOIID, CompanyName, MTCN, DollarAmount, RateUsed, Amount, exchange_amount, gain_loss) {
+        function dpoInDetails(DPOIID, CompanyName, MTCN, DollarAmount, SinagRateBuying, PrincipalAmount, exchange_amount, gain_loss, SellingRate) {
             var gain_loss_formatted = gain_loss.toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
             if (gain_loss > 1) {
@@ -109,8 +109,9 @@
             var company = $('<td class="text-center text-sm p-1">'+ CompanyName +'</td>');
             var mtcn = $('<td class="text-center text-sm p-1">'+ MTCN +'</td>');
             var dollar_amnt = $('<td class="text-right text-sm py-1 pe-2">'+ DollarAmount.toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) +'</td>');
-            var rate_used = $('<td class="text-right text-sm py-1 pe-2">'+ RateUsed.toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) +'</td>');
-            var peso_amnt = $('<td class="text-right text-sm py-1 pe-2">'+ Amount.toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) +'</td>');
+            var selling_rate = $('<td class="text-right text-sm py-1 pe-2">'+ SellingRate.toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) +'</td>');
+            var rate_used = $('<td class="text-right text-sm py-1 pe-2">'+ SinagRateBuying.toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) +'</td>');
+            var peso_amnt = $('<td class="text-right text-sm py-1 pe-2">'+ PrincipalAmount.toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) +'</td>');
             var exchange_amnt = $('<td class="text-right text-sm py-1 pe-2">'+ exchange_amount.toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) +'</td>');
             var processed_gain_loss = $(`<td class="text-right text-sm py-1 pe-2"><span class="text-[${text_color}] font-bold text-xs"><text> ${gain_loss_formatted} ${icon_gain_loss}</text></span></td>`);
 
@@ -118,9 +119,10 @@
             row.append(company);
             row.append(mtcn);
             row.append(dollar_amnt);
+            row.append(selling_rate);
             row.append(rate_used);
-            row.append(peso_amnt);
             row.append(exchange_amnt);
+            row.append(peso_amnt);
             row.append(processed_gain_loss);
 
             table.find('tbody').append(row);

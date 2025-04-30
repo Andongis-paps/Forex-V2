@@ -233,10 +233,10 @@
                                         <table class="table table-bordered table-hover">
                                             <thead>
                                                 <tr>
-                                                    <th class="text-center text-sm font-extrabold text-black p-1 whitespace-nowrap">Currency</th>
-                                                    <th class="text-center text-sm font-extrabold text-black p-1 whitespace-nowrap">Amount</th>
-                                                    <th class="text-center text-sm font-extrabold text-black p-1 whitespace-nowrap">Selling Rate</th>
-                                                    <th class="text-center text-sm font-extrabold text-black p-1 whitespace-nowrap">Total (PESO)</th>
+                                                    <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Currency</th>
+                                                    <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Amount</th>
+                                                    <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Selling Rate</th>
+                                                    <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Total (PESO)</th>
                                                 </tr>
                                             </thead>
                                             <tbody>

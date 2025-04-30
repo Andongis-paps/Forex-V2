@@ -35,24 +35,34 @@
                             <div class="col-12 p-2 border border-gray-300">
                                 <form class="mb-0" method="post" id="dpofx-in-form">
                                     @csrf
-                                    <div class="row align-items-center justify-content-center px-2">
-                                        {{-- <div class="col-4">
-                                            <label class="mb-1" for="dpo-reference-number">
-                                                <strong>
-                                                    {{ trans('labels.dpo_add_company') }}:
-                                                </strong>
-                                            </label>
-
-                                            <select class="form-select" name="select-company" id="select-company">
-                                                <option value="">Select a company</option>
-                                                @foreach ($result['company'] as $company)
-                                                    <option value="{{ $company->CompanyID }}">{{ $company->CompanyName }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div> --}}
-
-                                        <div class="col-4">
+                                    <div class="row align-items-center justify-content-center">
+                                        <div class="col-5">
                                             <input class="form-control" name="dpo-transact-date" id="dpo-transact-date" type="text" placeholder="Date from 'YYYY-MM-DD' to 'YYYY-MM-DD'">
+                                        </div>
+                                    </div>
+
+                                    {{-- Buying Transaction - Receipt Set --}}
+                                    <div class="row align-items-center justify-content-center mt-2 @if(session('time_toggle_status') == 1) d-none @endif">
+                                        <div class="col-5">
+                                            <div class="row">
+                                                <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                                                    <input type="radio" class="btn-check" name="radio-rset" id="r-set-o" value="{{ trans('labels.buying_rset_o') }}" @if(session('time_toggle_status') == 1) @endif disabled>
+                                                    <label class="btn btn-outline-primary" for="r-set-o">
+                                                        <strong>{{ trans('labels.buying_rset_o') }}</strong>
+                                                    </label>
+
+                                                    <input type="radio" class="btn-check" name="radio-rset" id="r-set-b" value="{{ trans('labels.buying_rset_b') }}" disabled>
+                                                    <label class="btn btn-outline-primary" for="r-set-b">
+                                                        <strong>{{ trans('labels.buying_rset_b') }}</strong>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row align-items-center justify-content-center  mt-2">
+                                        <div class="col-5">
+                                            <textarea class="form-control" id="remarks" name="remarks" rows="2"  placeholder="Remarks" disabled></textarea>
                                         </div>
                                     </div>
 

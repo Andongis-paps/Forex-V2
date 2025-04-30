@@ -215,7 +215,6 @@
                                                             $sum_php_amnt += $total_php_amnt;
                                                         @endphp
                                                     @endforeach
-
                                                 <tfoot>
                                                     <tr>
                                                         <td colspan="3">

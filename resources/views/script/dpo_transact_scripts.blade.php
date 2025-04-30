@@ -2,6 +2,9 @@
 <script>
     $(document).ready(function() {
         $('.dpo-in-details').click(function() {
+            $('#container-test').fadeIn("fast");
+            $('#container-test').css('display', 'block');
+
             $.ajax({
                 url: "{{ route('admin_transactions.dpofx.dpo_in_details') }}",
                 type: "POST",
@@ -11,29 +14,30 @@
                 },
                 success: function(data) {
                     resetTables();
+                    $('#container-test').fadeOut("fast");
 
                     var dpo_in_details = data.dpo_in_details;
 
                     dpo_in_details.forEach(function(gar) {
-                        dpoInDetails(gar.BranchCode, gar.CompanyName, gar.MTCN, gar.DollarAmount, gar.RateUsed, gar.Amount, gar.Rset, gar.EntryDate);
+                        dpoInDetails(gar.BranchCode, gar.CompanyName, gar.MTCN, gar.DollarAmount, gar.SinagRateBuying, gar.PrincipalAmount, gar.Rset, gar.EntryDate);
                     });
                 }
             });
         });
 
-        function dpoInDetails(BranchCode, CompanyName, MTCN, DollarAmount, RateUsed, Amount, Rset, EntryDate) {
+        function dpoInDetails(BranchCode, CompanyName, MTCN, DollarAmount, SinagRateBuying, PrincipalAmount, Rset, EntryDate) {
             var table = $('#dpo-in-details-table');
             var row = $('<tr>');
             var branch = $('<td class="text-center text-sm p-1">'+ BranchCode +'</td>');
             var company = $('<td class="text-center text-sm p-1">'+ CompanyName +'</td>');
             var mtcn = $('<td class="text-center font-bold text-sm p-1">'+ MTCN +'</td>');
             var dollar_amnt = $('<td class="text-right text-sm py-1 pe-2">'+ DollarAmount.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}) +'</td>');
-            var rate = $('<td class="text-right text-sm py-1 pe-2">'+ RateUsed.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}) +'</td>');
-            var peso_amnt = $('<td class="text-right text-sm font-bold py-1 pe-2">'+ Amount.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}) +'</td>');
+            var rate = $('<td class="text-right text-sm py-1 pe-2">'+ SinagRateBuying.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}) +'</td>');
+            var peso_amnt = $('<td class="text-right text-sm font-bold py-1 pe-2">'+ PrincipalAmount.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}) +'</td>');
             var receipt_set = $('<td class="text-center text-sm p-1">'+ Rset +'</td>');
             var entry_date = $('<td class="text-center text-sm p-1">'+ EntryDate +'</td>');
 
-            row.append(entry_date);
+            // row.append(entry_date);
             row.append(branch);
             row.append(company);
             row.append(receipt_set);
@@ -71,7 +75,13 @@
         });
 
         $('#dpo-transact-date').change(function() {
-            $('#generate-dpo-transacts').removeAttr('disabled');
+            $('input[name="radio-rset"]').prop('disabled', false);
+        });
+
+        $('input[name="radio-rset"]').change(function() {
+            emptyDPOTable();
+            $('#remarks').prop('disabled', false);
+            $('#generate-dpo-transacts').prop('disabled', false);
         });
 
         $('#dpofx-select-all').click(function() {
@@ -89,8 +99,7 @@
         });
 
         $('#generate-dpo-transacts').click(function() {
-            var raw_dates =  $('#dpo-transact-date').val();
-            var dates = raw_dates.split(" TO ");
+            var dates = $('#dpo-transact-date').val().split(" TO ");
             var date_from = dates[0];
             var date_to = dates[1];
 
@@ -98,10 +107,11 @@
                 url: "{{ route('admin_transactions.dpofx.DPOFXS') }}",
                 type: "POST",
                 data: {
+                    _token: "{{ csrf_token() }}",
                     date_to: date_to,
                     date_from: date_from,
-                    raw_dates: raw_dates,
-                    _token: "{{ csrf_token() }}",
+                    raw_dates: $('#dpo-transact-date').val(),
+                    receipt_set: $('input[name="radio-rset"]:checked').val(),
                 },
                 success: function(gar) {
                     var dpo_trans = gar.DPO_transacts
@@ -111,6 +121,8 @@
                             icon: 'error',
                             text: 'No DPOFX available.',
                         });
+
+                        emptyDPOTable();
                     } else {
                         $('#container-test').fadeIn("slow");
                         $('#container-test').css('display', 'block');
@@ -244,10 +256,6 @@
                 }
             });
 
-            console.log(FTDIDs.join(", "));
-            console.log(dpo_amount.join(", "));
-            console.log(peso_amount.join(", "));
-
             saveDPOIn(FTDIDs.join(", "), dpo_amount.join(", "), peso_amount.join(", "));
         });
 
@@ -294,6 +302,7 @@
                                 form_data.append('FTDIDs', FTDIDs);
                                 form_data.append('total_dpo_amnt', dpo_amount);
                                 form_data.append('total_peso_amnt', peso_amount);
+                                form_data.append('receipt_set', $('input[name="radio-rset"]:checked').val());
 
                                 $.ajax({
                                     url: "{{ route('admin_transactions.dpofx.save_dpo_in') }}",
