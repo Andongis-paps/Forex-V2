@@ -235,7 +235,7 @@ class AdminDPOFXController extends Controller {
         $menu_id = $this->MenuID;
 
         $result['dpo_out'] = DB::connection('forex')->table('tbldpooutdetails as did')
-            ->select('did.DPODOID', 'did.DPOSellingNo', 'tcx.FullName', 'did.DollarAmount', 'did.SellingRate', 'did.Principal', 'did.ExchangeAmount', 'did.GainLoss', 'tbx.Name', 'did.EntryDate', 'did.Remarks')
+            ->select('did.DPODOID', 'did.DPOSellingNo', 'tcx.FullName', 'did.DollarAmount', 'did.TotalPrincipal', 'did.TotalExchangeAmount', 'did.TotalGainLoss', 'tbx.Name', 'did.TransactionDate', 'did.Remarks')
             ->join('pawnshop.tblxcustomer as tcx', 'did.CustomerID', 'tcx.CustomerID')
             ->join('pawnshop.tblxusers as tbx', 'did.UserID', 'tbx.UserID')
             ->orderBy('did.DPODOID', 'DESC')
@@ -448,19 +448,11 @@ class AdminDPOFXController extends Controller {
         $menu_id = $this->MenuID;
 
         $result['dpo_out'] = DB::connection('forex')->table('tbldpooutdetails as dod')
-            ->selectRaw('dod.DPODOID, dod.DPOSellingNo, tc.FullName, dod.DollarAmount, dod.SellingRate, dod.Principal, dod.ExchangeAmount, dod.GainLoss, tbx.Name, dod.EntryDate, dod.Remarks, dod.Rset, dod.CustomerID')
+            ->selectRaw('dod.DPODOID, dod.DPOSellingNo, tc.FullName, dod.DollarAmount, dod.TotalPrincipal, dod.TotalExchangeAmount, dod.TotalGainLoss, tbx.Name, dod.DateSold, dod.Remarks, dod.Rset, dod.CustomerID')
             ->join('pawnshop.tblxcustomer as tc', 'dod.CustomerID', 'tc.CustomerID')
             ->join('pawnshop.tblxusers as tbx', 'dod.UserID', 'tbx.UserID')
             ->where('dod.DPODOID', $request->id)
-            ->groupBy('dod.DPODOID', 'dod.DPOSellingNo', 'tc.FullName', 'dod.DollarAmount', 'dod.SellingRate', 'dod.Principal', 'dod.ExchangeAmount', 'dod.GainLoss', 'tbx.Name', 'dod.EntryDate', 'dod.Remarks', 'dod.Rset', 'dod.CustomerID')
-            ->get();
-
-        $result['dpo_out'] = DB::connection('forex')->table('tbldpooutdetails as dod')
-            ->selectRaw('dod.DPODOID, dod.DPOSellingNo, tc.FullName, dod.DollarAmount, dod.SellingRate, dod.Principal, dod.ExchangeAmount, dod.GainLoss, tbx.Name, dod.EntryDate, dod.Remarks, dod.Rset, dod.CustomerID')
-            ->join('tbldpoout as dop', 'dod.DPODOID', 'dop.DPODOID')
-            ->join('accounting.tblcompany as atc', 'dop.CompanyID', 'atc.CompanyID')
-            ->where('dop.DPODOID', $request->id)
-            ->groupBy('dod.DPODOID', 'dod.DPOSellingNo', 'tc.FullName', 'dod.DollarAmount', 'dod.SellingRate', 'dod.Principal', 'dod.ExchangeAmount', 'dod.GainLoss', 'tbx.Name', 'dod.EntryDate', 'dod.Remarks', 'dod.Rset', 'dod.CustomerID')
+            ->groupBy('dod.DPODOID', 'dod.DPOSellingNo', 'tc.FullName', 'dod.DollarAmount', 'dod.TotalPrincipal', 'dod.TotalExchangeAmount', 'dod.TotalGainLoss', 'tbx.Name', 'dod.DateSold', 'dod.Remarks', 'dod.Rset', 'dod.CustomerID')
             ->get();
 
         $result['fc_form_series'] = DB::connection('forex')->table('tblfcformseries')

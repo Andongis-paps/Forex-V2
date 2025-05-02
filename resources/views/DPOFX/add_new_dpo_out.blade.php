@@ -40,7 +40,6 @@
                                                 {{-- <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Transacted By</th> --}}
                                                 <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Remarks</th>
                                                 <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Dollar Amount</th>
-                                                <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Selling Rate</th>
                                                 <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Principal</th>
                                                 <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Exchange Amount</th>
                                                 <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Gain/Loss</th>
@@ -59,7 +58,7 @@
                                                 @forelse ($result['dpo_out'] as $dpo_out)
                                                     <tr>
                                                         <td class="text-center text-sm p-1">
-                                                            {{ \Carbon\Carbon::parse($dpo_out->EntryDate)->format('Y-m-d') }}
+                                                            {{ \Carbon\Carbon::parse($dpo_out->TransactionDate)->format('Y-m-d') }}
                                                         </td>
                                                         <td class="text-center text-sm p-1">
                                                             {{ $dpo_out->DPOSellingNo }}
@@ -81,17 +80,14 @@
                                                             {{ number_format($dpo_out->DollarAmount, 2, '.', ',') }}
                                                         </td>
                                                         <td class="text-right text-sm py-1 pe-2">
-                                                            {{ number_format($dpo_out->SellingRate, 2, '.', ',') }}
+                                                            {{ number_format($dpo_out->TotalPrincipal, 2, '.', ',') }}
                                                         </td>
                                                         <td class="text-right text-sm py-1 pe-2">
-                                                            {{ number_format($dpo_out->Principal, 2, '.', ',') }}
-                                                        </td>
-                                                        <td class="text-right text-sm py-1 pe-2">
-                                                            {{ number_format($dpo_out->ExchangeAmount, 2, '.', ',') }}
+                                                            {{ number_format($dpo_out->TotalExchangeAmount, 2, '.', ',') }}
                                                         </td>
                                                         <td class="text-right text-sm py-1 px-2">
-                                                            <span class="badge @if ($dpo_out->GainLoss >= 0) success-badge-custom @else danger-badge-custom @endif">
-                                                                @if ($dpo_out->GainLoss >= 0){{ trans('labels.gain_symbol') }}@else{{ trans('labels.loss_symbol') }}@endif{{ number_format(str_replace('-', '', $dpo_out->GainLoss), 2, '.', ',') }}  @if ($dpo_out->GainLoss >= 0) <i class='bx bxs-up-arrow pb-1' style="font-size: .5rem;"></i> @else <i class='bx bxs-down-arrow pb-1' style="font-size: .5rem;"></i> @endif
+                                                            <span class="badge @if ($dpo_out->TotalGainLoss >= 0) success-badge-custom @else danger-badge-custom @endif">
+                                                                @if ($dpo_out->TotalGainLoss >= 0){{ trans('labels.gain_symbol') }}@else{{ trans('labels.loss_symbol') }}@endif{{ number_format(str_replace('-', '', $dpo_out->TotalGainLoss), 2, '.', ',') }}  @if ($dpo_out->TotalGainLoss >= 0) <i class='bx bxs-up-arrow pb-1' style="font-size: .5rem;"></i> @else <i class='bx bxs-down-arrow pb-1' style="font-size: .5rem;"></i> @endif
                                                             </span>
                                                         </td>
                                                         @can('access-permission', $menu_id)

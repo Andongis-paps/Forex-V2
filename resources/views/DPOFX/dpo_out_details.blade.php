@@ -35,11 +35,11 @@
                                     @foreach ($result['dpo_out'] as $dpo_out)
                                         <form class="mb-0" method="post" id="update-dpo-out-details-form">
                                             @csrf
-                                            <div class="col-12 p-2 border border-gray-300">
+                                            <div class="col-12 py-2 px-0 border border-gray-300">
                                                 <div class="row align-items-center px-3">
                                                     <div class="col-3">
                                                         <strong>
-                                                            {{ trans('labels.transact_#') }} :
+                                                            {{ trans('labels.transact_#') }}:
                                                         </strong>
                                                     </div>
                                                     <div class="col-9">
@@ -50,7 +50,7 @@
                                                 <div class="row align-items-center px-3 my-2">
                                                     <div class="col-3">
                                                         <strong>
-                                                            Processed By :
+                                                            Processed By:
                                                         </strong>
                                                     </div>
                                                     <div class="col-9">
@@ -61,7 +61,7 @@
                                                 <div class="row align-items-center px-3 my-2">
                                                     <div class="col-3">
                                                         <strong>
-                                                            Receipt Set :
+                                                            Receipt Set:
                                                         </strong>
                                                     </div>
                                                     <div class="col-9">
@@ -73,7 +73,7 @@
                                                     <div class="row align-items-center px-3 mt-2 d-none" id="customer-container">
                                                         <div class="col-3">
                                                             <strong>
-                                                                {{ trans('labels.transact_customer') }}&nbsp;:
+                                                                {{ trans('labels.transact_customer') }}:
                                                             </strong>
                                                         </div>
                                                         <div class="col-6">
@@ -92,7 +92,7 @@
                                                     <div class="row align-items-center px-3 my-2" id="customer-details-cont">
                                                         <div class="col-3">
                                                             <strong>
-                                                                Customer :
+                                                                Customer:
                                                             </strong>
                                                         </div>
                                                         <div class="col-9">
@@ -105,7 +105,7 @@
                                                 <div class="row px-3 my-2">
                                                     <div class="col-3">
                                                         <strong>
-                                                            Remarks :
+                                                            Remarks:
                                                         </strong>
                                                     </div>
                                                     <div class="col-9">
@@ -116,7 +116,7 @@
                                                 <div class="row align-items-center px-3 my-2">
                                                     <div class="col-3">
                                                         <strong>
-                                                            Dollar Amount :
+                                                            Dollar Amount:
                                                         </strong>
                                                     </div>
                                                     <div class="col-9">
@@ -124,7 +124,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="row align-items-center px-3 my-2">
+                                                {{-- <div class="row align-items-center px-3 my-2">
                                                     <div class="col-3">
                                                         <strong>
                                                             Selling Rate :
@@ -133,16 +133,16 @@
                                                     <div class="col-9">
                                                         <input class="form-control" name="selling-rate" type="text" value="{{ number_format($dpo_out->SellingRate, 2, '.', ',') }}" readonly>
                                                     </div>
-                                                </div>
+                                                </div> --}}
 
                                                 <div class="row align-items-center px-3 my-2">
                                                     <div class="col-3">
                                                         <strong>
-                                                            Exchange Amount :
+                                                            Exchange Amount:
                                                         </strong>
                                                     </div>
                                                     <div class="col-9">
-                                                        <input class="form-control text-right" name="exchange-amount" type="text" value="{{ number_format($dpo_out->ExchangeAmount, 2, '.', ',') }}" readonly>
+                                                        <input class="form-control text-right" name="exchange-amount" type="text" value="{{ number_format($dpo_out->TotalExchangeAmount, 2, '.', ',') }}" readonly>
                                                         <input name="true-exchange-amount" type="hidden" value="0">
                                                     </div>
                                                 </div>
@@ -154,19 +154,19 @@
                                                         </strong>
                                                     </div>
                                                     <div class="col-9">
-                                                        <input class="form-control text-right" name="principal" type="text" value="{{ number_format($dpo_out->Principal, 2, '.', ',') }}" data-actualprincipal="{{ $dpo_out->Principal }}" readonly>
+                                                        <input class="form-control text-right" name="principal" type="text" value="{{ number_format($dpo_out->TotalPrincipal, 2, '.', ',') }}" data-actualprincipal="{{ $dpo_out->TotalPrincipal }}" readonly>
                                                     </div>
                                                 </div>
 
                                                 <div class="row align-items-center px-3">
                                                     <div class="col-3">
                                                         <strong>
-                                                            {{ trans('labels.transact_gain_loss') }} :
+                                                            {{ trans('labels.transact_gain_loss') }}:
                                                         </strong>
                                                     </div>
                                                     <div class="col-4 offset-5 text-right">
                                                         @php
-                                                            $gain_loss = $dpo_out->GainLoss;
+                                                            $gain_loss = $dpo_out->TotalGainLoss;
                                                         @endphp
 
                                                         <strong>
@@ -230,7 +230,7 @@
                                             </div>
                                         </div>
 
-                                        <table class="table table-bordered table-hover">
+                                        {{-- <table class="table table-bordered table-hover">
                                             <thead>
                                                 <tr>
                                                     <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Currency</th>
@@ -267,7 +267,7 @@
                                                     </td>
                                                 </tr>
                                             </tfoot>
-                                        </table>
+                                        </table> --}}
 
                                         <div class="col-12 p-1 border border-gray-300 rounded-bl rounded-br">
                                             <div class="row align-items-center ps-2">
