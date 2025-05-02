@@ -326,26 +326,28 @@
         });
 
         $('#proceed-transfer').click(function() {
+            $('#proceed-transfer').prop('disabled', true);
             var amount_to_cut = isNaN(parseFloat($('#selected-bill-total-amount').val())) ? 0 : parseFloat($('#selected-bill-total-amount').val());
 
             if (amount_to_cut == 0 || amount_to_cut == '') {
-                $('#proceed-transfer').prop('disabled', true);
-
                 Swal.fire({
                     text: 'Buffer amount is required.',
                     icon: 'error',
                     showConfirmButton: true
                 }).then(() => {
                     clear();
-
                     $(this).val('');
+                    $('#proceed-transfer').prop('disabled', false);
                 });
             } else {
                 if ($('input[name="buffer-type"]:checked').val() == 1) {
+                    $('#proceed-transfer').prop('disabled', false);
+
                     validation(amount_to_cut, branch_id, currency_id);
                 } else {
-                    $('#buffer-cut-details').modal("hide");
-                    $('#security-code-modal').modal("show");
+                    // if (proceed_boolean) {
+                    //     proceed();
+                    // }
                 }
             }
         });
@@ -361,8 +363,7 @@
                     showConfirmButton: true
                 }).then(() => {
                     clear();
-
-                    $('#proceed-transfer').prop('disabled', true);
+                    $('#proceed-transfer').prop('disabled', false);
                 });
             } else {
                 validation(amount_to_cut, branch_id, currency_id, selling_rate);
@@ -444,8 +445,8 @@
                                 $('#proceed-transfer').prop('disabled', false);
                             });
                         } else {
-                            if (data.buffer_type == 1) {
-                                $('#proceed-transfer').prop('disabled', false);
+                            if ($('input[name="buffer-type"]:checked').val() == 1) {
+                                proceed();
                             } else {
                                 $('#by-rate-breakdown').find('tbody').empty();
 
@@ -567,8 +568,8 @@
 
         function breakdownByRate(SinagRateBuying, gain_loss, principal, selling_rate, total_bill_amount, total_bill_count, total_exchange_amount) {
             var gain_loss_formatted = parseFloat(gain_loss).toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-            console.log(gain_loss);
+            var added_selling_rate = selling_rate == null ? 0.00 : selling_rate.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2});
+            var exchng_amount = total_exchange_amount == null ? 0.00 : total_exchange_amount.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2});
 
             if (gain_loss > 1) {
                 gain_loss_formatted = '+' + gain_loss_formatted;
@@ -583,8 +584,8 @@
             var row = $('<tr>');
             var r_bill_amount = $('<td class="text-black text-right text-xs py-1 px-2">'+ total_bill_amount.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}) +'</td>');
             var r_bill_count = $('<td class="text-black text-center text-xs p-1">'+ total_bill_count +'</td>');
-            var r_selling_rate = $('<td class="text-black text-right text-xs py-1 px-2">'+ selling_rate.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}) +'</td>');
-            var r_exchange_amount = $('<td class="text-black text-right text-xs py-1 px-2">'+ total_exchange_amount.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}) +'</td>');
+            var r_selling_rate = $('<td class="text-black text-right text-xs py-1 px-2">'+ added_selling_rate +'</td>');
+            var r_exchange_amount = $('<td class="text-black text-right text-xs py-1 px-2">'+ exchng_amount +'</td>');
             var r_buying_rate = $('<td class="text-black text-right text-xs py-1 px-2">'+ SinagRateBuying.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}) +'</td>');
             var r_principal= $('<td class="text-black text-right text-xs py-1 px-2">'+ principal.toLocaleString("en" , {minimumFractionDigits: 2 , maximumFractionDigits: 2}) +'</td>');
             var r_gain_loss= $('<td class="text-black text-right text-xs py-1 px-2"><span class="'+ text_color +'"><text>'+ gain_loss_formatted +' '+ icon_gain_loss +'</text></span></td>');
@@ -633,6 +634,11 @@
 
             row_footer.find('tbody').append(cash_count_row);
             cash_count_row.hide().fadeIn(250);
+        }
+
+        function proceed() {
+            $('#buffer-cut-details').modal("hide");
+            $('#security-code-modal').modal("show");
         }
 
         // function bufferSerials(parsed_serials_for_buffer, parse_bill_amounts, branch_id) {

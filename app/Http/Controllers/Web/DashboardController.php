@@ -22,19 +22,32 @@ use App\Http\Requests\AuthenticateRequest;
 class DashboardController extends Controller {
     protected function queries() {
         $stocks = DB::connection('forex')->table('tblforextransactiondetails as fd')
-            ->join('tblcurrency as tc', 'fd.CurrencyID', '=', 'tc.CurrencyID')
-            ->join('tblforexserials as fs', 'fd.FTDID', '=', 'fs.FTDID')
+            ->join('tblcurrency as tc', 'fd.CurrencyID', 'tc.CurrencyID')
+            ->join('tblforexserials as fs', 'fd.FTDID', 'fs.FTDID')
             ->where('fd.Voided' , 0)
-            ->where('fs.Sold' , '=' , 0)
-            ->where('fs.Queued' , '=' , 0)
-            ->where('fs.SoldToManila' , '=' , 0)
-            ->where('fs.Serials', '!=', null)
-            ->where('fd.BranchID', '=', Auth::user()->getBranch()->BranchID)
+            ->where('fs.Sold' , 0)
+            ->where('fs.Queued' , 0)
+            ->where('fs.SoldToManila' , 0)
+            ->where('fs.Serials', '<>', null)
+            ->where('fd.BranchID', Auth::user()->getBranch()->BranchID)
             ->where('fd.TransactionDate', '>=', '2025-01-01')
-            ->where('fd.Rset', '=', 'O');
+            ->where('fd.Rset', 'O');
+
+        $buffer_stocks = $stocks->clone()
+            ->selectRaw('tc.CurrencyID, tc.Currency, tc.CurrAbbv, fd.Rset, COUNT(fs.BillAmount) as count, SUM(fs.BillAmount) as total_amount, 1 as buffer')
+            ->join('tbltransferforex as tf', 'fs.TFID', 'tf.TransferForexID')
+            ->join('tblbuffertransfer as bf', 'tf.TransferForexID', 'bf.TFID')
+            ->where('fs.Buffer' , 1)
+            ->where('fs.Transfer', 1)
+            ->where('fs.FSType' , 1)
+            ->where('fs.FSStat' , 2)
+            ->where('bf.BufferDate', '>', '2025-01-01')
+            ->where('fs.EntryDate', '>', '2025-01-01')
+            ->groupBy('tc.CurrencyID' , 'tc.Currency', 'tc.CurrAbbv', 'fd.Rset', 'buffer');
             
         return [
-            'stocks' => $stocks
+            'stocks' => $stocks,
+            'buffer_stocks' => $buffer_stocks
         ];
     }
 
@@ -45,23 +58,21 @@ class DashboardController extends Controller {
         $result['buying_sales'] = DB::connection('forex')->table('tblforextransactiondetails as fd')
             ->selectRaw('SUM(fd.Amount) as Amount, COUNT(fd.FTDID) as transct_count')
             ->where('fd.Voided', 0)
-            ->where('fd.TransactionDate', '=', $raw_date->toDateString())
-            ->where('fd.TransactionDate', '=', $raw_date->toDateString())
-            ->where('fd.BranchID', '=', Auth::user()->getBranch()->BranchID)
+            ->where('fd.TransactionDate', $raw_date->toDateString())
+            ->where('fd.TransactionDate', $raw_date->toDateString())
+            ->where('fd.BranchID', Auth::user()->getBranch()->BranchID)
             ->when($r_set == 'O', function($query) use ($r_set) {
-                return $query->where('fd.Rset', '=', $r_set);
-            })
-            ->get();
+                return $query->where('fd.Rset', $r_set);
+            })->get();
 
         $result['selling_sales'] = DB::connection('forex')->table('tblsoldcurrdetails as sc')
             ->selectRaw('SUM(sc.AmountPaid) as Amount, COUNT(sc.SCID) as transct_count')
             ->where('sc.Voided', 0)
-            ->where('sc.DateSold', '=', $raw_date->toDateString())
-            ->where('sc.BranchID', '=', Auth::user()->getBranch()->BranchID)
+            ->where('sc.DateSold', $raw_date->toDateString())
+            ->where('sc.BranchID', Auth::user()->getBranch()->BranchID)
             ->when($r_set == 'O', function($query) use ($r_set) {
-                return $query->where('sc.Rset', '=', $r_set);
-            })
-            ->get();
+                return $query->where('sc.Rset', $r_set);
+            })->get();
 
         $current_rate_query = DB::connection('forex')->table('tblcurrencydenom as tcd')
             ->selectRaw('tc.CurrencyID, tc.Currency, FLOOR(tcd.SinagRateBuying) as whole_b_rate, tcd.SinagRateBuying, (tcd.SinagRateBuying - FLOOR(tcd.SinagRateBuying)) as b_decimal_rate, FLOOR(tcd.SinagRateSelling) as whole_s_rate, tcd.SinagRateSelling, (tcd.SinagRateSelling - FLOOR(tcd.SinagRateSelling)) as s_decimal_rate, REPLACE(GROUP_CONCAT(tcd.BillAmount), ",", " - ") as Denomination')
@@ -94,32 +105,30 @@ class DashboardController extends Controller {
 
         $branch_stocks_query = DB::connection('forex')->table('tblforextransactiondetails AS fd')
             ->selectRaw('fd.CurrencyID, COUNT(fd.CurrencyID) AS Cnt, SUM(CASE WHEN fs.Queued = 0 THEN fs.BillAmount ELSE 0 END) AS TotalCurrencyAmount, SUM(fs.BillAmount * d.SinagRateBuying) AS Principal, MAX(DATEDIFF(CURDATE(), fd.TransactionDate)) AS stock_days')
-            // ->selectRaw('fd.CurrencyID, COUNT(fd.CurrencyID) AS Cnt, SUM(CASE WHEN fs.Queued = 0 THEN fs.BillAmount ELSE 0 END) AS TotalCurrencyAmount, SUM(fs.BillAmount * d.SinagRateBuying) AS Principal, DATEDIFF(CURDATE(), MIN(fd.TransactionDate)) AS min_days, DATEDIFF(CURDATE(), MAX(fd.TransactionDate)) AS max_days, DATEDIFF(CURDATE(), fd.TransactionDate) AS stock_days')
-            ->join('tblforexserials AS fs', 'fd.FTDID', '=', 'fs.FTDID')
-            ->join('tbldenom AS d', 'fs.DenomID', '=', 'd.DenomID')
-            ->where('fd.TransactionDate', '>=', '2025-01-01')
+            ->join('tblforexserials AS fs', 'fd.FTDID', 'fs.FTDID')
+            ->join('tbldenom AS d', 'fs.DenomID', 'd.DenomID')
+            ->where('fd.TransactionDate', '>', '2025-01-01')
             ->where('fd.Voided', 0)
             ->whereNotNull('fs.Serials')
             ->where('fs.Sold', 0)
             ->where('fs.Transfer', 0)
             ->whereNotNull('fs.FTDID')
             ->where('fs.Received', 0)
-            ->where('fs.SoldToManila', '=', 0)
+            ->where('fs.SoldToManila', 0)
             ->where('fs.FSStat', 1)
+            ->where('fs.Buffer', 0)
             ->whereIn('fs.FSType', [1, 2, 3])
-            ->where('fd.BranchID', '=', Auth::user()->getBranch()->BranchID)
+            ->where('fd.BranchID', Auth::user()->getBranch()->BranchID)
             ->when($r_set == 'O', function($query) use ($r_set) {
-                return $query->where('fd.Rset', '=', $r_set);
+                return $query->where('fd.Rset', $r_set);
             })
             ->groupBy('fd.CurrencyID');
-            // ->groupBy('fd.CurrencyID', 'stock_days');
 
         $result['available_stocks'] = DB::connection('forex')->table('tblcurrency AS c')
             ->leftJoinSub($branch_stocks_query, 'bs', function($join) {
-                $join->on('c.currencyid', '=', 'bs.CurrencyID');
+                $join->on('c.currencyid', 'bs.CurrencyID');
             })
-            ->selectRaw("c.CurrencyID, c.Currency, c.CurrAbbv, Cnt, TotalCurrencyAmount, stock_days")
-            // ->selectRaw("c.CurrencyID, c.Currency, c.CurrAbbv, Cnt, TotalCurrencyAmount, min_days, max_days, CASE WHEN stock_days <= 3 THEN 'Fresh Stocks' ELSE 'Old Stocks' END AS stock_category")
+            ->selectRaw('c.CurrencyID, c.Currency, c.CurrAbbv, Cnt, TotalCurrencyAmount, stock_days')
             ->havingRaw('TotalCurrencyAmount > 0')
             ->orderBy('c.currency')
             ->get();
@@ -129,66 +138,36 @@ class DashboardController extends Controller {
             ->leftJoin('tblcurrency', 'tblforextransactiondetails.CurrencyID', 'tblcurrency.CurrencyID')
             ->leftJoin('tblforexserials', 'tblforextransactiondetails.FTDID', '=' , 'tblforexserials.FTDID')
             ->whereNull('tblforexserials.Serials')
-            ->where('tblforexserials.FSStat', '=' , 1)
+            ->where('tblforexserials.FSStat', 1)
             ->where('tblforextransactiondetails.Voided' , 0)
-            ->where('tblforextransactiondetails.BranchID' , '=' , Auth::user()->getBranch()->BranchID)
+            ->where('tblforextransactiondetails.BranchID' , Auth::user()->getBranch()->BranchID)
             ->when($r_set == 'O', function($query) use ($r_set) {
-                return $query->where('tblforextransactiondetails.Rset', '=', $r_set);
+                return $query->where('tblforextransactiondetails.Rset', $r_set);
             })
             ->groupBy('tblcurrency.Currency', 'tblcurrency.CurrAbbv')
             ->orderBy('tblcurrency.Currency', 'ASC')
             ->get();
 
-        $old_stocks_query = DB::connection('forex')->table('tblforextransactiondetails AS fd')
-            ->selectRaw('fd.CurrencyID, COUNT(fd.CurrencyID) AS Cnt, SUM(CASE WHEN fs.Queued = 0 THEN fs.BillAmount ELSE 0 END) AS TotalCurrencyAmount, DATEDIFF(CURDATE(), MIN(fd.TransactionDate)) AS min_days, DATEDIFF(CURDATE(), MAX(fd.TransactionDate)) AS max_days')
-            ->join('tblforexserials AS fs', 'fd.FTDID', '=', 'fs.FTDID')
-            ->join('tbldenom AS d', 'fs.DenomID', '=', 'd.DenomID')
-            ->where('fd.TransactionDate', '>=', '2025-01-01')
-            ->where('fd.Voided', 0)
-            ->whereNotNull('fs.Serials')
-            ->where('fs.Sold', 0)
-            ->where('fs.Transfer', 0)
-            ->whereNotNull('fs.FTDID')
-            ->where('fs.Received', 0)
-            ->where('fs.FSStat', 1)
-            ->whereIn('fs.FSType', [1, 2, 3])
-            ->where('fd.BranchID', '=', Auth::user()->getBranch()->BranchID)
-            ->where('fs.EntryDate', '<=', Carbon::now()->subDays(3)->toDateString())
-            ->when($r_set == 'O', function($query) use ($r_set) {
-                return $query->where('fd.Rset', '=', $r_set);
-            })
-            ->groupBy('fd.CurrencyID');
-
-        $result['old_stocks'] = DB::connection('forex')
-            ->table('tblcurrency AS c')
-            ->leftJoinSub($old_stocks_query, 'os', function($join) {
-                $join->on('c.currencyid', '=', 'os.CurrencyID');
-            })
-            ->selectRaw('c.CurrencyID, c.Currency, c.CurrAbbv, Cnt, TotalCurrencyAmount, min_days, max_days')
-            ->orderBy('c.Currency')
-            ->groupBy('c.CurrencyID', 'c.Currency', 'c.CurrAbbv', 'Cnt', 'TotalCurrencyAmount')
-            ->havingRaw('Cnt > 0')
-            ->get();
 
         $b_transactions = DB::connection('forex')->table('tblforextransactiondetails AS fd')
             ->selectRaw('fd.FTDID, fd.CurrencyID, c.Currency, c.CurrAbbv, SUM(fd.Amount) as total_curr_amnt, fd.EntryDate, xus.Name, fd.Voided, 1 as source_type')
-            ->join('tblcurrency as c', 'fd.CurrencyID', '=', 'c.CurrencyID')
-            ->join('pawnshop.tblxusers as xus', 'fd.UserID', '=', 'xus.UserID')
-            ->where('fd.TransactionDate', '=', $raw_date->toDateString())
-            ->where('fd.BranchID', '=', Auth::user()->getBranch()->BranchID)
+            ->join('tblcurrency as c', 'fd.CurrencyID', 'c.CurrencyID')
+            ->join('pawnshop.tblxusers as xus', 'fd.UserID', 'xus.UserID')
+            ->where('fd.TransactionDate', $raw_date->toDateString())
+            ->where('fd.BranchID', Auth::user()->getBranch()->BranchID)
             ->when($r_set == 'O', function($query) use ($r_set) {
-                return $query->where('fd.Rset', '=', $r_set);
+                return $query->where('fd.Rset', $r_set);
             })
             ->groupBy('fd.FTDID', 'fd.CurrencyID', 'c.Currency', 'c.CurrAbbv', 'fd.EntryDate', 'xus.Name', 'fd.Voided');
 
         $s_transactions = DB::connection('forex')->table('tblsoldcurrdetails AS sc')
             ->selectRaw('sc.SCID as FTDID, sc.CurrencyID, c.Currency, c.CurrAbbv, SUM(sc.AmountPaid) as total_curr_amnt, sc.EntryDate, xus.Name, sc.Voided, 2 as source_type')
-            ->join('tblcurrency as c', 'sc.CurrencyID', '=', 'c.CurrencyID')
-            ->join('pawnshop.tblxusers as xus', 'sc.UserID', '=', 'xus.UserID')
-            ->where('sc.DateSold', '=', $raw_date->toDateString())
-            ->where('sc.BranchID', '=', Auth::user()->getBranch()->BranchID)
+            ->join('tblcurrency as c', 'sc.CurrencyID', 'c.CurrencyID')
+            ->join('pawnshop.tblxusers as xus', 'sc.UserID', 'xus.UserID')
+            ->where('sc.DateSold', $raw_date->toDateString())
+            ->where('sc.BranchID', Auth::user()->getBranch()->BranchID)
             ->when($r_set == 'O', function($query) use ($r_set) {
-                return $query->where('sc.Rset', '=', $r_set);
+                return $query->where('sc.Rset', $r_set);
             })
             ->groupBy('sc.SCID', 'sc.CurrencyID', 'c.Currency', 'c.CurrAbbv', 'sc.EntryDate', 'xus.Name', 'sc.Voided');
 
@@ -201,6 +180,7 @@ class DashboardController extends Controller {
             ->orderBy('TransactDate', 'DESC')
             ->get();
 
+
         $result['tagged_bills'] = DB::connection('forex')->table('tbltaggedbills as tb')
             ->join('tbltaggedbillsdetails as tbd', 'tb.TBTID', 'tbd.TBTID')
             ->get();
@@ -212,7 +192,7 @@ class DashboardController extends Controller {
                 ->join('tblbillstatus as bs', 'bs.BillStatID', 'tbd.BillStatID')
                 ->select('bs.BillStatus')
                 // ->select('tbd.BillStatID')
-                ->where('tbd.TBTID', '=', $tagged_bills->TBTID)
+                ->where('tbd.TBTID', $tagged_bills->TBTID)
                 ->orderBy('tbd.TBDID', 'DESC')
                 ->get();
 
@@ -227,62 +207,11 @@ class DashboardController extends Controller {
             $TBTIDs[] = $tagged_bills;
         }
 
-        $stocks = $this->queries()['stocks'];
+        $buffer_stocks = $this->queries()['buffer_stocks'];
 
-        $result['buffer_stocks'] = $stocks->clone()
-            ->selectRaw('tc.CurrencyID, tc.Currency, tc.CurrAbbv, fd.Rset, COUNT(fs.BillAmount) as count, SUM(fs.BillAmount) as total_amount, 1 as buffer')
-            ->join('tbltransferforex as tf', 'fs.TFID', '=', 'tf.TransferForexID')
-            ->where('fs.Buffer' , 1)
-            ->where('fs.Transfer', 1)
-            ->where('fs.FSType' , '=' , 1)
-            ->where('fs.FSStat' , '=' , 2)
-            ->where('fs.Received' , '=' , 0)
-            ->where('tf.TransferDate', '>=', '2025-01-01')
-            ->where('fs.EntryDate', '>=', '2025-01-01')
-            ->groupBy('tc.CurrencyID' , 'tc.Currency', 'tc.CurrAbbv', 'fd.Rset', 'buffer')
+        $result['processed_buffer'] = $buffer_stocks->clone()
+            ->where('bf.BufferTransfer' , 1)
             ->get();
-
-        // Patext API ===========================================================================================
-            // $result['customers'] =  DB::select('CALL spjsamplesms()');
-
-            // $url = 'https://enterprise.messagingsuite.smart.com.ph/cgpapi/messages/sms';
-
-            // $headers = [
-            //     'X-MEMS-API-ID' => '1384',
-            //     'X-MEMS-API-KEY' => '0664a4e79c6b41a081b38ecabfb287d9',
-            //     'Content-Type' => 'application/json;charset=UTF-8'
-            // ];
-
-            // $response_data = [];
-
-            // foreach ($result['customers'] as $key => $customers) {
-            //     $customers->CelNo = preg_replace('/^\+63/', '0', $customers->CelNo);
-
-            //     $data = [
-            //         'messageType' => 'sms',
-            //         'destination' => $customers->CelNo,
-            //         'text' => $customers->Msg
-            //     ];
-
-            //     $response = Http::withHeaders($headers)->post($url, $data);
-
-            //     if ($response->successful()) {
-            //         $response_data[] = [
-            //             'status' => 'Message sent successfully',
-            //             'customer' => $customers->Msg,
-            //             'number' => $customers->CelNo,
-            //             'data' => $response->json()
-            //         ];
-            //     } else {
-            //         $response_data[] = [
-            //             'status' => 'Failed to send message',
-            //             'customer' => $customers->Msg,
-            //             'number' => $customers->CelNo,
-            //             'error' => $response->body()
-            //         ];
-            //     }
-            // }
-        // End of Patext API ====================================================================================
 
         return view('blades.branch_dashboard', compact('result'));
     }
