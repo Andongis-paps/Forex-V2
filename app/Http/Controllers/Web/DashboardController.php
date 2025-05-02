@@ -148,7 +148,6 @@ class DashboardController extends Controller {
             ->orderBy('tblcurrency.Currency', 'ASC')
             ->get();
 
-
         $b_transactions = DB::connection('forex')->table('tblforextransactiondetails AS fd')
             ->selectRaw('fd.FTDID, fd.CurrencyID, c.Currency, c.CurrAbbv, SUM(fd.Amount) as total_curr_amnt, fd.EntryDate, xus.Name, fd.Voided, 1 as source_type')
             ->join('tblcurrency as c', 'fd.CurrencyID', 'c.CurrencyID')

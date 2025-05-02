@@ -345,9 +345,12 @@
 
                     validation(amount_to_cut, branch_id, currency_id);
                 } else {
-                    // if (proceed_boolean) {
-                    //     proceed();
-                    // }
+                    validation(amount_to_cut, branch_id, currency_id, $('#selling-rate').val(), function(result) {
+                        if (result.length > 0) {
+                            proceed();
+                        }
+                    });
+                    
                 }
             }
         });
@@ -390,7 +393,7 @@
             $('#true-exch-amount').val(0);
         }
 
-        function validation(amount_to_cut, branch_id, currency_id, selling_rate) {
+        function validation(amount_to_cut, branch_id, currency_id, selling_rate, callback) {
             $('#container-test').fadeIn("fast");
             $('#container-test').css('display', 'block');
 
@@ -445,6 +448,10 @@
                                 $('#proceed-transfer').prop('disabled', false);
                             });
                         } else {
+                            if (typeof callback === 'function') {
+                                callback(data);
+                            }
+                
                             if ($('input[name="buffer-type"]:checked').val() == 1) {
                                 proceed();
                             } else {

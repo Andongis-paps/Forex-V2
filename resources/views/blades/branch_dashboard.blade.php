@@ -539,7 +539,7 @@
                                         <div class="swiper rate-swiper mt-2" id="rate-swiper">
                                             <div class="swiper-wrapper">
                                                 @php
-                                                    $rate_chunks = $result['general_rates']->chunk(11);
+                                                    $rate_chunks = $result['general_rates']->chunk(10);
                                                 @endphp
 
                                                 @forelse ($rate_chunks as $chunk)
@@ -557,9 +557,9 @@
                                                                                 $rate_used = $general_rates->whole_b_rate + $general_rates->b_decimal_rate;
                                                                                 $decimal_places = (strpos((string) $rate_used, '.') !== false) ? strlen(explode('.', $rate_used)[1]) : 0;
 
-                                                                                if ($decimal_places <= 2 && !in_array($general_rates->CurrencyID, [12, 14, 31])) {
+                                                                                if ($decimal_places <= 2 && !in_array($general_rates->CurrencyID, [12, 32, 31])) {
                                                                                     $b_formatted_rate = number_format(floor($rate_used * 100) / 100, 2);
-                                                                                } else if ($decimal_places <= 4 && in_array($general_rates->CurrencyID, [12, 14, 31])) {
+                                                                                } else if ($decimal_places <= 4 && in_array($general_rates->CurrencyID, [12, 32, 31])) {
                                                                                     $b_formatted_rate = number_format(floor($rate_used * 100000) / 100000, 4, '.', ',');
                                                                                 }
 
@@ -568,9 +568,9 @@
                                                                                 $rate_used = $general_rates->whole_s_rate + $general_rates->s_decimal_rate;
                                                                                 $decimal_places = (strpos((string) $rate_used, '.') !== false) ? strlen(explode('.', $rate_used)[1]) : 0;
 
-                                                                                if ($decimal_places <= 2 && !in_array($general_rates->CurrencyID, [12, 14, 31])) {
+                                                                                if ($decimal_places <= 2 && !in_array($general_rates->CurrencyID, [12, 32, 31])) {
                                                                                     $s_formatted_rate = number_format(floor($rate_used * 100) / 100, 2);
-                                                                                } else if ($decimal_places <= 4 && in_array($general_rates->CurrencyID, [12, 14, 31])) {
+                                                                                } else if ($decimal_places <= 4 && in_array($general_rates->CurrencyID, [12, 32, 31])) {
                                                                                     $s_formatted_rate = number_format(floor($rate_used * 100000) / 100000, 4, '.', ',');
                                                                                 }
                                                                             @endphp
