@@ -229,7 +229,7 @@
                             form_data.append('exch_amnt', $('#true-total-exhc-amount').val());
                             form_data.append('gain_loss', $('#true-total-gain-loss').val());
                             form_data.append('amount', $('#true-total-peso-amount').val());
-                            form_data.append('recept_set', $('input[name="radio-rset"]:checked').val())
+                            form_data.append('receipt_set', $('input[name="radio-rset"]:checked').val())
 
                             $.ajax({
                                 url: "{{ route('admin_transactions.dpofx.save_dpo_out') }}",

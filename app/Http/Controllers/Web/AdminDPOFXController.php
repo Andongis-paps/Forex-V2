@@ -285,12 +285,6 @@ class AdminDPOFXController extends Controller {
             ->selectRaw('CASE WHEN MAX(DPOSellingNo) IS NULL THEN 1 ELSE MAX(DPOSellingNo) + 1 END AS max_dpo_out_no')
             ->value('max_dpo_out_no');
 
-        // $get_latest_fc_series = DB::connection('forex')->table('tblfcformseries as fc')
-        //     ->where('fc.CompanyID', 1)
-        //     ->where('fc.RSet', $request->get('recept_set'))
-        //     ->selectRaw('CASE WHEN MAX(FormSeries) IS NULL THEN 1 ELSE MAX(FormSeries) + 1 END AS FCSeries')
-        //     ->value('FCSeries');
-
         $DPODOID = DB::connection('forex')->table('tbldpooutdetails')
             ->insertGetId([
                 'DPOSellingNo' => $max_dpo_out_no,
@@ -314,12 +308,15 @@ class AdminDPOFXController extends Controller {
         $trimmed_dpoiids = array_map('trim', explode(",", trim($request->input('selected_dpoins'))));
 
         $query = DB::connection('forex')->table('tbldpoin as di')
-            ->join('tbldpoindetails', 'di.DPDID', 'tbldpoindetails.DPDID')
             ->join('tblbranch', 'di.BranchID', 'tblbranch.BranchID')
             ->join('pawnshop.tblxbranch as tbx', 'tblbranch.BranchCode', 'tbx.BranchCode')
-            ->join('accounting.tblsegmentgroup', 'tbx.BranchID', 'accounting.tblsegmentgroup.BranchID')
-            ->join('accounting.tblcompany', 'accounting.tblsegmentgroup.CompanyID', 'accounting.tblcompany.CompanyID')
-            ->join('accounting.tblsegments', 'accounting.tblsegmentgroup.SegmentID', 'accounting.tblsegments.SegmentID')
+            ->join('accounting.tblsegmentgroup as sgt', 'tbx.BranchID', 'sgt.BranchID')
+            ->join('accounting.tblcompany as tc', 'sgt.CompanyID', 'tc.CompanyID')
+            ->join('accounting.tblsegments as sgg', 'sgt.SegmentID', 'sgg.SegmentID')
+            ->where('di.Sold', 0)
+            ->where('di.Inserted', 1)
+            ->where('sgg.SegmentID', 3)
+            ->where('di.Rset', $request->get('receipt_set'))
             ->when(is_array($trimmed_dpoiids), function ($query) use ($trimmed_dpoiids) {
                 return $query->whereIn('di.DPOIID', $trimmed_dpoiids);
             }, function ($query) use ($trimmed_dpoiids) {
@@ -330,15 +327,18 @@ class AdminDPOFXController extends Controller {
             ->selectRaw('di.DPOIID, di.CompanyID, di.MTCN, di.DollarAmount, di.SinagRateBuying, di.PrincipalAmount, tbx.BranchID')
             ->selectRaw('ROUND(SUM(di.DollarAmount) * ?) as exchange_amount', [$request->get('selling_rate')])
             ->selectRaw('ROUND((SUM(di.DollarAmount) * ?) - SUM(di.PrincipalAmount)) as gain_loss', [$request->get('selling_rate')])
-            ->groupBy('di.DPOIID', 'accounting.tblcompany.CompanyName', 'di.MTCN', 'di.DollarAmount', 'di.SinagRateBuying', 'di.PrincipalAmount', 'tbx.BranchID')
+            ->groupBy('di.DPOIID', 'tc.CompanyName', 'di.MTCN', 'di.DollarAmount', 'di.SinagRateBuying', 'di.PrincipalAmount', 'tbx.BranchID')
             ->get();
-        
-        $get_tc_no = DB::connection('forex')->table('tblfxtranscap')
-            ->selectRaw('MAX(TCNo) + 1 AS max_tc_no')
-            ->value('max_tc_no');
 
-        $trans_cap_connection = DB::connection('forex')->table('tblfxtranscap');
-        $fc_query = DB::connection('forex')->table('tblfcformseries as fc');
+        $latest_series = DB::connection('forex')->table('tblfcformseries as fc')
+            ->where('fc.RSet', $request->input('radio-rset'))
+            ->where('fc.CompanyID', 1)
+            ->selectRaw('MAX(FormSeries) + 1 AS latest_series')
+            ->value('latest_series');
+
+        $get_tc_no = DB::connection('forex')->table('tblfxtranscap')
+            ->selectRaw('CASE WHEN MAX(TCNo) IS NULL THEN 1 ELSE MAX(TCNo) + 1 END AS max_tc_no')
+            ->value('max_tc_no');
 
         foreach ($DPO_in_transacts as $key => $value) {
             $raw_balance = DB::connection('forex')->table('tbldpofxcontrol')->selectRaw('Balance')
@@ -347,17 +347,12 @@ class AdminDPOFXController extends Controller {
 
             $current_balance = $raw_balance == null ? 0 : $raw_balance;
 
-            $latest_series = $fc_query->clone()
-                ->where('fc.RSet', '=', $request->input('radio-rset'))
-                ->where('fc.CompanyID', '=', $value->CompanyID)
-                ->selectRaw('MAX(FormSeries) + 1 AS latest_series')
-                ->value('latest_series');
-
             DB::connection('forex')->table('tbldpoout')
                 ->insert([
                     'DPODOID' => $DPODOID,
                     'DPOIID' => $value->DPOIID,
-                    'CompanyID'  => $value->CompanyID,
+                    'CompanyID'  => 1,
+                    // 'CompanyID'  => $value->CompanyID,
                     'MTCN' => $value->MTCN,
                     'DollarAmount' => $value->DollarAmount,
                     'SinagRateBuying' => $value->SinagRateBuying,
@@ -383,7 +378,7 @@ class AdminDPOFXController extends Controller {
                     'EntryDate' => $raw_date->toDateString()
                 ]);
 
-            $trans_cap_connection->insert([
+            DB::connection('forex')->table('tblfxtranscap')->insert([
                 'Transferred' => 1,
                 'DPODOID' => $DPODOID,
                 'TCNo' => $get_tc_no++,
@@ -391,36 +386,28 @@ class AdminDPOFXController extends Controller {
                 'TranscapAmount' => $value->exchange_amount,
                 'UserID' => $request->input('matched_user_id')
             ]);
-
-            $fc_query->clone()
-                ->where('fc.RSet', '=', $request->input('radio-rset'))
-                ->where('fc.CompanyID', '=', $value->CompanyID)
-                ->update([
-                    'FormSeries' => $latest_series + 1
-                ]);
         }
 
         DB::connection('forex')->table('tblfcformseries')
-            ->where('tblfcformseries.RSet', '=', $request->get('recept_set'))
-            ->where('tblfcformseries.CompanyID', '=', 1)
+            ->where('tblfcformseries.CompanyID', 1)
+            ->where('tblfcformseries.RSet', $request->get('recept_set'))
             ->update([
-                'FormSeries' => DB::raw("(SELECT MAX(DPOCNo) FROM tbldpofxcontrol)")
+                'FormSeries' => $latest_series + 1
             ]);
             
-        $query->update([
-            'Sold' => 1
-        ]);
+        $query->clone()
+            ->update([
+                'Sold' => 1
+            ]);
 
         $trans_cap_details = DB::connection('forex')->table('tblfxtranscap as tc')
-            ->selectRaw('tc.STMDID, tc.TCID, tc.TranscapAmount, txb.BranchID')
-            ->join('tblbranch as tb', 'tc.BranchID', 'tb.BranchID')
-            ->join('pawnshop.tblxbranch as txb', 'tb.BranchCode', 'txb.BranchCode')
-            ->where('tc.STMDID', $DPODOID)
-            ->groupBy('tc.STMDID', 'tc.TCID', 'tc.TranscapAmount', 'txb.BranchID')
+            ->selectRaw('tc.DPODOID, tc.TCID, tc.TranscapAmount, tc.BranchID')
+            ->where('tc.DPODOID', $DPODOID)
+            ->groupBy('tc.DPODOID', 'tc.TCID', 'tc.TranscapAmount', 'tc.BranchID')
             ->get();
 
         $get_tr_no = DB::connection('generaldcpr')->table('tbltransaddcap')
-            ->selectRaw('MAX(trno) + 1 AS max_tr_no')
+            ->selectRaw('CASE WHEN MAX(trno) IS NULL THEN 1 ELSE MAX(trno) + 1 END AS max_tr_no')
             ->value('max_tr_no');
 
         foreach ($trans_cap_details as $details) {

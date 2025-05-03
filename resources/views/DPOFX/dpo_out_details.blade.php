@@ -204,7 +204,7 @@
                                                 <div class="col-6">
                                                     <span class="text-lg text-black">
                                                         <strong>
-                                                            {{ $result['fc_form_series']->CompanyName }}
+                                                            {{-- {{ $result['fc_form_series']->CompanyName }} --}}
                                                         </strong>
                                                     </span>
                                                 </div>
@@ -216,16 +216,16 @@
                                                     </span>
                                                     <span class="text-md">
                                                         <strong class="text-red-500">
-                                                            {{ str_pad($result['fc_form_series']->FormSeries, 6, '0', STR_PAD_LEFT) }}
+                                                            {{-- {{ str_pad($result['fc_form_series']->FormSeries, 6, '0', STR_PAD_LEFT) }} --}}
                                                         </strong>
                                                     </span>
                                                 </div>
                                                 <div class="col-4 text-end">
-                                                    @can('print-permission', $menu_id)
+                                                    {{-- @can('print-permission', $menu_id)
                                                         <button class="btn btn-primary btn-sm print-dpofx-receipt ps-2" data-dpooid="{{ $result['dpo_out'][0]->DPODOID }}" data-companyid="{{ $result['fc_form_series']->CompanyID }}">
                                                             <i class='bx bxs-printer'></i>&nbsp;&nbsp;{{ trans('labels.selling_admin_print_receipt') }}
                                                         </button>
-                                                    @endcan
+                                                    @endcan --}}
                                                 </div>
                                             </div>
                                         </div>
