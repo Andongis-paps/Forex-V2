@@ -182,7 +182,7 @@
                                                                     {{-- @endif --}}
 
                                                                     @if ($tranfer_forex->ITNo)
-                                                                        @can('edit-permission', $menu_id)
+                                                                        @can('delete-permission', $menu_id)
                                                                             <button class="btn btn-warning button-warning remove-tracking-button text-white btn-popover btn-revert-tracking pe-2" data-transferforexid="{{ $tranfer_forex->TransferForexID }}" data-bs-toggle="modal" data-bs-target="#remove-tracking-modal">
                                                                                 <i class='bx bx-revision'></i>
                                                                             </button>
