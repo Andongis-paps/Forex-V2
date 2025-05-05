@@ -21,4 +21,38 @@ class ApplicationManagement {
 
         return $new_application_url;
     }
+
+    public static function current() {
+        $config = DB::connection('access')
+                    ->table('tblsystemconfig')
+                    ->where('SoftwareID', config('app.software_id'))
+                    ->latest('DateCreated')
+                    ->first();
+ 
+        return $config;
+    }
+ 
+    public static function copyright() {
+          $copyright = '&copy; ' . date('Y') . ' Sinag Pawnshop Corp. All Rights Reserved.';
+     
+          $config = self::current();
+     
+          if ($config) {
+               $copyright = $config->Copyright;
+          }
+     
+          return $copyright;
+    }
+ 
+    public static function version() {
+          $version = '2.0.0';
+     
+          $config = self::current();
+     
+          if ($config) {
+               $version = $config->Version;
+          }
+     
+          return $version;
+    }
 }
