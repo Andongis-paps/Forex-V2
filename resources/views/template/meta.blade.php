@@ -62,7 +62,7 @@
         <!-- Page JS -->
         <script type="text/javascript" src="{{ asset('sneat/assets/js/ui-popover.js') }}"></script>
         <!-- Place this tag in your head or just before your close body tag. -->
-        <script async defer src="https://buttons.github.io/buttons.js"></script>
+        {{-- <script async defer src="https://buttons.github.io/buttons.js"></script> --}}
 
         {{-- <script src="https://cdn.jsdelivr.net/npm/swiper@11.1.14/swiper-bundle.min.js"></script> --}}
         {{-- <link href="https://cdn.jsdelivr.net/npm/swiper@11.1.14/swiper-bundle.min.css" rel="stylesheet"> --}}
@@ -111,7 +111,7 @@
         <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
         {{-- Include Flatpickr JS --}}
         <script type="text/javascript" src="{{ asset('sneat/assets/vendor/js/flatpickr.js') }}"></script>
-        <script src="https://cdn.jsdelivr.net/npm/jquery-ui-datepicker-range/jquery-ui-datepicker-range.js"></script>
+        {{-- <script src="https://cdn.jsdelivr.net/npm/jquery-ui-datepicker-range/jquery-ui-datepicker-range.js"></script> --}}
         {{-- Include Select2 JS --}}
         <script type="text/javascript" src="{{ asset('sneat/assets/vendor/libs/select2/select2.js') }}"></script>
         {{-- Include Select2 CSS --}}

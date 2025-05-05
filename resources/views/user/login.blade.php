@@ -1,7 +1,6 @@
 {{-- <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}"> --}}
     @include('template.meta')
-    @include('modals.toast')
 
     <div class="authentication-wrapper authentication-cover d-flex justify-content-center align-items-center">
         <div class="authentication-inner row m-0 d-flex justify-content-center" id="components-container">
@@ -38,29 +37,30 @@
                     <br/>
                     <br/>
 
-                    <form id="goldlogin" class="mt-5 mb-3 fv-plugins-bootstrap5 fv-plugins-framework" action="{{ route('authenticate') }}" method="POST" novalidate="novalidate">
-                        @csrf
+                    <form id="forexlogin" class="mt-5 mb-3 fv-plugins-bootstrap5 fv-plugins-framework" method="POST">
                         <div class="mb-3 ">
-                            <label for="email" class="form-label">Username</label>
-                            <input type="text" class="form-control focus timeout" id="email" name="username"
-                                placeholder="Enter username" autofocus="" autocomplete="off" required>
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username"
+                                placeholder="Enter username" autofocus="" autocomplete="off" />
+                                <span class="text-danger" id="error_username"></span>
                         </div>
                         <div class="mb-3 form-password-toggle fv-plugins-icon-container">
                             <div class="d-flex justify-content-between">
                                 <label class="form-label" for="password">Password</label>
                             </div>
                             <div class="input-group input-group-merge">
-                                <input type="password" id="password" class="form-control password timeout" name="password"
-                                    placeholder="••••••••" aria-describedby="password" autocomplete="off" required>
+                                <input type="password" id="password" class="form-control" name="password"
+                                    placeholder="••••••••" aria-describedby="password" autocomplete="off" />
                                 {{-- <span class="input-group-text cursor-pointer" id="togglePassword"><i
                                         class="bx bx-hide" id="pass-eye-admin-pass"></i></span> --}}
                             </div>
+                            <span class="text-danger" id="error_password"></span>
                         </div>
                         <div class="divider"></div>
                         <div class="col-lg-12 mb-lg-2">
                             <small class="text-danger"></small>
                         </div>
-                        <button class="btn btn-primary d-grid w-100 text-white" id="login-btn">
+                        <button type="submit" class="btn btn-primary w-100 text-white" id="login-btn">
                             Login
                         </button>
                         <div class="alert alert-danger text-center mt-3" role="alert">
@@ -78,11 +78,14 @@
 
     <script>
         $(document).ready(function() {
-            // focus in input on load.
-            $(".focus").focus();
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
 
             // Capital all letters for the input type text, search and textarea
-            $(document).on('input', 'input[type="text"]:not([name="password"]), input[type="search"], textarea', function() {
+            $(document).on('input', 'input[name="username"]', function() {
                 var $this = $(this);
                 var cursorPosition = this.selectionStart;
 
@@ -93,10 +96,84 @@
                 this.setSelectionRange(cursorPosition, cursorPosition);
             });
 
-            // Set a timer to fade out the element after a specific time
-            setTimeout(function() {
-                $(".toast-custom-gold-fade").fadeOut("slow"); // Fades out the element slowly
-            }, 3000); // 3000 milliseconds = 3 seconds
+            $(document).on('submit', '#forexlogin', function(event) {
+                event.preventDefault();
+
+                const formData = $(this).serialize(); // Serialize form data
+                const $btnLogin = $('#login-btn'); // Cache the login button
+                const btnLoginOriginalContent = $btnLogin.html(); // Store original login button content
+
+                $.ajax({
+                    url: "{{ route('authenticate') }}",
+                    type: 'POST',
+                    data: formData,
+                    dataType: 'json',
+                    beforeSend: () => {
+                        // Disable the login button and show a loading spinner
+                        $btnLogin
+                            .attr('disabled', true)
+                            .attr('aria-disabled', true)
+                            .html(`
+                                <div class="spinner-border spinner-border-sm" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            `);
+                    },
+                    success: (response) => {
+                        if (response.success) {
+                            // Redirect to the provided URL
+                            location.href = response.redirectUrl;
+                        }
+                    },
+                    error: (xhr) => {
+                        // Clear existing error messages
+                        $('#error_username').empty();
+                        $('#error_password').empty();
+
+                        if (xhr.status === 422) {
+                            // Handle validation errors
+                            const errors = xhr.responseJSON.errors;
+
+                            // Dynamically populate error messages based on field names
+                            Object.keys(errors).forEach((field) => {
+                                $(`#error_${field}`).text(errors[field][0]);
+                            });
+                        } else if (xhr.status === 401 || xhr.status === 403) {
+                            // Handle unauthorized or forbidden access
+                            swal.fire({
+                                icon: 'error',
+                                title: xhr.responseJSON.title,
+                                text: xhr.responseJSON.message,
+                                showClass: {
+                                    popup: 'swal2-zoom-in'
+                                },
+                            });
+
+                            // Redirect if URL is provided
+                            if (xhr.responseJSON.redirectUrl) {
+                                location.href = xhr.responseJSON.redirectUrl;
+                            }
+                        } else {
+                            // Handle unexpected errors
+                            swal.fire({
+                                icon: 'error',
+                                title: 'Login Failed',
+                                text: 'An unexpected error occurred while processing your login request.',
+                                showClass: {
+                                    popup: 'swal2-zoom-in'
+                                },
+                            });
+                        }
+                    },
+                    complete: () => {
+                        // Re-enable the login button and restore its original content
+                        $btnLogin
+                            .attr('disabled', false)
+                            .attr('aria-disabled', false)
+                            .html(btnLoginOriginalContent);
+                    }
+                });
+            });
         });
 
         // $(document).ready(function() {

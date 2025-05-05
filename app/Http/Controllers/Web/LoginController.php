@@ -1,23 +1,26 @@
 <?php
 
 namespace App\Http\Controllers\Web;
-use App\Http\Controllers\Controller;
-use App\Helpers\ApplicationManagement;
-use Adldap\Laravel\Facades\Adldap;
-use Validator;
 use App;
 use Lang;
-use App\Admin;
-use App\Models\User;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Mail;
-use DB;
-use Hash;
-use Auth;
 use Session;
+use App\Admin;
+use Validator;
+use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Helpers\MenuManagement;
+use Adldap\Laravel\Facades\Adldap;
+use Illuminate\Support\Facades\DB;
+use App\Helpers\ServerAddressHelper;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use App\Helpers\ActiveDirectoryHelper;
+use App\Helpers\ApplicationManagement;
+use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\AuthenticateRequest;
 
 class LoginController extends Controller {
@@ -44,7 +47,7 @@ class LoginController extends Controller {
         }
     }
 
-    public function authenticate(AuthenticateRequest $request) {
+    public function authenticateBackup(AuthenticateRequest $request) {
         $validated = $request->validated();
 
         $username = $validated['username'];
@@ -742,6 +745,7 @@ class LoginController extends Controller {
             ]);
         }
     }
+    
 
     public function logout(Request $request) {
         $current_datetime   = Carbon::now();
@@ -797,7 +801,7 @@ class LoginController extends Controller {
         return redirect()->route('login');
     }
 
-    protected function getRemainingTime($from_datetime, $start_datetime) {
+    protected function getRemainingTimeBackup($from_datetime, $start_datetime) {
         $locked_until    = Carbon::parse($from_datetime);
         $diff_in_seconds = $locked_until->diffInSeconds($start_datetime);
 
@@ -833,4 +837,507 @@ class LoginController extends Controller {
 
         return response()->json(['message' => 'Email sent successfully']);
     }
+
+    public function authenticate(AuthenticateRequest $request)
+    {
+        // Validate the incoming request data
+        $data = $request->validated();
+
+        $username       = $data['username'];
+        $password       = $data['password'];
+        $hash_password  = Hash::make($password);
+
+        // Get the current IP address and datetime
+        $currentIpAddress   = $request->ip();
+        $currentDateTime    = Carbon::now();
+
+        // Initialize attempts-related variables
+        $totalAttempts  = 0;
+        $remainingTime  = '';
+
+        // Attempt to find the user in Active Directory (AD) and pawnshop database
+        $adUser = Adldap::search()->users()->where('samaccountname', '=', $username)->first();
+        $dbUser = User::where('pawnshop.tblxusers.Username', '=', $username)->first();
+
+        $softwareId = env('SOFTWARE_ID');
+
+        // Fetch lockout configurations from Active Directory or use defaults
+        $lockoutConfigurations = ActiveDirectoryHelper::getAdLockoutConfigurations();
+
+        // Extract the lockout threshold and duration from the lockout configurations
+        $lockoutThreshold           = $lockoutConfigurations['threshold'];
+        $lockoutDurationInMinutes   = $lockoutConfigurations['duration'];
+
+        if ($adUser) {
+            $userAccountControl = $adUser->getFirstAttribute('userAccountControl');
+            $accountExpires     = $adUser->getFirstAttribute('accountExpires');
+            $lockoutTime        = $adUser->getFirstAttribute('lockoutTime');
+            $pwdLastSet         = $adUser->getFirstAttribute('pwdLastSet');
+            $badPwdCount        = $adUser->getFirstAttribute('badPwdCount');
+
+            // Check if AD account is disabled
+            $isDisabled = ActiveDirectoryHelper::isAccountDisabled($userAccountControl);
+
+            // Check if AD account has expired
+            $isAccountExpired = ActiveDirectoryHelper::isAccountExpired($accountExpires);
+
+            // Check if AD account is locked out
+            $isAccountLockedOut = ActiveDirectoryHelper::isAccountLockedOut($lockoutTime);
+
+            // Check if AD password has expired
+            $isAccountPasswordExpired = ActiveDirectoryHelper::isAccountPasswordExpired($userAccountControl, $pwdLastSet);
+
+            if (Adldap::auth()->attempt($username, $password)) {
+                if ($dbUser) {
+                    $almsChangePasswordUrl = ServerAddressHelper::getAppUrl('uams') . '/user/change-password/' . $dbUser->Username . '/' . config('main.app_url_name');
+                    if ($dbUser->HashPassword) {
+                        if (Hash::check($password, $dbUser->HashPassword)) {
+                            if ($dbUser->IsSecurityCodeUpdated == 1) {
+                                // $employee = $dbUser->employee;
+
+                                // Check if DB account is inactive or suspended
+                                $userStatus = $dbUser->Status;
+                                if ($userStatus == 0 || $userStatus == 2) {
+                                    // Log the failed attempt
+
+                                    DB::connection('laravelsysconfigs')
+                                        ->table('login_history')
+                                        ->insert([
+                                                'SoftwareID'    => $softwareId,
+                                                'ADID'          => $adUser->getConvertedSid(),
+                                                'UserID'        => $dbUser->UserID,
+                                                'Username'      => $username,
+                                                'Password'      => $password,
+                                                'IPAddress'     => $currentIpAddress,
+                                                'Successful'    => 0,
+                                                'Event'         => $userStatus == 2 ? 'Suspended DB Account' : 'Inactive DB Account',
+                                                'AttemptedAt'   => $currentDateTime,
+                                                'CreatedAt'     => $currentDateTime,
+                                                'UpdatedAt'     => $currentDateTime
+                                            ]);
+
+                                    return response()->json([
+                                        'success'  => false,
+                                        'type'     => 'error',
+                                        'title'    => 'Login Failed',
+                                        'message'  => $userStatus == 2 ? 'Your account has been suspended.' : 'Your account has been inactive.'
+                                    ], 403);
+                                }
+
+                                // if ($employee) {
+                                    $hasModuleAccess = $dbUser->hasModuleAccess();
+
+                                    if ($hasModuleAccess) {
+                                        // Log in the user
+                                        Auth::login($dbUser);
+
+                                        // Log the success attempt
+                                        DB::connection('laravelsysconfigs')
+                                            ->table('login_history')
+                                            ->insert([
+                                                        'SoftwareID'    => $softwareId,
+                                                        'ADID'          => $adUser->getConvertedSid(),
+                                                        'UserID'        => $dbUser->UserID,
+                                                        'Username'      => $username,
+                                                        'Password'      => $password,
+                                                        'IPAddress'     => $currentIpAddress,
+                                                        'Successful'    => 1,
+                                                        'Event'         => 'Logged In',
+                                                        'AttemptedAt'   => $currentDateTime,
+                                                        'CreatedAt'     => $currentDateTime,
+                                                        'UpdatedAt'     => $currentDateTime
+                                                    ]);
+
+                                        // Get the route of the first module the user has access to
+                                        // $route = strtolower(str_replace('/', '.', $hasModuleAccess)) . '.index';
+                                        $route = strtolower(str_replace('/', '.', $hasModuleAccess));
+
+                                        // Get the intended URL or fallback to the dashboard
+                                        $intendedUrl = session()->get('url.intended', route($route));
+
+                                        return response()->json([
+                                            'success'       => true,
+                                            'type'     => 'success',
+                                            'title'    => 'Login Success',
+                                            'message'  => 'You have been successfully logged in.',
+                                            'redirectUrl'   => $intendedUrl
+                                        ], 200);
+                                    } else {
+                                        // Log the failed attempt
+                                        DB::connection('laravelsysconfigs')
+                                        ->table('login_history')
+                                        ->insert([
+                                            'SoftwareID'    => $softwareId,
+                                            'ADID'          => $adUser->getConvertedSid(),
+                                            'UserID'        => $dbUser->UserID,
+                                            'Username'      => $username,
+                                            'Password'      => $password,
+                                            'IPAddress'     => $currentIpAddress,
+                                            'Successful'    => 0,
+                                            'Event'         => 'No Permission',
+                                            'AttemptedAt'   => $currentDateTime,
+                                            'CreatedAt'     => $currentDateTime,
+                                            'UpdatedAt'     => $currentDateTime
+                                        ]);
+
+                                        return response()->json([
+                                            'success'       => false,
+                                            'type'     => 'error',
+                                            'title'    => 'Login Failed',
+                                            'message'  => 'You do not have the necessary permissions to access ' . config('app.name') . '.'
+                                        ], 401);
+                                    }
+                                // } else {
+                                //     // Log the failed attempt
+                                //     DB::connection('laravelsysconfigs')
+                                //     ->table('login_history')
+                                //     ->insert([
+                                //         'SoftwareID'    => $softwareId,
+                                //         'ADID'          => $adUser->getConvertedSid(),
+                                //         'UserID'        => $dbUser->UserID,
+                                //         'Username'      => $username,
+                                //         'Password'      => $password,
+                                //         'IPAddress'     => $currentIpAddress,
+                                //         'Successful'    => 0,
+                                //         'Event'         => 'Missing Employee Data',
+                                //         'AttemptedAt'   => $currentDateTime,
+                                //         'CreatedAt'     => $currentDateTime,
+                                //         'UpdatedAt'     => $currentDateTime
+                                //     ]);
+
+                                //     return response()->json([
+                                //         'success'       => false,
+                                //         'type'     => 'error',
+                                //         'title'    => 'Login Failed',
+                                //         'message'  => 'Your account is not linked to employee details.'
+                                //     ], 401);
+                                // }
+                            } else {
+                                // Log the failed attempt
+                                DB::connection('laravelsysconfigs')
+                                ->table('login_history')
+                                ->insert([
+                                    'SoftwareID'    => $softwareId,
+                                    'ADID'          => $adUser->getConvertedSid(),
+                                    'UserID'        => $dbUser->UserID,
+                                    'Username'      => $username,
+                                    'Password'      => $password,
+                                    'IPAddress'     => $currentIpAddress,
+                                    'Successful'    => 0,
+                                    'Event'         => 'Outdated Security Code',
+                                    'AttemptedAt'   => $currentDateTime,
+                                    'CreatedAt'     => $currentDateTime,
+                                    'UpdatedAt'     => $currentDateTime
+                                ]);
+
+                                return response()->json([
+                                    'success'       => false,
+                                    'type'     => 'error',
+                                    'title'    => 'Outdated Security Code',
+                                    'message'  => 'Please update your security code.',
+                                    'redirectUrl'   => $almsChangePasswordUrl
+                                ], 401);
+                            }
+                        } else {
+                            // Log the failed attempt
+                            DB::connection('laravelsysconfigs')
+                                ->table('login_history')
+                                ->insert([
+                                'SoftwareID'    => $softwareId,
+                                'ADID'          => $adUser->getConvertedSid(),
+                                'UserID'        => $dbUser->UserID,
+                                'Username'      => $username,
+                                'Password'      => $password,
+                                'IPAddress'     => $currentIpAddress,
+                                'Successful'    => 0,
+                                'Event'         => 'Incorrect DB Password',
+                                'AttemptedAt'   => $currentDateTime,
+                                'CreatedAt'     => $currentDateTime,
+                                'UpdatedAt'     => $currentDateTime
+                            ]);
+
+                            DB::connection('pawnshop')
+                                ->select('CALL spa_update_user_credentials(?, ?, ?)', [
+                                    $username,
+                                    $password,
+                                    $hash_password
+                                ]);
+
+                            return response()->json([
+                                'success'       => false,
+                                'type'     => 'error',
+                                'title'    => 'Login Failed',
+                                'message'  => 'Please match your system and Active Directory (AD) credentials.',
+                                'redirectUrl'   => $almsChangePasswordUrl
+                            ], 401);
+                        }
+                    } else {
+                        // Log the failed attempt
+                        DB::connection('laravelsysconfigs')
+                            ->table('login_history')
+                            ->insert([
+                            'SoftwareID'    => $softwareId,
+                            'ADID'          => $adUser->getConvertedSid(),
+                            'UserID'        => $dbUser->UserID,
+                            'Username'      => $username,
+                            'Password'      => $password,
+                            'IPAddress'     => $currentIpAddress,
+                            'Successful'    => 0,
+                            'Event'         => 'NULL DB Password',
+                            'AttemptedAt'   => $currentDateTime,
+                            'CreatedAt'     => $currentDateTime,
+                            'UpdatedAt'     => $currentDateTime
+                        ]);
+
+                        DB::connection('pawnshop')
+                            ->select('CALL spa_update_user_credentials(?, ?, ?)', [
+                                $username,
+                                $password,
+                                $hash_password
+                            ]);
+
+                        return response()->json([
+                            'success'       => false,
+                            'type'     => 'error',
+                            'title'    => 'Login Failed',
+                            'message'  => 'Please match your system and Active Directory (AD) credentials.',
+                            'redirectUrl'   => $almsChangePasswordUrl
+                        ], 401);
+                    }
+                } else {
+                    DB::connection('laravelsysconfigs')
+                    ->table('login_history')
+                    ->insert([
+                                    'SoftwareID'    => $softwareId,
+                                    'ADID'          => $adUser->getConvertedSid(),
+                                    'UserID'        => null,
+                                    'Username'      => $username,
+                                    'Password'      => $password,
+                                    'IPAddress'     => $currentIpAddress,
+                                    'Successful'    => 0,
+                                    'Event'         => 'Incorrect DB Username',
+                                    'AttemptedAt'   => $currentDateTime,
+                                    'CreatedAt'     => $currentDateTime,
+                                    'UpdatedAt'     => $currentDateTime
+                                ]);
+
+                    return response()->json([
+                        'success'       => false,
+                        'type'     => 'error',
+                        'title'    => 'Login Failed',
+                        'message'  => 'You do not have an existing system account.'
+                    ], 401);
+                }
+            } else {
+                // Check if AD account is disabled
+                if ($isDisabled) {
+                    // Log the failed attempt
+                    DB::connection('laravelsysconfigs')
+                    ->table('login_history')
+                    ->insert([
+                                    'SoftwareID'    => $softwareId,
+                                    'ADID'          => $adUser->getConvertedSid(),
+                                    'UserID'        => $dbUser ? $dbUser->UserID : null,
+                                    'Username'      => $username,
+                                    'Password'      => $password,
+                                    'IPAddress'     => $currentIpAddress,
+                                    'Successful'    => 0,
+                                    'Event'         => 'Disabled AD Account',
+                                    'AttemptedAt'   => $currentDateTime,
+                                    'CreatedAt'     => $currentDateTime,
+                                    'UpdatedAt'     => $currentDateTime
+                                ]);
+
+                    return response()->json([
+                        'success'       => false,
+                        'type'     => 'error',
+                        'title'    => 'Login Failed',
+                        'message'  => 'Your account has been disabled.'
+                    ], 403);
+                }
+
+                // Check if AD account has expired
+                if ($isAccountExpired) {
+                    // Log the failed attempt
+                    DB::connection('laravelsysconfigs')
+                    ->table('login_history')
+                    ->insert([
+                                    'SoftwareID'    => $softwareId,
+                                    'ADID'          => $adUser->getConvertedSid(),
+                                    'UserID'        => $dbUser ? $dbUser->UserID : null,
+                                    'Username'      => $username,
+                                    'Password'      => $password,
+                                    'IPAddress'     => $currentIpAddress,
+                                    'Successful'    => 0,
+                                    'Event'         => 'Expired AD Account',
+                                    'AttemptedAt'   => $currentDateTime,
+                                    'CreatedAt'     => $currentDateTime,
+                                    'UpdatedAt'     => $currentDateTime
+                                ]);
+
+                    return response()->json([
+                        'success'       => false,
+                        'type'     => 'error',
+                        'title'    => 'Login Failed',
+                        'message'  => 'Your account has expired.'
+                    ], 403);
+                }
+
+                // Check if AD account is locked out
+                if ($isAccountLockedOut) {
+                    // Get the unlock time
+                    $lockoutCarbonTimestamp = Carbon::createFromTimestamp(($lockoutTime / 10000000) - 11644473600);
+                    $unlockTime             = $lockoutCarbonTimestamp->addMinutes($lockoutDurationInMinutes);
+                    $remainingTime          = $this->getRemainingTime($currentDateTime, $unlockTime);
+
+                    // Log the failed attempt
+                    DB::connection('laravelsysconfigs')
+                    ->table('login_history')
+                    ->insert([
+                                    'SoftwareID'    => $softwareId,
+                                    'ADID'          => $adUser->getConvertedSid(),
+                                    'UserID'        => $dbUser ? $dbUser->UserID : null,
+                                    'Username'      => $username,
+                                    'Password'      => $password,
+                                    'IPAddress'     => $currentIpAddress,
+                                    'Successful'    => 0,
+                                    'Event'         => 'Locked AD Account',
+                                    'AttemptedAt'   => $currentDateTime,
+                                    'CreatedAt'     => $currentDateTime,
+                                    'UpdatedAt'     => $currentDateTime
+                                ]);
+
+                    return response()->json([
+                        'success'       => false,
+                        'type'     => 'error',
+                        'title'    => 'Login Failed',
+                        'message'  => "Your account has been temporarily locked due to multiple failed login attempts. Please try again after {$remainingTime}."
+                    ], 403);
+                }
+
+                // Check if AD password has expired
+                if ($isAccountPasswordExpired) {
+                    // Log the failed attempt
+                    DB::connection('laravelsysconfigs')
+                    ->table('login_history')
+                    ->insert([
+                                    'SoftwareID'    => $softwareId,
+                                    'ADID'          => $adUser->getConvertedSid(),
+                                    'UserID'        => $dbUser ? $dbUser->UserID : null,
+                                    'Username'      => $username,
+                                    'Password'      => $password,
+                                    'IPAddress'     => $currentIpAddress,
+                                    'Successful'    => 0,
+                                    'Event'         => 'Expired AD Password',
+                                    'AttemptedAt'   => $currentDateTime,
+                                    'CreatedAt'     => $currentDateTime,
+                                    'UpdatedAt'     => $currentDateTime
+                                ]);
+
+                    return response()->json([
+                        'success'       => false,
+                        'type'     => 'error',
+                        'title'    => 'Login Failed',
+                        'message'  => 'Your password has expired.'
+                    ], 403);
+                }
+
+                // Log the failed attempt
+                DB::connection('laravelsysconfigs')
+                    ->table('login_history')
+                    ->insert([
+                                'SoftwareID'    => $softwareId,
+                                'ADID'          => $adUser->getConvertedSid(),
+                                'UserID'        => $dbUser ? $dbUser->UserID : null,
+                                'Username'      => $username,
+                                'Password'      => $password,
+                                'IPAddress'     => $currentIpAddress,
+                                'Successful'    => 0,
+                                'Event'         => 'Incorrect AD Password',
+                                'AttemptedAt'   => $currentDateTime,
+                                'CreatedAt'     => $currentDateTime,
+                                'UpdatedAt'     => $currentDateTime
+                            ]);
+
+                if (!is_null($lockoutThreshold) && $lockoutThreshold > 0) {
+                    // Get the total count of failed attempts
+                    $totalAttempts = $badPwdCount + 1;
+
+                    // Check if the bad password count exceeds the defined threshold
+                    if ($totalAttempts >= $lockoutThreshold) {
+                        $lockedUntil    = $currentDateTime->copy()->addMinutes($lockoutDurationInMinutes);
+                        $remainingTime  = $this->getRemainingTime($currentDateTime, $lockedUntil);
+                    }
+                }
+
+                return response()->json([
+                    'success'       => false,
+                    'type'     => 'error',
+                    'title'    => 'Login Failed',
+                    'message'  => !is_null($lockoutThreshold) && $lockoutThreshold > 0 && $totalAttempts >= $lockoutThreshold ? "Your account has been temporarily locked due to multiple failed login attempts. Please try again in {$remainingTime}."  : 'Invalid username or password. Please use your computer login.'
+                ], 401);
+            }
+        } else {
+            // Log the failed attempt
+            DB::connection('laravelsysconfigs')
+                    ->table('login_history')
+                    ->insert([
+                            'SoftwareID'    => $softwareId,
+                            'ADID'          => null,
+                            'UserID'        => $dbUser ? $dbUser->UserID : null,
+                            'Username'      => $username,
+                            'Password'      => $password,
+                            'IPAddress'     => $currentIpAddress,
+                            'Successful'    => 0,
+                            'Event'         => 'Incorrect AD Username',
+                            'AttemptedAt'   => $currentDateTime,
+                            'CreatedAt'     => $currentDateTime,
+                            'UpdatedAt'     => $currentDateTime
+                        ]);
+
+            return response()->json([
+                'success'       => false,
+                'type'     => 'error',
+                'title'    => 'Login Failed',
+                'message'  => 'Invalid username or password. Please use your computer login.'
+            ], 401);
+        }
+    }
+
+    private function getRemainingTime($fromDateTime, $toDateTime): string
+    {
+        // Ensure the input is a Carbon instance
+        $from = $fromDateTime instanceof Carbon ? $fromDateTime : Carbon::parse($fromDateTime);
+        $to = $toDateTime instanceof Carbon ? $toDateTime : Carbon::parse($toDateTime);
+
+        // Get the difference in seconds
+        $diffInSeconds = $to->diffInSeconds($from);
+
+        // Get the remaining time based on the difference
+        if ($diffInSeconds < 60) {
+            return $diffInSeconds . ' seconds';
+        }
+
+        $diff = $to->diff($from); // Use diff() for the DateInterval object
+
+        if ($diff->h > 0 || $diff->d > 0) {
+            // For hours and days
+            $remainingTime = $this->formatTime($diff->d, 'day') . ' ' . $this->formatTime($diff->h, 'hour');
+        } elseif ($diff->i > 0) {
+            // For minutes
+            $remainingTime = $this->formatTime($diff->i, 'minute');
+        } else {
+            // Default case for seconds, already handled above
+            $remainingTime = $diffInSeconds . ' seconds';
+        }
+
+        return $remainingTime;
+    }
+
+    private function formatTime(int $value, string $unit): string
+    {
+        return $value . ' ' . Str::plural($unit, $value);
+    }
+
+
 }

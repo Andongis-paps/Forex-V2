@@ -221,4 +221,21 @@ class User extends Authenticatable {
 
         return $branch_list ?  $branch_list : '';
     }
+
+    public function hasModuleAccess(?string $userType = null)
+    {
+        $module = DB::connection('access')->table('tblpermissions')
+                ->join('access.tblmenu', 'access.tblpermissions.MenuID', '=', 'access.tblmenu.MenuID')
+                ->select('access.tblmenu.URLName')
+                ->where('access.tblpermissions.PositionID', '=', $this->PositionID) // Employee's position
+                ->where('access.tblpermissions.WithPermission', '=', 1) // Permission is enabled
+                ->where('access.tblmenu.ApplicationID', env('SOFTWARE_ID'))
+                ->when($userType, function($query, $userType){
+                    return $query->where('access.tblmenu.AppMenuName', 'like', $userType . '/%');
+                })
+                ->orderByRaw("LENGTH(access.tblmenu.AppMenuID), access.tblmenu.AppMenuID")
+                ->first();
+
+        return $module ? $module->URLName : null;
+    }
 }
