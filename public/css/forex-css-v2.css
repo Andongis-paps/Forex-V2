@@ -619,7 +619,7 @@ tr.search-highlight {
 }
 
 #time-on-off-card {
-    margin-top: 2%;
+    margin-top: 2%!important;
     z-index: 999!important;
     display: none;
     position: absolute!important;
