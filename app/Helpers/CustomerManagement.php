@@ -3,7 +3,9 @@
 namespace App\Helpers;
 
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB; 
+use Illuminate\Support\Facades\Validator;
 
 class CustomerManagement {
     public static function all() {
@@ -32,7 +34,7 @@ class CustomerManagement {
 
     // Search Customer
     public static function searchCustomer($CNumber, $FName, $MName, $LName, $CBirthday, $filter) {
-        return  CustomerManagement::all()
+        $customers = CustomerManagement::all()
             ->where(function ($query) use ($CNumber, $FName, $MName, $LName, $CBirthday, $filter) {
                 if ($filter == 1 && $FName || $LName || $MName || $CBirthday) {
                     $query
@@ -67,6 +69,17 @@ class CustomerManagement {
             ->orderBy('tblxcustomer.FullName')
             ->limit(10)
             ->get();
+        
+        foreach ($customers as $customer) {
+            $evaluateCustomer   = self::evaluateCustomerStatus($customer->CustomerID, null);
+            $customer->Status   = $evaluateCustomer['status'];
+            $customer->Reason   = $evaluateCustomer['reason'];
+            $customer->Photo    = self::getCustomerPhoto($customer->CustomerID);
+            // $customer->Birthday = ConfigurationManagement::customDateFormat($customer->Birthday);
+            $customer->Birthday =  Carbon::parse($customer->Birthday)->format('Y-m-d');
+        }
+
+        return $customers;
     }
 
     // Search Customer Sanctions
@@ -116,10 +129,118 @@ class CustomerManagement {
     // check Customer If Sinag Employee
     public static function checkCustomerIfSinagEmployee($customerid) {
         return !!DB::connection('pawnshop')->table('tblxcustomer')
-            ->where('tblxcustomer.NewF', '=', 1)
-            ->where('tblxcustomer.Deleted', '=', 0)
-            ->where('tblxcustomer.SinagEmployee', '=', 1)
-            ->where('tblxcustomer.customerid', '=', $customerid)
+            ->where('tblxcustomer.NewF', 1)
+            ->where('tblxcustomer.Deleted', 0)
+            ->where('tblxcustomer.SinagEmployee', 1)
+            ->where('tblxcustomer.customerid', $customerid)
             ->exists();
+    }
+
+    public static function evaluateCustomerStatus($cid = null, $branchcode = null) {
+        if ($cid) {
+            $validations = DB::select("CALL pawnshop.cms_validate_customer(?, ?)", [$cid, $branchcode]);
+   
+            $reasons = [];
+   
+            foreach ($validations as $validation) {
+                if (isset($validation->msg) && strtolower(trim($validation->msg)) !== 'ok') {
+                    $reasons[] = trim($validation->msg);
+                } 
+            }
+   
+            if (!empty($reasons)) {
+                $reasonList = '<ul  class="list-group">';
+
+                foreach ($reasons as $msg) {
+                    $reasonList .= '<li class="list-group-item">' . htmlspecialchars($msg) . '</li>';
+                }
+
+                $reasonList .= '</ul>';
+   
+                return [
+                    'status' => false,
+                    'reason' => $reasonList
+                ];
+            }
+        }
+   
+        return [
+            'status' => true,
+            'reason' => ''
+        ];
+    }
+
+    public static function getCustomerPhoto($customerid){
+        $basePhotoUrl = config('app.cms_photo_location_ip');
+        $customer = self::customerInfo($customerid);
+        $photoPath = '';
+
+        if (!empty($customer->ScanID)) {
+            $photoPath = $customer->ScanID;
+        } elseif (!empty($customer->IDPicture)) {
+            $photoPath = $customer->IDPicture;
+        }
+    
+        // Construct the full customer photo URL or use a default image
+        if (!empty($photoPath)) {
+            return $basePhotoUrl . $photoPath;
+        } else {
+            return asset('assets/img/default-customer-img.jpg');
+        }
+    }
+
+    // validate Requests
+    public function validateRequest($request){
+           $isMethod = $request->isMethod('POST');
+  
+           // Initialize the rules and messages arrays
+           $rules = [];
+           $messages = [];
+           $filter = $request->input('filter');
+  
+  
+           /* ================================
+           |  Searching Customer Validations  |
+           ================================= */
+  
+           // Birthday
+           if ($filter == 1) {
+                $rules['birth-date']                 = 'required|date';
+                $messages['Birthday.required']     = 'Birthdate field is required.';
+                $messages['Birthday.date']         = 'Birthdate must be a valid date.';
+  
+                $rules['f-name'] = 'nullable|string';
+                $rules['m-name'] = 'nullable|string';
+                $rules['l-name'] = 'nullable|string';
+           }
+           // CustomerID Validation
+           if ($filter == 2) {
+                $rules['c-number']              = 'required|string|exists:pawnshop.tblxcustomer,customerid';
+                $messages['CustomerID.required']  = 'Customer is required.';
+                $messages['CustomerID.exists']    = 'Customer not found.';
+           }
+  
+  
+           $validator = Validator::make($request->all(), $rules, $messages);
+  
+           // Additional validation for name fields (at least two must be filled)
+           if ($filter == 1) {
+                $nameFields = array_filter([
+                     $request->FName,
+                     $request->MName,
+                     $request->LName
+                ]);
+  
+                if (count($nameFields) < 2) {
+                     $validator->after(function ($validator) {
+                          $validator->errors()->add('name_fields', 'At least two of the name fields are required.');
+                     });
+                }
+           }
+  
+  
+        //    if ($validator->fails()) return response()->json(['errors' => 1, 'title' => '', 'html' => ErrorHandler::formatErrors($validator->errors())]);
+  
+           return null;
     }
 }

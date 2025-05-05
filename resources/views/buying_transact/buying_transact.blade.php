@@ -286,12 +286,12 @@
                                                 </div>
                                             </div>
                                         </div>
-
-                                        @include('UI.UX.security_code')
-                                        @include('UI.UX.customer_searching')
                                     </div>
                                 </form>
                             </div>
+
+                            @include('UI.UX.security_code')
+                            @include('UI.UX.customer_searching')
 
                             <div class="col-5">
                                 @include('UI.UX.customer_info_card')

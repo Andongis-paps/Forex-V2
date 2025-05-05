@@ -39,13 +39,13 @@ class SessionController extends Controller {
     }
 
     public function searchCustomer(Request $request) {
-        $search_filter = $request->get('search_filter');
-        $customer_details = $request->get('customer_details');
-        $customer_l_name = $request->get('customer_l_name');
-        $customer_f_name = $request->get('customer_f_name');
-        $customer_m_name = $request->get('customer_m_name');
-        $customer_number = $request->get('customer_number');
-        $birth_date = $request->get('birth_date');
+        $search_filter = $request->input('filter');
+        $customer_details = $request->input('customer_details');
+        $customer_l_name = $request->input('l-name');
+        $customer_f_name = $request->input('f-name');
+        $customer_m_name = $request->input('m-name');
+        $customer_number = $request->input('c-number');
+        $birth_date = $request->input('birth-date');
 
         $data['sanctions'] = CustomerManagement::searchCustomerInSanctions($customer_number, $customer_f_name, $customer_m_name, $customer_l_name, $birth_date, $search_filter);
 

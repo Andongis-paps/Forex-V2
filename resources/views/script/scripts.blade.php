@@ -219,7 +219,7 @@
 {{-- ======================================================================================================================================================================================== --}}
 
 {{-- Customer selection --}}
-<script>
+{{-- <script>
     $(document).ready(function() {
         var swiper = new Swiper("#test-swiper", {
             navigation: {
@@ -779,7 +779,7 @@
             }
         });
     });
-</script>
+</script> --}}
 
 <script>
     $(document).ready(function() {
