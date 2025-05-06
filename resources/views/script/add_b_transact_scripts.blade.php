@@ -284,7 +284,7 @@
                     decim_part = 0.25;
                 } else if (decim_part >= 0.50 && decim_part < 0.75) {
                     decim_part = 0.50;
-                } else if (decim_part >= 0.75 && decim_part < 1) {
+                } else if (decim_part >= 0.75 && decim_part < .94) {
                     decim_part = 0.75;
                 }
 

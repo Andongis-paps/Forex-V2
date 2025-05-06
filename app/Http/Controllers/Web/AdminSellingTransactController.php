@@ -1266,8 +1266,6 @@ class AdminSellingTransactController extends Controller {
             )
             ->get();
 
-        dd($result['selling_trans_details']);
-
         $STMDID = $request->id;
 
         return view('selling_transact_admin.selling_transact_details_admin', compact('result', 'STMDID', 'menu_id'));

@@ -512,7 +512,7 @@ class AdminDPOFXController extends Controller {
     }
 
     public function print(Request $request) {
-        $dpo_out = DB::connection('forex')->table('tbldpooutdetails')
+        $dpo_out = DB::connection('forex')->table('tbldpooutdetails as dod')
             ->select('pawnshop.tblxcustomer.Nameofemployer', 'pawnshop.tblxcustomer.Address2', 'accounting.tblcompany.CompanyName', 'tblfcformseries.FormSeries', 'tbldpooutdetails.DPODOID', 'tbldpooutdetails.DPOSellingNo', 'pawnshop.tblxcustomer.FullName', 'tbldpooutdetails.DollarAmount', 'tbldpooutdetails.SellingRate', 'tbldpooutdetails.Principal', 'tbldpooutdetails.ExchangeAmount', 'tbldpooutdetails.GainLoss', 'pawnshop.tblxusers.Name', 'tbldpooutdetails.EntryDate', 'tbldpooutdetails.Rset')
             ->join('pawnshop.tblxcustomer', 'tbldpooutdetails.CustomerID', 'pawnshop.tblxcustomer.CustomerID')
             ->join('pawnshop.tblxusers', 'tbldpooutdetails.UserID', 'pawnshop.tblxusers.UserID')
