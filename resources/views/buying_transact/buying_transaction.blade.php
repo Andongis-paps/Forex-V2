@@ -434,7 +434,7 @@
                                                                     <input class="form-control current-rates text-right" name="current-rates" id="current-rates" type="number" value="{{ number_format(floor($denom_details->SinagRateBuying * 100000) / 100000, 4, '.', ',') }}">
                                                                 </div>
     
-                                                                <input type="hidden" class="form-control bill-rate-input" value="{{ number_format(floor($denom_details->SinagRateBuying * 100000) / 100000, 4, '.', ',') }}">
+                                                                <input type="hidden" class="form-control bill-rate-input" value="{{ number_format(floor($denom_details->SinagRateBuying * 100000) / 100000, 4, '.', ',') }}" >
                                                             </td>
                                                         </tr>
                                                     </div>
