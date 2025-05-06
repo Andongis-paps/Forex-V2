@@ -51,16 +51,11 @@
                                                 </div>
                                                 <div class="col-9">
                                                     <div class="input-group">
-                                                        <input type="text" class="form-control" id="customer-name-selected" value="" readonly>
-                                                        <input type="hidden" class="form-control" id="customer-id-selected" name="customer-id-selected" value="" readonly>
-                                                        <input type="hidden" class="form-control" id="customer-no-selected" name="customer-no-selected" value="" readonly>
-                                                        <input type="hidden" class="form-control" id="customer-entry-id" name="customer-entry-id" value="" readonly>
-                                      
-                                                        <input id="available-serials-count" type="hidden" value="{{ count($result['available_serials']) }}">
-                                                        <button class="btn btn-primary" id="customer-detail-selling" type="button" disabled data-bs-toggle="modal" data-bs-target="#customerDeetsModal" @if (count($result['available_serials']) == 0) disabled @else  @endif>
-                                                            Customer
-                                                        </button>
-                                                        {{-- <button class="btn btn-primary" id="customer-detail-selling" type="button" disabled data-bs-toggle="modal" data-bs-target="#customerDeetsSellingModal" @if (count($result['available_serials']) == 0) disabled @else  @endif>Customer &nbsp; <i class='bx bxs-user-detail pb-1'></i></button> --}}
+                                                        <input type="text" class="form-control" id="customer-name-selected" value="{{ !empty($result['customer']->FullName) ? $result['customer']->FullName : '' }}" readonly>
+                                                        <input type="hidden" class="form-control" id="customer-id-selected" name="customer-id-selected" value="{{ !empty($result['customer']->CustomerID) ? $result['customer']->CustomerID : '' }}" readonly>
+                                                        <input type="hidden" class="form-control" id="customer-no-selected" name="customer-no-selected" value="{{ !empty($result['customer']->CustomerNo) ? $result['customer']->CustomerNo : '' }}" readonly>
+                                                        <input type="hidden" class="form-control" id="customer-entry-id" name="customer-entry-id" value="{{ !empty($result['customer']->CustomerID) ? $result['customer']->CustomerID : '' }}" readonly>
+                                                        <button class="btn btn-primary" id="customer-detail" type="button" disabled data-bs-toggle="modal" data-bs-target="#customerDeetsModal">Customer</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -74,12 +69,12 @@
                                                 <div class="col-9">
                                                     <div class="row">
                                                         <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                                                            <input type="radio" class="btn-check" name="radio-rset" id="r-set-o" value="{{ trans('labels.buying_rset_o') }}" @if(session('time_toggle_status') == 1) @endif disabled="true">
+                                                            <input type="radio" class="btn-check" name="radio-rset" id="r-set-o" value="{{ trans('labels.buying_rset_o') }}" @if(session('time_toggle_status') == 1) @endif @if (empty($result['customer'])) disabled @else @endif>
                                                             <label class="btn btn-outline-primary" for="r-set-o">
                                                                 <strong>{{ trans('labels.buying_rset_o') }}</strong>
                                                             </label>
 
-                                                            <input type="radio" class="btn-check" name="radio-rset" id="r-set-b" value="{{ trans('labels.buying_rset_b') }}" disabled="true">
+                                                            <input type="radio" class="btn-check" name="radio-rset" id="r-set-b" value="{{ trans('labels.buying_rset_b') }}" @if (empty($result['customer'])) disabled @else @endif>
                                                             <label class="btn btn-outline-primary" for="r-set-b">
                                                                 <strong>{{ trans('labels.buying_rset_b') }}</strong>
                                                             </label>
@@ -206,7 +201,7 @@
                                                 </div>
                                                 <div class="col-lg-6 text-end">
                                                     @can('access-permission', $menu_id)
-                                                        <a class="btn btn-secondary btn-sm" type="button" href="{{ URL::to('/addNewSellingTrans') }}">{{ trans('labels.back_action') }}</a>
+                                                        <a class="btn btn-secondary btn-sm" type="button" href="{{ route('admin_transactions.selling_transaction') }}">{{ trans('labels.back_action') }}</a>
                                                     @endcan
 
                                                     @can('add-permission', $menu_id)
@@ -222,7 +217,7 @@
                     </div>
 
                     <div class="col-lg-5">
-                        @include('UI.UX.customer_info_card')
+                        @include('UI.UX.customer_info_card', ['customer' => !empty($result['customer']) ? $result['customer'] : ''])
 
                         <div class="card rounded-tr-sm rounded-tl-sm mt-3">
                             <div class="col-12 p-1 border border-gray-300 rounded-tr rounded-tl">

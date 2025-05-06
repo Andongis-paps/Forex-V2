@@ -43,64 +43,64 @@
     </div>
 
     <div class="col-12 p-2 border-b border-gray-300 rounded-tl rounded-tr">
-          <div class="row">
-                <div class="col-3">
-                    <div class="ms-0 rounded customer-image-thumbnail">
-                        <img src="{{ App\Helpers\CustomerManagement::getCustomerPhoto(!empty($customer->CustomerID) ? $customer->CustomerID : '') }}" alt="Item Image" class="responsive-image img_show" id="customer-photo">
-                    </div>
+        <div class="row">
+            <div class="col-3">
+                <div class="ms-0 rounded customer-image-thumbnail">
+                    <img src="{{ App\Helpers\CustomerManagement::getCustomerPhoto(!empty($customer->CustomerID) ? $customer->CustomerID : '') }}" alt="Item Image" class="responsive-image img_show" id="customer-photo">
                 </div>
-                <div class="col-9">
-                    <table class="table table-borderless">
-                        <tbody>
-                            <tr>
-                                <td class="text-sm align-middle py-1">
-                                    <i class="bx bx-id-card me-1"></i>
-                                    <strong>CUSTOMER NO:</strong>
-                                </td>
-                                <td class="text-sm align-middle py-1 customer_no">
-                                    {{ !empty($customer->CustomerID) ? $customer->CustomerID : '' }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-sm align-middle py-1">
-                                    <i class="bx bx-user me-1"></i>
-                                    <strong> CUSTOMER NAME:</strong> 
-                                </td>
-                                <td class="text-sm align-middle py-1 customer_name">
-                                    {{ !empty($customer->FullName) ? $customer->FullName : '' }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-sm align-middle py-1">
-                                    <i class="bx bx-calendar me-1"></i>
-                                    <strong>BIRTHDAY:</strong>
-                                </td>
-                                <td class="text-sm align-middle py-1 customer_birthday">
-                                    {{ !empty($customer->Birthday) ? Carbon\Carbon::parse($customer->Birthday)->format('F j, Y') : '' }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-sm align-middle py-1">
-                                    <i class="bx bx-phone me-1"></i>
-                                    <strong> CONTACT NO:</strong>
-                                </td>
-                                <td class="text-sm align-middle py-1 customer_celno">
-                                    {{ !empty($customer->WithCP) && $customer->WithCP ? $customer->CelNo : '' }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-sm align-middle py-1">
-                                    <i class="bx bx-envelope me-1"></i>
-                                    <strong>EMAIL:</strong>
-                                </td>
-                                <td class="text-sm align-middle py-1 customer_email">
-                                    {{ !empty($customer->Email) ? $customer->Email : '-' }}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-          </div>
+            </div>
+            <div class="col-9">
+                <table class="table table-borderless">
+                    <tbody>
+                        <tr>
+                            <td class="text-sm align-middle py-1">
+                                <i class="bx bx-id-card me-1"></i>
+                                <strong>CUSTOMER NO:</strong>
+                            </td>
+                            <td class="text-sm align-middle py-1 customer_no">
+                                {{ !empty($customer->CustomerID) ? $customer->CustomerID : '' }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-sm align-middle py-1">
+                                <i class="bx bx-user me-1"></i>
+                                <strong> CUSTOMER NAME:</strong> 
+                            </td>
+                            <td class="text-sm align-middle py-1 customer_name">
+                                {{ !empty($customer->FullName) ? $customer->FullName : '' }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-sm align-middle py-1">
+                                <i class="bx bx-calendar me-1"></i>
+                                <strong>BIRTHDAY:</strong>
+                            </td>
+                            <td class="text-sm align-middle py-1 customer_birthday">
+                                {{ !empty($customer->Birthday) ? Carbon\Carbon::parse($customer->Birthday)->format('F j, Y') : '' }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-sm align-middle py-1">
+                                <i class="bx bx-phone me-1"></i>
+                                <strong> CONTACT NO:</strong>
+                            </td>
+                            <td class="text-sm align-middle py-1 customer_celno">
+                                {{ !empty($customer->WithCP) && $customer->WithCP ? $customer->CelNo : '' }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-sm align-middle py-1">
+                                <i class="bx bx-envelope me-1"></i>
+                                <strong>EMAIL:</strong>
+                            </td>
+                            <td class="text-sm align-middle py-1 customer_email">
+                                {{ !empty($customer->Email) ? $customer->Email : '-' }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 

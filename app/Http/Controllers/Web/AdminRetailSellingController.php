@@ -1,18 +1,19 @@
 <?php
 
 namespace App\Http\Controllers\Web;
-use App\Http\Controllers\Controller;
-use Validator;
-use App;
-use Lang;
-use App\Admin;
-use App\Models\User;
 use DB;
-use Illuminate\Support\Carbon;
-use Hash;
+use App;
 use Auth;
+use Hash;
+use Lang;
 use Session;
+use App\Admin;
+use Validator;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use App\Helpers\CustomerManagement;
+use App\Http\Controllers\Controller;
 
 class AdminRetailSellingController extends Controller {
     protected $MenuID;
@@ -69,11 +70,13 @@ class AdminRetailSellingController extends Controller {
 
     public function add(Request $request) {
         $raw_date = Carbon::now('Asia/Manila');
-        $time_togg_status = session('time_toggle_status');
-        $r_set = $time_togg_status == 1 ? 'O' : null;
+        $r_set = session('time_toggle_status') == 1 ? 'O' : null;
 
         $this->MenuID = $request->attributes->get('MenuID');
         $menu_id = $this->MenuID;
+
+        $customerid = $request->query('customerid');
+        if ($customerid) $result['customer'] = CustomerManagement::customerInfo($customerid);
 
         $branch_stocks_query = DB::connection('forex')->table('tblforextransactiondetails AS fd')
             ->selectRaw('tc.CurrencyID, tc.Currency, fs.BillAmount, COUNT(fs.BillAmount) as bill_amount_count, SUM(fs.BillAmount) as bill_amount, fd.Rset')

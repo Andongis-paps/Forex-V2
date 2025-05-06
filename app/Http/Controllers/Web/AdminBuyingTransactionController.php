@@ -1,18 +1,19 @@
 <?php
 
 namespace App\Http\Controllers\Web;
-use App\Http\Controllers\Controller;
-use Validator;
-use App;
-use Lang;
-use App\Admin;
-use App\Models\User;
 use DB;
-use Illuminate\Support\Carbon;
-use Hash;
-use Session;
-use Illuminate\Http\Request;
+use App;
 use Auth;
+use Hash;
+use Lang;
+use Session;
+use App\Admin;
+use Validator;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use App\Helpers\CustomerManagement;
+use App\Http\Controllers\Controller;
 
 class AdminBuyingTransactionController extends Controller {
     protected $MenuID;
@@ -125,6 +126,9 @@ class AdminBuyingTransactionController extends Controller {
         $this->MenuID = $request->attributes->get('MenuID');
         $menu_id = $this->MenuID;
 
+        $customerid = $request->query('customerid');
+        if ($customerid) $result['customer'] = CustomerManagement::customerInfo($customerid);
+
         $result['transact_type'] = DB::connection('forex')->table('tbltransactiontype')
             ->where('tbltransactiontype.Active', '!=', 0)
             ->where('tbltransactiontype.TransType', '!=', 'DPOFX')
@@ -198,8 +202,7 @@ class AdminBuyingTransactionController extends Controller {
             ->where('tbldpoindirate.BranchID', '=', Auth::user()->getBranch()->BranchID)
             ->select(
                 'tbldpoindirate.Rate'
-            )
-            ->first();
+            )->first();
 
         $currency_ = DB::connection('forex')->table('tblcurrency')
             ->leftJoin('forexcurrency.tblcurrency', 'tblcurrency.CurrencyID', '=', 'forexcurrency.tblcurrency.fxCurrecnyID')
@@ -502,48 +505,48 @@ class AdminBuyingTransactionController extends Controller {
                             'Serials' => null,
                             'UserID' => $request->input('matched_user_id'),
                             'FSType' => $request->input('radio-transact-type'),
-                            'Buffer' => $buffer_status,
+                            // 'Buffer' => $buffer_status,
                         ]);
                     }
                 }
 
-                if ($buffer_status == 1) {
-                    DB::connection('forex')->table('tblbuffertransfer')
-                        ->insert([
-                            'BufferNo' => $get_buffer_no,
-                            'BufferDate' => $raw_date->toDateString(),
-                            'DollarAmount' => $request->input('current_amount_true'),
-                            'BranchID' => Auth::user()->getBranch()->BranchID,
-                            'UserID' => $request->input('matched_user_id'),
-                            'EntryDate' => $raw_date->toDateTimeString(),
-                            'BufferTransfer' => 2,
-                            'BTBy' => $request->input('matched_user_id'),
-                            'BTDate' => $raw_date->toDateString(),
-                            'BTEntryDate' => $raw_date->toDateTimeString(),
-                            'Received' => 1,
-                            'RDate' => $raw_date->toDateString(),
-                            'RUserID' => $request->input('matched_user_id'),
-                            'RDate' => $raw_date->toDateTimeString(),
-                        ]);
+                // if ($buffer_status == 1) {
+                //     DB::connection('forex')->table('tblbuffertransfer')
+                //         ->insert([
+                //             'BufferNo' => $get_buffer_no,
+                //             'BufferDate' => $raw_date->toDateString(),
+                //             'DollarAmount' => $request->input('current_amount_true'),
+                //             'BranchID' => Auth::user()->getBranch()->BranchID,
+                //             'UserID' => $request->input('matched_user_id'),
+                //             'EntryDate' => $raw_date->toDateTimeString(),
+                //             'BufferTransfer' => 2,
+                //             'BTBy' => $request->input('matched_user_id'),
+                //             'BTDate' => $raw_date->toDateString(),
+                //             'BTEntryDate' => $raw_date->toDateTimeString(),
+                //             'Received' => 1,
+                //             'RDate' => $raw_date->toDateString(),
+                //             'RUserID' => $request->input('matched_user_id'),
+                //             'RDate' => $raw_date->toDateTimeString(),
+                //         ]);
 
-                    $max_bcno = DB::connection('forex')->table('tblbuffercontrol')
-                        ->selectRaw('MAX(BCNO) + 1 AS maxBCNO')
-                        ->value('maxBCNO');
+                //     $max_bcno = DB::connection('forex')->table('tblbuffercontrol')
+                //         ->selectRaw('MAX(BCNO) + 1 AS maxBCNO')
+                //         ->value('maxBCNO');
 
-                    DB::connection('forex')->table('tblbuffercontrol')
-                        ->insert([
-                            'BCNO' => $max_bcno,
-                            'BCDate' => $raw_date->toDateString(),
-                            'DITID' => 2,
-                            'BCType' => 1,
-                            'DollarIn' => $request->input('current_amount_true'),
-                            'Balance' => 0,
-                            'UserID' => $request->input('matched_user_id'),
-                            'EntryDate' => $raw_date->toDateTimeString(),
-                            'BranchID' =>  Auth::user()->getBranch()->BranchID,
-                            'Remarks' => $request->input('remarks'),
-                        ]);
-                }
+                //     DB::connection('forex')->table('tblbuffercontrol')
+                //         ->insert([
+                //             'BCNO' => $max_bcno,
+                //             'BCDate' => $raw_date->toDateString(),
+                //             'DITID' => 2,
+                //             'BCType' => 1,
+                //             'DollarIn' => $request->input('current_amount_true'),
+                //             'Balance' => 0,
+                //             'UserID' => $request->input('matched_user_id'),
+                //             'EntryDate' => $raw_date->toDateTimeString(),
+                //             'BranchID' =>  Auth::user()->getBranch()->BranchID,
+                //             'Remarks' => $request->input('remarks'),
+                //         ]);
+                // }
 
                 $latest_aftdid = $get_transact_deets_aftdid[0]->AFTDID;
 
@@ -551,7 +554,7 @@ class AdminBuyingTransactionController extends Controller {
 
                 return response()->json(['latest_aftdid' => $latest_aftdid]);
 
-                break;
+                // break;
             default:
                 dd("no transactions available!");
         }

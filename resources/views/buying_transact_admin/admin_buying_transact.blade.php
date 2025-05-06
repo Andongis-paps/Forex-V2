@@ -55,10 +55,10 @@
                                                 </div>
                                                 <div class="col-9">
                                                     <div class="input-group">
-                                                        <input type="text" class="form-control" id="customer-name-selected" value="" readonly>
-                                                        <input type="hidden" class="form-control" id="customer-id-selected" name="customer-id-selected" value="" readonly>
-                                                        <input type="hidden" class="form-control" id="customer-no-selected" name="customer-no-selected" value="" readonly>
-                                                        <input type="hidden" class="form-control" id="customer-entry-id" name="customer-entry-id" value="" readonly>
+                                                        <input type="text" class="form-control" id="customer-name-selected" value="{{ !empty($result['customer']->FullName) ? $result['customer']->FullName : '' }}" readonly>
+                                                        <input type="hidden" class="form-control" id="customer-id-selected" name="customer-id-selected" value="{{ !empty($result['customer']->CustomerID) ? $result['customer']->CustomerID : '' }}" readonly>
+                                                        <input type="hidden" class="form-control" id="customer-no-selected" name="customer-no-selected" value="{{ !empty($result['customer']->CustomerNo) ? $result['customer']->CustomerNo : '' }}" readonly>
+                                                        <input type="hidden" class="form-control" id="customer-entry-id" name="customer-entry-id" value="{{ !empty($result['customer']->CustomerID) ? $result['customer']->CustomerID : '' }}" readonly>
                                                         <button class="btn btn-primary" id="customer-detail" type="button" disabled data-bs-toggle="modal" data-bs-target="#customerDeetsModal">Customer</button>
                                                     </div>
                                                 </div>
@@ -86,12 +86,12 @@
                                                 <div class="col-9">
                                                     <div class="row">
                                                         <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                                                            <input type="radio" class="btn-check" name="radio-rset" id="r-set-o" value="{{ trans('labels.buying_rset_o') }}" @if(session('time_toggle_status') == 1) @endif disabled="true">
+                                                            <input type="radio" class="btn-check" name="radio-rset" id="r-set-o" value="{{ trans('labels.buying_rset_o') }}" @if(session('time_toggle_status') == 1) @endif @if (empty($result['customer'])) disabled @else @endif>
                                                             <label class="btn btn-outline-primary" for="r-set-o">
                                                                 <strong>{{ trans('labels.buying_rset_o') }}</strong>
                                                             </label>
 
-                                                            <input type="radio" class="btn-check" name="radio-rset" id="r-set-b" value="{{ trans('labels.buying_rset_b') }}" disabled="true">
+                                                            <input type="radio" class="btn-check" name="radio-rset" id="r-set-b" value="{{ trans('labels.buying_rset_b') }}"  @if (empty($result['customer'])) disabled @else @endif>
                                                             <label class="btn btn-outline-primary" for="r-set-b">
                                                                 <strong>{{ trans('labels.buying_rset_b') }}</strong>
                                                             </label>
@@ -121,7 +121,7 @@
                                                     <div class="row text-center">
                                                         <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
                                                             @foreach ($result['transact_type'] as $transact_type)
-                                                                <input type="radio" class="btn-check radio-button" name="radio-transact-type" id="radio-button-{{ $transact_type->TransType }}" value="{{ $transact_type->TTID }}" disabled>
+                                                                <input type="radio" class="btn-check radio-button" name="radio-transact-type" id="radio-button-{{ $transact_type->TransType }}" value="{{ $transact_type->TTID }}">
                                                                 <label class="btn btn-outline-primary" for="radio-button-{{ $transact_type->TransType }}">
                                                                     <strong>{{ $transact_type->TransType }}</strong>
                                                                 </label>
@@ -226,7 +226,7 @@
                                                     <span>Received in:</span>
                                                 </div>
 
-                                                <div class="col-2 mt-1 offset-3">
+                                                {{-- <div class="col-2 mt-1 offset-3">
                                                     <div class="col-12 text-left">
                                                         <div class="row">
                                                             <label class="switch switch-success switch-square">
@@ -250,18 +250,16 @@
                                                         <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
                                                             <input type="radio" class="btn-check" name="radio-buffer-options" id="r-buffer-opt-1" value="1" disabled="true">
                                                             <label class="btn btn-outline-primary" for="r-buffer-opt-1">
-                                                                {{-- <strong>With Amount</strong> --}}
                                                                 <strong>In PHP</strong>
                                                             </label>
 
                                                             <input type="radio" class="btn-check" name="radio-buffer-options" id="r-buffer-opt-2" value="2" disabled="true">
                                                             <label class="btn btn-outline-primary" for="r-buffer-opt-2">
-                                                                {{-- <strong>Without Amount</strong> --}}
                                                                 <strong>In USD</strong>
                                                             </label>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div> --}}
                                             </div>
 
                                             {{-- Buying Transaction - Currency Amount --}}
@@ -336,15 +334,14 @@
                                                 </div>
                                             </div>
                                         </div>
-
-                                        @include('UI.UX.security_code')
-                                        @include('UI.UX.customer_searching')
                                     </div>
                                 </form>
                             </div>
 
                             <div class="col-5">
-                                @include('UI.UX.customer_info_card')
+                                @include('UI.UX.security_code')
+                                @include('UI.UX.customer_searching')
+                                @include('UI.UX.customer_info_card',['customer' => !empty($result['customer']) ? $result['customer'] : '']) {{-- Customer Information Card --}}
                             </div>
                         </div>
                     </div>

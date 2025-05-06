@@ -223,6 +223,9 @@
                                 popup: 'swal2-zoom-in'
                             },
                         }).then((result) => {
+                            $cms_button = `<a class="btn btn-primary btn-sm" href="${fucking_path}" id="cms-redirect-button-footer" type="button"  target='_blank'> Go to CMS </a>`;
+                            $('#customer-modal-footer').append($cms_button);
+
                             if (result.dismiss === Swal.DismissReason.success) {  
                             // window.location.reload(); // You can optionally enable this if needed
                             }
@@ -233,175 +236,175 @@
 
                     if (result.customers.length > 0) {
                         result.customers.forEach(function(res) {
-                            rows += `<div class="swiper-slide"> 
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <div class=" rounded search-customer-image-thumbnail">
-                                                    <img src="${res.Photo}" loading="lazy" alt="customer Image" class="responsive-image" />
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="table-container">
-                                                <table class="table table-bordered table-hover" id="search-customer-table">
-                                                        <tbody>
-                                                            <tr>
-                                                                <td class="text-xs whitespace-nowrap">
-                                                                    <strong>Customer No</strong>
-                                                                </td>
-                                                                <td class="text-xs">
-                                                                    ${res.CustomerNo}
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td class="text-xs whitespace-nowrap w-25">
-                                                                    <strong>Customer Name</strong>
-                                                                </td>
-                                                                <td class="text-xs">
-                                                                    ${res.FullName}
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td class="text-xs whitespace-nowrap">
-                                                                    <strong>Birthdate</strong>
-                                                                </td>
-                                                                <td class="text-xs">
-                                                                    ${res.Birthday ? new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', day: '2-digit' }).format(new Date(res.Birthday)) : '-'}
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td class="text-xs whitespace-nowrap">
-                                                                    <strong>Status</strong>
-                                                                </td>
-                                                                <td class="text-xs text-danger">
-                                                                    ${res.Reason}
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td class="text-xs whitespace-nowrap">
-                                                                    <strong>Action</strong>
-                                                                </td>
-                                                                <td class="text-xs">
-                                                                ${res.Status? 
-                                                                    `<button class="btn btn-primary btn-sm get-customer-details py-1 px-3" id="get-customer-details" type="button" data-customerid="${res.CustomerID}"  data-photo="${res.Photo}"  ><i class='bx bx-user-check me-1'></i>Select</button>`
-                                                                    :
-                                                                    `<a class="btn btn-primary btn-warning btn-sm text-sm cms-redirect-button pe-2" href="${fucking_path}" type="button" target="_blank"><i class='bx bx-info-circle bx-flashing me-2'></i>Update Info</a>`
-                                                                }
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
+                            rows +=
+                                `<div class="swiper-slide"> 
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class=" rounded search-customer-image-thumbnail">
+                                                <img src="${res.Photo}" loading="lazy" alt="customer Image" class="responsive-image" />
                                             </div>
                                         </div>
-                                    </div>`;
+                                        <div class="col-6">
+                                            <div class="table-container">
+                                            <table class="table table-bordered table-hover" id="search-customer-table">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="text-xs whitespace-nowrap">
+                                                                <strong>Customer No</strong>
+                                                            </td>
+                                                            <td class="text-xs">
+                                                                ${res.CustomerNo}
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-xs whitespace-nowrap w-25">
+                                                                <strong>Customer Name</strong>
+                                                            </td>
+                                                            <td class="text-xs">
+                                                                ${res.FullName}
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-xs whitespace-nowrap">
+                                                                <strong>Birthdate</strong>
+                                                            </td>
+                                                            <td class="text-xs">
+                                                                ${res.Birthday ? new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', day: '2-digit' }).format(new Date(res.Birthday)) : '-'}
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-xs whitespace-nowrap">
+                                                                <strong>Status</strong>
+                                                            </td>
+                                                            <td class="text-xs text-danger">
+                                                                ${res.Reason}
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-xs whitespace-nowrap">
+                                                                <strong>Action</strong>
+                                                            </td>
+                                                            <td class="text-xs">
+                                                            ${res.Status? 
+                                                                `<button class="btn btn-primary btn-sm get-customer-details py-1 px-3" id="get-customer-details" type="button" data-customerid="${res.CustomerID}"  data-photo="${res.Photo}"  ><i class='bx bx-user-check me-1'></i>Select</button>`
+                                                                :
+                                                                `<a class="btn btn-primary btn-warning btn-sm text-sm cms-redirect-button pe-2" href="${fucking_path}" type="button" target="_blank"><i class='bx bx-info-circle bx-flashing me-2'></i>Update Info</a>`
+                                                            }
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>`;
 
                             $('#customer_images').empty().append(rows).fadeIn("fast");
                         });
                     } else {
-                        $no_results = `<div class="swiper-slide">
-                                            <div class="table-container mt-1">
-                                                <table class="table table-bordered table-hover" id="search-customer-table">
-                                                <thead>
-                                                        <tr>
-                                                            <th class="text-center text-xs whitespace-nowrap"><strong>Customer No</strong></th>
-                                                            <th class="text-center text-xs whitespace-nowrap w-25"><strong>Customer Name</strong></th>
-                                                            <th class="text-center text-xs whitespace-nowrap"><strong>Birthdate</strong></th>
-                                                            <th class="text-center text-xs whitespace-nowrap"><strong>Risk</strong></th>
-                                                            <th class="text-center text-xs whitespace-nowrap"><strong>Status</strong></th>
-                                                            <th class="text-center text-xs whitespace-nowrap"><strong>Action</strong></th>
-                                                        </tr
-                                                </thead>
-                                                <tbody>
-                                                        <tr>
-                                                            <td class="text-center text-xs" colspan="100">
-                                                                <p class="text-center text-sm" ><span >No records found</span></p>
-                                                            </td>
-                                                        </tr>
-                                                </tbody>
-                                                </table>
-                                            </div>
-                                        </div>`;
+                        $no_results =
+                            `<div class="swiper-slide">
+                                <div class="table-container mt-1">
+                                    <table class="table table-bordered table-hover" id="search-customer-table">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center text-xs whitespace-nowrap"><strong>Customer No</strong></th>
+                                                <th class="text-center text-xs whitespace-nowrap w-25"><strong>Customer Name</strong></th>
+                                                <th class="text-center text-xs whitespace-nowrap"><strong>Birthdate</strong></th>
+                                                <th class="text-center text-xs whitespace-nowrap"><strong>Risk</strong></th>
+                                                <th class="text-center text-xs whitespace-nowrap"><strong>Status</strong></th>
+                                                <th class="text-center text-xs whitespace-nowrap"><strong>Action</strong></th>
+                                            </tr
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-center text-xs" colspan="100">
+                                                    <p class="text-center text-sm" ><span >No records found</span></p>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>`;
 
-                        $cms_button = `<a class='btn btn-primary text-xs' href ='${fucking_path}/cms/login' id='cms-redirect-button' type='button'  target='_blank'> Go to CMS </a>`;
+                        $cms_button = `<a class="btn btn-primary btn-sm" href="${fucking_path}" id="cms-redirect-button-footer" type="button"  target='_blank'> Go to CMS </a>`;
 
                         $('#customer_images').empty().append($no_results).fadeIn("fast");
 
                         resetModal();
 
-                        $('.customer-modal-footer').append($cms_button);
+                        $('#customer-modal-footer').append($cms_button);
                     }
-
 
                     if (result.sanctions.length > 0) {
                         result.sanctions.forEach(function(res) {
-                            $sanctions = `<div class="table-container mt-1">
-                                            <table class="table table-bordered table-hover" id="search-customer-table">
-                                                <thead>
-                                                <tr>
-                                                        <th colspan="100" class="text-center text-xs p-0">
-                                                            <div class=" bg-[#FFD50A] p-2">
-                                                                <strong>Sanction Results</strong>
-                                                            </div>
-                                                        </th>
-                                                </tr>
-                                                <tr>
-                                                        <th class="text-center text-xs whitespace-nowrap p-1 w-25"> <strong>First Name </strong></th>
-                                                        <th class="text-center text-xs whitespace-nowrap p-1 w-25"> <strong>Middle Name </strong></th>
-                                                        <th class="text-center text-xs whitespace-nowrap p-1 w-25"> <strong>Last Name </strong></th>
-                                                        <th class="text-center text-xs whitespace-nowrap p-1"> <strong>Birthdate </strong></th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                <tr class="bg-red-100">
-                                                        <td class="text-center text-xs p-1">
-                                                            ${res.FName}
-                                                        </td>
-                                                        <td class="text-center text-xs p-1">
-                                                            ${res.MName}
-                                                        </td>
-                                                        <td class="text-center text-xs p-1">
-                                                            ${res.LName}
-                                                        </td>
-                                                        <td class="text-center text-xs p-1">
-                                                            ${res.Birthday}
-                                                        </td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>`;
+                            $sanctions =
+                                `<div class="table-container mt-1">
+                                    <table class="table table-bordered table-hover" id="search-customer-table">
+                                        <thead>
+                                            <tr>
+                                                <th colspan="100" class="text-center text-xs p-0">
+                                                    <div class=" bg-[#FFD50A] p-2">
+                                                        <strong>Sanction Results</strong>
+                                                    </div>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th class="text-center text-xs whitespace-nowrap p-1 w-25"> <strong>First Name </strong></th>
+                                                <th class="text-center text-xs whitespace-nowrap p-1 w-25"> <strong>Middle Name </strong></th>
+                                                <th class="text-center text-xs whitespace-nowrap p-1 w-25"> <strong>Last Name </strong></th>
+                                                <th class="text-center text-xs whitespace-nowrap p-1"> <strong>Birthdate </strong></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="bg-red-100">
+                                                <td class="text-center text-xs p-1">
+                                                    ${res.FName}
+                                                </td>
+                                                <td class="text-center text-xs p-1">
+                                                    ${res.MName}
+                                                </td>
+                                                <td class="text-center text-xs p-1">
+                                                    ${res.LName}
+                                                </td>
+                                                <td class="text-center text-xs p-1">
+                                                    ${res.Birthday}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>`;
 
                             $('#sanctions-container').empty().append($sanctions).fadeIn("fast");
-
                         });
                     } else {
-
-                        $no_results = `<div class="table-container mt-2">
-                                                <table class="table table-bordered table-hover" id="search-customer-table">
-                                                <thead>
-                                                        <tr>
-                                                            <th colspan="100" class="text-center text-xs p-0">
-                                                                <div class=" bg-[#FFD50A] p-2">
-                                                                    <strong>Sanction Results</strong>
-                                                                </div>
-                                                            </th>
-                                                        </tr>
-                                                        <tr>
-                                                            <th class="text-center text-xs whitespace-nowrap p-1 w-25"> <strong>First Name </strong></th>
-                                                            <th class="text-center text-xs whitespace-nowrap p-1 w-25"> <strong>Middle Name </strong></th>
-                                                            <th class="text-center text-xs whitespace-nowrap p-1 w-25"> <strong>Last Name </strong></th>
-                                                            <th class="text-center text-xs whitespace-nowrap p-1"> <strong>Birthdate </strong></th>
-                                                        </tr>
-                                                </thead>
-                                                <tbody>
-                                                        <tr>
-                                                            <td class="text-center text-xs p-1" colspan="100">
-                                                                <p class="text-center text-sm m-0" ><span >No records found</span></p>
-                                                            </td>
-                                                        </tr>
-                                                </tbody>
-                                                </table>
-                                            </div>`;
-
+                        $no_results =
+                            `<div class="table-container mt-2">
+                                <table class="table table-bordered table-hover" id="search-customer-table">
+                                <thead>
+                                        <tr>
+                                            <th colspan="100" class="text-center text-xs p-0">
+                                                <div class=" bg-[#FFD50A] p-2">
+                                                    <strong>Sanction Results</strong>
+                                                </div>
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th class="text-center text-xs whitespace-nowrap p-1 w-25"> <strong>First Name </strong></th>
+                                            <th class="text-center text-xs whitespace-nowrap p-1 w-25"> <strong>Middle Name </strong></th>
+                                            <th class="text-center text-xs whitespace-nowrap p-1 w-25"> <strong>Last Name </strong></th>
+                                            <th class="text-center text-xs whitespace-nowrap p-1"> <strong>Birthdate </strong></th>
+                                        </tr>
+                                </thead>
+                                <tbody>
+                                        <tr>
+                                            <td class="text-center text-xs p-1" colspan="100">
+                                                <p class="text-center text-sm m-0" ><span >No records found</span></p>
+                                            </td>
+                                        </tr>
+                                </tbody>
+                                </table>
+                            </div>`;
 
                         $('#sanctions-container').empty().append($no_results).fadeIn("fast");
                     }
@@ -412,16 +415,16 @@
 
                         Swal.fire({
                             html: `
-                                    <div class="row justify-content-center px-2 py-1">
-                                        <div class="col-12 text-center border border-2 border-gray-300 rounded-lg p-2">
-                                            <div class="row justify-content-center">
-                                                <img src="${photo}" alt="Customer Photo" style="width: 470px;">
-                                            </div>
+                                <div class="row justify-content-center px-2 py-1">
+                                    <div class="col-12 text-center border border-2 border-gray-300 rounded-lg p-2">
+                                        <div class="row justify-content-center">
+                                            <img src="${photo}" alt="Customer Photo" style="width: 470px;">
                                         </div>
                                     </div>
-                                    <div class="mb-2 mt-1" id="count-down-container">
-                                        <span class="text-black" style="font-size: 17px;" id="count-down-label">Is this the correct customer?&nbsp;<strong class="text-red-500"  id="count-down">3</strong></span>
-                                    </div>`,
+                                </div>
+                                <div class="mb-2 mt-1" id="count-down-container">
+                                    <span class="text-black" style="font-size: 17px;" id="count-down-label">Is this the correct customer?&nbsp;<strong class="text-red-500"  id="count-down">3</strong></span>
+                                </div>`,
                             confirmButtonColor: '#3085d6',
                             showCancelButton: true,
                             cancelButtonColor: '#8592A3',
@@ -498,7 +501,7 @@
         function resetModal() {
             $('#customer_images').empty().fadeOut("fast");
             $('#sanctions-container').empty().fadeOut("fast");
-            $('.customer-modal-footer #cms-redirect-button-footer').remove();
+            $('#customer-modal-footer #cms-redirect-button-footer').remove();
         }
 
         function emptyFields() {
