@@ -5,6 +5,7 @@ namespace App\Helpers;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB; 
+use App\Helpers\Errors\ErrorHandler;
 use Illuminate\Support\Facades\Validator;
 
 class CustomerManagement {
@@ -38,18 +39,17 @@ class CustomerManagement {
             ->where(function ($query) use ($CNumber, $FName, $MName, $LName, $CBirthday, $filter) {
                 if ($filter == 1 && $FName || $LName || $MName || $CBirthday) {
                     $query
-                        ->where('tblxcustomer.FName', 'like', '%' . $FName . '%')
-                        ->where('tblxcustomer.MName', 'like', '%' . $MName . '%')
-                        ->where('tblxcustomer.LName', 'like', '%' . $LName . '%')
-                        ->where('tblxcustomer.birthday', '=', $CBirthday);
+                        ->where('FName', 'like', '%' . $FName . '%')
+                        ->where('MName', 'like', '%' . $MName . '%')
+                        ->where('LName', 'like', '%' . $LName . '%')
+                        ->where('birthday', '=', $CBirthday);
                 } elseif ($filter == 2 && $CNumber) {
-                    $query->where('tblxcustomer.CustomerNo', '=', $CNumber);
+                    $query->where('CustomerNo', '=', $CNumber);
                 } else {
-                    $query->where('tblxcustomer.CustomerNo', '=', '');
+                    $query->where('CustomerNo', '=', '');
                 }
             })
             ->select([
-                DB::connection('pawnshop')->raw('(SELECT COUNT(*) FROM tblxcustnoid WHERE CustomerID = tblxcustomer.CustomerID) AS count'),
                 'CustomerID',
                 'CustomerNo',
                 'Birthday',
@@ -64,9 +64,9 @@ class CustomerManagement {
                 'WithCP',
                 'ScanID',
             ])
-            ->where('tblxcustomer.Newf', 1)
-            ->where('tblxcustomer.Deleted', 0)
-            ->orderBy('tblxcustomer.FullName')
+            ->where('Newf', 1)
+            ->where('Deleted', 0)
+            ->orderBy('FullName')
             ->limit(10)
             ->get();
         
@@ -86,10 +86,10 @@ class CustomerManagement {
     public static function searchCustomerInSanctions($CNumber, $FName, $MName, $LName, $CBirthday, $filter) {
         if ($CNumber) {
             $customer_table = self::searchCustomer($CNumber, '', '', '', '', $filter);
-            $FName = $customer_table[0]->FName ?? null;
-            $MName = $customer_table[0]->MName ?? null;
-            $LName = $customer_table[0]->LName ?? null;
-            $CBirthday = $customer_table[0]->Birthday ?? null;
+            $FName = $customer_table[0]->Fname ?? null;
+            $MName = $customer_table[0]->Mname ?? null;
+            $LName = $customer_table[0]->Lname ?? null;
+            $CBirthday = $customer_table[0]->Birthdate ?? null;
         }
 
         return DB::table('cis.tblsanctions as s')
@@ -190,57 +190,54 @@ class CustomerManagement {
     }
 
     // validate Requests
-    public function validateRequest($request){
-           $isMethod = $request->isMethod('POST');
-  
-           // Initialize the rules and messages arrays
-           $rules = [];
-           $messages = [];
-           $filter = $request->input('filter');
-  
-  
-           /* ================================
-           |  Searching Customer Validations  |
-           ================================= */
-  
-           // Birthday
-           if ($filter == 1) {
-                $rules['birth-date']                 = 'required|date';
-                $messages['Birthday.required']     = 'Birthdate field is required.';
-                $messages['Birthday.date']         = 'Birthdate must be a valid date.';
-  
-                $rules['f-name'] = 'nullable|string';
-                $rules['m-name'] = 'nullable|string';
-                $rules['l-name'] = 'nullable|string';
-           }
-           // CustomerID Validation
-           if ($filter == 2) {
-                $rules['c-number']              = 'required|string|exists:pawnshop.tblxcustomer,customerid';
-                $messages['CustomerID.required']  = 'Customer is required.';
-                $messages['CustomerID.exists']    = 'Customer not found.';
-           }
-  
-  
-           $validator = Validator::make($request->all(), $rules, $messages);
-  
-           // Additional validation for name fields (at least two must be filled)
-           if ($filter == 1) {
-                $nameFields = array_filter([
-                     $request->FName,
-                     $request->MName,
-                     $request->LName
-                ]);
-  
-                if (count($nameFields) < 2) {
-                     $validator->after(function ($validator) {
-                          $validator->errors()->add('name_fields', 'At least two of the name fields are required.');
-                     });
-                }
-           }
-  
-  
-        //    if ($validator->fails()) return response()->json(['errors' => 1, 'title' => '', 'html' => ErrorHandler::formatErrors($validator->errors())]);
-  
-           return null;
+    public static function validateRequest($request){
+        $isMethod = $request->isMethod('POST');
+
+        $rules = [];
+        $messages = [];
+        $filter = $request->input('filter');
+
+        /* ================================
+        |  Searching Customer Validations  |
+        ================================= */
+
+        // Birthday
+        if ($filter == 1) {
+            $rules['Birthdate']                 = 'required|date';
+            $messages['Birthdate.required']     = 'Birthdate field is required.';
+            $messages['Birthdate.date']         = 'Birthdate must be a valid date.';
+
+            $rules['Fname'] = 'nullable|string';
+            $rules['Mname'] = 'nullable|string';
+            $rules['Lname'] = 'nullable|string';
+        }
+        // CustomerID Validation
+        if ($filter == 2) {
+            $rules['Cnumber']              = 'required|integer|exists:pawnshop.tblxcustomer,customerid';
+            $messages['Cnumber.required']  = 'Customer is required.';
+            $messages['Cnumber.exists']    = 'Customer not found.';
+        }
+
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        // Additional validation for name fields (at least two must be filled)
+        if ($filter == 1) {
+            $nameFields = array_filter([
+                $request->Fname,
+                $request->Mname,
+                $request->Lname
+            ]);
+
+            if (count($nameFields) < 2) {
+                $validator->after(function ($validator) {
+                    $validator->errors()->add('name_fields', 'At least two of the name fields are required.');
+                });
+            }
+        }
+
+        if ($validator->fails()) return response()->json(['errors' => 1, 'title' => '', 'html' => ErrorHandler::formatErrors($validator->errors())]);
+
+        return null;
     }
 }

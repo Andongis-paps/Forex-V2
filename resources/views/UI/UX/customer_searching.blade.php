@@ -36,7 +36,7 @@
                                     <strong><span class="text-sm">{{ trans('labels.customer_search_f_name') }}</span>: </strong>
                                 </label>
     
-                                <input class="form-control" type="text" id="f-name" name="f-name" placeholder="First Name">
+                                <input class="form-control" type="text" id="Fname" name="Fname" placeholder="First Name">
                             </div>
     
                             <div class="col-3 mt-3" id="c-searching-m-name">
@@ -44,7 +44,7 @@
                                     <strong><span class="text-sm">{{ trans('labels.customer_search_m_name') }}</span>: </strong>
                                 </label>
     
-                                <input class="form-control" type="text" id="m-name" name="m-name" placeholder="Middle Name">
+                                <input class="form-control" type="text" id="Mname" name="Mname" placeholder="Middle Name">
                             </div>
     
                             <div class="col-3 mt-3" id="c-searching-l-name">
@@ -52,7 +52,7 @@
                                     <strong><span class="text-sm">{{ trans('labels.customer_search_l_name') }}</span>: </strong>
                                 </label>
     
-                                <input class="form-control" type="text" id="l-name" name="l-name" placeholder="Last Name">
+                                <input class="form-control" type="text" id="Lname" name="Lname" placeholder="Last Name">
                             </div>
     
                             <div class="col-3 mt-3" id="c-searching-birth-date">
@@ -60,7 +60,7 @@
                                     <strong><span class="text-sm">{{ trans('labels.customer_search_b_date') }}</span>: <span class="required-class">*</span></strong>
                                 </label>
     
-                                <input class="form-control" type="text" id="birth-date" name="birth-date" placeholder="YYYY-MM-DD">
+                                <input class="form-control" type="text" id="Birthdate" name="Birthdate" placeholder="YYYY-MM-DD">
                             </div>
 
                             <small class="text-muted pt-1">
@@ -74,7 +74,7 @@
                                     <strong><span class="text-sm">{{ trans('labels.customer_search_number') }}</span>: <span class="required-class">*</span></strong>
                                 </label>
 
-                                <input class="form-control mb-1" type="number" id="c-number" name="c-number" placeholder="Customer Number">
+                                <input class="form-control mb-1" type="number" id="Cnumber" name="Cnumber" placeholder="Customer Number">
 
                                 <small class="text-muted">
                                     <i class="bx bx-info-circle me-2"></i>Note: Search by Customer No.
@@ -164,15 +164,15 @@
             var no_record =`<tr class="no-record"><td colspan="100"  class="text-center text-sm" ><span >No records found</span></td></tr>`;
 
             if (parseInt(filter_type) == 1) {
-                    $('#c-searching-name').fadeIn(100);
-                    $('#c-searching-customer-number').fadeOut(100);
-            }
-            if (parseInt(filter_type) == 2) {
-                    $('#c-searching-name').fadeOut(100);
-                    $('#c-searching-customer-number').removeClass('d-none').fadeIn(100);
+                $('#c-searching-name').fadeIn(100);
+                $('#c-searching-customer-number').fadeOut(100);
+            } else if (parseInt(filter_type) == 2) {
+                $('#c-searching-name').fadeOut(100);
+                $('#c-searching-customer-number').removeClass('d-none').fadeIn(100);
             }
 
             resetModal();
+            emptyFields();
         });
 
         $('#searchCustomerForm').on('submit', function(e) {
@@ -227,7 +227,6 @@
 
                     if (result.customers.length > 0) {
                         result.customers.forEach(function(res) {
-
                             rows += `<div class="swiper-slide"> 
                                         <div class="row">
                                             <div class="col-6">
@@ -247,7 +246,6 @@
                                                                     ${res.CustomerNo}
                                                                 </td>
                                                             </tr>
-
                                                             <tr>
                                                                 <td class="text-xs whitespace-nowrap w-25">
                                                                     <strong>Customer Name</strong>
@@ -256,7 +254,6 @@
                                                                     ${res.FullName}
                                                                 </td>
                                                             </tr>
-
                                                             <tr>
                                                                 <td class="text-xs whitespace-nowrap">
                                                                     <strong>Birthdate</strong>
@@ -265,7 +262,6 @@
                                                                     ${res.Birthday ? new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', day: '2-digit' }).format(new Date(res.Birthday)) : '-'}
                                                                 </td>
                                                             </tr>
-
                                                             <tr>
                                                                 <td class="text-xs whitespace-nowrap">
                                                                     <strong>Status</strong>
@@ -274,21 +270,20 @@
                                                                     ${res.Reason}
                                                                 </td>
                                                             </tr>
-
                                                             <tr>
                                                                 <td class="text-xs whitespace-nowrap">
                                                                     <strong>Action</strong>
                                                                 </td>
                                                                 <td class="text-xs">
                                                                 ${res.Status? 
-                                                                    `<button class="btn btn-success btn-sm get-customer-details py-1 px-3" id="get-customer-details" type="button" data-customerid="${res.CustomerID}"  data-photo="${res.Photo}"  ><i class='bx bx-user-check me-1'></i>Select</button>`
+                                                                    `<button class="btn btn-primary btn-sm get-customer-details py-1 px-3" id="get-customer-details" type="button" data-customerid="${res.CustomerID}"  data-photo="${res.Photo}"  ><i class='bx bx-user-check me-1'></i>Select</button>`
                                                                     :
                                                                     `<a class="btn btn-primary btn-warning btn-sm text-sm cms-redirect-button pe-2" href="${fucking_path}" type="button" target="_blank"><i class='bx bx-info-circle bx-flashing me-2'></i>Update Info</a>`
                                                                 }
                                                                 </td>
                                                             </tr>
                                                         </tbody>
-                                                </table>
+                                                    </table>
                                                 </div>
                                             </div>
                                         </div>
@@ -490,6 +485,14 @@
             $('#customer_images').empty().fadeOut("fast");
             $('#sanctions-container').empty().fadeOut("fast");
             $('.customer-modal-footer #cms-redirect-button-footer').remove();
+        }
+
+        function emptyFields() {
+            $('input[name="Fname"]').val('');
+            $('input[name="Mname"]').val('');
+            $('input[name="Lname"]').val('');
+            $('input[name="Birthdate"]').val('');
+            $('input[name="Cnumber"]').val('');
         }
     });
 </script>
