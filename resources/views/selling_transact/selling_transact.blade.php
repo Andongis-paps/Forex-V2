@@ -58,18 +58,15 @@
                                                 </div>
                                                 <div class="col-9">
                                                     <div class="input-group">
-                                                        <input type="text" class="form-control" id="customer-name-selected" value="" readonly>
-                                                        <input type="hidden" class="form-control" id="customer-id-selected" name="customer-id-selected" value="" readonly>
-                                                        <input type="hidden" class="form-control" id="customer-no-selected" name="customer-no-selected" value="" readonly>
-                                                        <input type="hidden" class="form-control" id="customer-entry-id" name="customer-entry-id" value="" readonly>
-                                                        <input id="available-serials-count" type="hidden" value="{{ count($result['available_serials']) }}">
-                                                        <button class="btn btn-primary" id="customer-detail-selling" type="button" disabled data-bs-toggle="modal" data-bs-target="#customerDeetsModal" @if (count($result['available_serials']) == 0) disabled @else  @endif>
-                                                            Customer
-                                                        </button>
+                                                        <input type="text" class="form-control" id="customer-name-selected" value="{{ !empty($result['customer']->FullName) ? $result['customer']->FullName : '' }}" readonly>
+                                                        <input type="hidden" class="form-control" id="customer-id-selected" name="customer-id-selected" value="{{ !empty($result['customer']->CustomerID) ? $result['customer']->CustomerID : '' }}" readonly>
+                                                        <input type="hidden" class="form-control" id="customer-no-selected" name="customer-no-selected" value="{{ !empty($result['customer']->CustomerNo) ? $result['customer']->CustomerNo : '' }}" readonly>
+                                                        <input type="hidden" class="form-control" id="customer-entry-id" name="customer-entry-id" value="{{ !empty($result['customer']->CustomerID) ? $result['customer']->CustomerID : '' }}" readonly>
+                                                        <button class="btn btn-primary" id="customer-detail" type="button" disabled data-bs-toggle="modal" data-bs-target="#customerDeetsModal">Customer</button>
                                                     </div>
-                                                    {{-- <button class="btn btn-primary" id="customer-detail-selling" type="button" disabled data-bs-toggle="modal" data-bs-target="#customerDeetsSellingModal" @if (count($result['available_serials']) == 0) disabled @else  @endif>Customer &nbsp; <i class='bx bxs-user-detail pb-1'></i></button> --}}
                                                 </div>
                                             </div>
+
                                             {{-- Selling Transact - Receipt Set --}}
                                             {{-- <div class="row align-items-center px-3 mt-3 @if(session('time_toggle_status') == 1) d-none @endif">
                                                 <div class="col-3">
@@ -103,7 +100,7 @@
                                                     </strong>
                                                 </div>
                                                 <div class="col-9">
-                                                    <input type="number" class="form-control or-number-selling" id="or-number-selling" name="or-number-selling" autocomplete="off" placeholder="Invoice No." @if(session('time_toggle_status') == 0) disabled @else  @endif">
+                                                    <input type="number" class="form-control or-number-selling" id="or-number-selling" name="or-number-selling" autocomplete="off" placeholder="Invoice No." @if(empty($result['customer'])) disabled @else  @endif">
                                                 </div>
                                             </div>
                                             {{-- Selling Transact - Currency --}}
@@ -212,7 +209,7 @@
                     </div>
 
                     <div class="col-lg-5">
-                        @include('UI.UX.customer_info_card')
+                        @include('UI.UX.customer_info_card',['customer' => !empty($result['customer']) ? $result['customer'] : ''])
                         @include('UI.UX.customer_img_zoom')
 
                         <div class="card rounded-tr-sm rounded-tl-sm mt-3">
@@ -229,7 +226,7 @@
                                 <thead>
                                     <tr>
                                         <th class="text-center text-xs font-extrabold text-black p-1">{{ trans('labels.selling_currency') }}</th>
-                                        <th class="text-center text-xs font-extrabold text-black p-1">{{ trans('labels.selling_bill_amount') }}</th>
+                                        <th class="text-center text-xs font-extrabold text-black p-1">Denomination</th>
                                         <th class="text-center text-xs font-extrabold text-black p-1">{{ trans('labels.selling_pieces') }}</th>
                                         <th class="text-center text-xs font-extrabold text-black p-1">{{ trans('labels.selling_sub_total') }}</th>
                                         {{-- @if (session('time_toggle_status') == 0)

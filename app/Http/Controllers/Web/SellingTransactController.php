@@ -1,18 +1,19 @@
 <?php
 
 namespace App\Http\Controllers\Web;
-use App\Http\Controllers\Controller;
-use Validator;
-use App;
-use Lang;
-use App\Admin;
-use App\Models\User;
 use DB;
-use Illuminate\Support\Carbon;
-use Hash;
+use App;
 use Auth;
+use Hash;
+use Lang;
 use Session;
+use App\Admin;
+use Validator;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use App\Helpers\CustomerManagement;
+use App\Http\Controllers\Controller;
 
 class SellingTransactController extends Controller {
     protected $MenuID;
@@ -66,10 +67,12 @@ class SellingTransactController extends Controller {
         return view('selling_transact.add_new_selling_transact', compact('result', 'menu_id'));
     }
 
-    public function add(Request $requests) {
+    public function add(Request $request) {
         $raw_date = Carbon::now('Asia/Manila');
-        $time_togg_status = session('time_toggle_status');
-        $r_set =  $time_togg_status == 1 ? 'O' : '';
+        $r_set =  session('time_toggle_status') == 1 ? 'O' : '';
+
+        $customerid = $request->query('customerid');
+        if ($customerid) $result['customer'] = CustomerManagement::customerInfo($customerid);
 
         $selling_transact = DB::connection('forex')->table('tblforextransactiondetails')
             ->join('tblcurrency', 'tblforextransactiondetails.CurrencyID', '=', 'tblcurrency.CurrencyID')

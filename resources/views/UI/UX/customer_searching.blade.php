@@ -130,6 +130,12 @@
 
 <script>
     $(document).ready(function() {
+        $('.img_show').on('click',  function() {
+            var imgSrc = $(this).attr('src');
+            $('.myimg').attr('src', imgSrc);
+            $('#modal-image').modal('show');
+        });
+        
         var swiper = new Swiper(".mySwiper", {
             navigation: {
                 nextEl: ".swiper-button-next",
@@ -477,6 +483,14 @@
                             }
                         });
                     });
+
+                    if (window.location.href !== $('#base-url').val() + '/sellToManila') {
+                        $('#r-set-b').prop('checked', true);
+                    } else {
+                    }
+                        $('#r-set-o').prop('checked', true);
+
+                    $('#radio-button-Bills').prop('checked', true).change();
                 },
             });
         }

@@ -72,10 +72,10 @@
                                                 </div>
                                                 <div class="col-9">
                                                     <div class="input-group">
-                                                        <input type="text" class="form-control" id="customer-name-selected" value="" readonly>
-                                                        <input type="hidden" class="form-control" id="customer-id-selected" name="customer-id-selected" value="" readonly>
-                                                        <input type="hidden" class="form-control" id="customer-no-selected" name="customer-no-selected" value="" readonly>
-                                                        <input type="hidden" class="form-control" id="customer-entry-id" name="customer-entry-id" value="" readonly>
+                                                        <input type="text" class="form-control" id="customer-name-selected" value="{{ !empty($result['customer']->FullName) ? $result['customer']->FullName : '' }}" readonly>
+                                                        <input type="hidden" class="form-control" id="customer-id-selected" name="customer-id-selected" value="{{ !empty($result['customer']->CustomerID) ? $result['customer']->CustomerID : '' }}" readonly>
+                                                        <input type="hidden" class="form-control" id="customer-no-selected" name="customer-no-selected" value="{{ !empty($result['customer']->CustomerNo) ? $result['customer']->CustomerNo : '' }}" readonly>
+                                                        <input type="hidden" class="form-control" id="customer-entry-id" name="customer-entry-id" value="{{ !empty($result['customer']->CustomerID) ? $result['customer']->CustomerID : '' }}" readonly>
                                                         <button class="btn btn-primary" id="customer-detail" type="button" disabled data-bs-toggle="modal" data-bs-target="#customerDeetsModal">Customer</button>
                                                     </div>
                                                 </div>
@@ -113,7 +113,7 @@
                                                 </div>
                                                 <div class="col-9">
                                                     {{-- <input type="number" class="form-control" id="or-number-buying" name="or-number-buying" autocomplete="off" placeholder="Invoice No." @if(session('time_toggle_status') == 0) disabled @else   @endif> --}}
-                                                    <input type="number" class="form-control" id="or-number-buying" name="or-number-buying" autocomplete="off" placeholder="Invoice No." @if(session('time_toggle_status') == 0) disabled @else   @endif>
+                                                    <input type="number" class="form-control" id="or-number-buying" name="or-number-buying" autocomplete="off" placeholder="Invoice No." @if(empty($result['customer'])) disabled @else   @endif>
                                                 </div>
                                             </div>
                                             {{-- Buying Transaction - Transaction Type --}}
@@ -294,7 +294,7 @@
                             @include('UI.UX.customer_searching')
 
                             <div class="col-5">
-                                @include('UI.UX.customer_info_card')
+                                @include('UI.UX.customer_info_card',['customer' => !empty($result['customer']) ? $result['customer'] : '']) {{-- Customer Information Card --}}
                                 @include('UI.UX.customer_img_zoom')
                             </div>
                         </div>
