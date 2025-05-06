@@ -14,7 +14,7 @@ class ActiveDirectoryHelper
      *
      * @return array
      */
-    public static function getAdLockoutConfigurations(): array
+    public static function getAdLockoutConfigurations()
     {
         // Default values to return in case AD query fails
         $defaultThreshold = 0;
@@ -65,7 +65,7 @@ class ActiveDirectoryHelper
      * @param  int  $userAccountControl
      * @return bool
      */
-    public static function isAccountDisabled(int $userAccountControl): bool
+    public static function isAccountDisabled($userAccountControl)
     {
         // If userAccountControl is null, assume the account is not disabled
         if (is_null($userAccountControl)) {
