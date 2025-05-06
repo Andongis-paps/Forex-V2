@@ -1266,7 +1266,7 @@ class AdminSellingTransactController extends Controller {
             )
             ->get();
 
-        dd($result['bills_sold_to_mnl']);
+        dd($result['selling_trans_details']);
 
         $STMDID = $request->id;
 

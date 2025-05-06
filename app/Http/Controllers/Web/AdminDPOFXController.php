@@ -449,9 +449,9 @@ class AdminDPOFXController extends Controller {
             ->where('dod.DPODOID', $request->id);
 
         $result['dpo_out'] = $query->clone()
-            ->selectRaw('dod.DPODOID, dod.DPOSellingNo, tc.FullName, dod.DollarAmount, dod.TotalPrincipal, dod.TotalExchangeAmount, dod.TotalGainLoss, tbx.Name, dod.DateSold, dod.Remarks, dod.Rset, dod.CustomerID, tc.CompanyID')
+            ->selectRaw('dod.DPODOID, tc.CompanyID, tc.CompanyName, dop.FormSeries')
             ->join('accounting.tblcompany as tc', 'dop.CompanyID', 'tc.CompanyID')
-            ->groupBy('dod.DPODOID', 'dod.DPOSellingNo', 'tc.FullName', 'dod.DollarAmount', 'dod.TotalPrincipal', 'dod.TotalExchangeAmount', 'dod.TotalGainLoss', 'tbx.Name', 'dod.DateSold', 'dod.Remarks', 'dod.Rset', 'dod.CustomerID', 'tc.CompanyID')
+            ->groupBy('dod.DPODOID', 'tc.CompanyID', 'tc.CompanyName', 'dop.FormSeries')
             ->get();
 
         $sales = [];
@@ -475,7 +475,10 @@ class AdminDPOFXController extends Controller {
             $sales[] = $dpo_out;
         }
 
-        
+        $result['dpo_palit_deets'] = $query->clone()
+            ->selectRaw('dod.DPODOID, dod.DPOSellingNo, tc.FullName, dod.DollarAmount, dod.TotalPrincipal, dod.TotalExchangeAmount, dod.TotalGainLoss, tbx.Name, dod.DateSold, dod.Remarks, dod.Rset, dod.CustomerID')
+            ->groupBy('dod.DPODOID', 'dod.DPOSellingNo', 'tc.FullName', 'dod.DollarAmount', 'dod.TotalPrincipal', 'dod.TotalExchangeAmount', 'dod.TotalGainLoss', 'tbx.Name', 'dod.DateSold', 'dod.Remarks', 'dod.Rset', 'dod.CustomerID')
+            ->get();
 
         return view('DPOFX.dpo_out_details', compact('result', 'menu_id'));
     }

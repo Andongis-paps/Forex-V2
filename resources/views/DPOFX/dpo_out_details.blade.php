@@ -32,7 +32,7 @@
                                         </div>
                                     </div>
 
-                                    @foreach ($result['dpo_out'] as $dpo_out)
+                                    @foreach ($result['dpo_palit_deets'] as $dpo_palit_deets)
                                         <form class="mb-0" method="post" id="update-dpo-out-details-form">
                                             @csrf
                                             <div class="col-12 py-2 px-0 border border-gray-300">
@@ -43,7 +43,7 @@
                                                         </strong>
                                                     </div>
                                                     <div class="col-9">
-                                                        <input class="form-control" name="transact-no" type="text" value="{{ $dpo_out->DPOSellingNo }}" readonly>
+                                                        <input class="form-control" name="transact-no" type="text" value="{{ $dpo_palit_deets->DPOSellingNo }}" readonly>
                                                     </div>
                                                 </div>
 
@@ -54,7 +54,7 @@
                                                         </strong>
                                                     </div>
                                                     <div class="col-9">
-                                                        <input class="form-control" name="processed-by" type="text" value="{{ $dpo_out->Name }}" readonly>
+                                                        <input class="form-control" name="processed-by" type="text" value="{{ $dpo_palit_deets->Name }}" readonly>
                                                     </div>
                                                 </div>
 
@@ -65,7 +65,7 @@
                                                         </strong>
                                                     </div>
                                                     <div class="col-9">
-                                                        <input class="form-control" id="transact-rset" name="transact-rset" type="text" value="{{ $dpo_out->Rset }}" readonly>
+                                                        <input class="form-control" id="transact-rset" name="transact-rset" type="text" value="{{ $dpo_palit_deets->Rset }}" readonly>
                                                     </div>
                                                 </div>
 
@@ -77,7 +77,7 @@
                                                             </strong>
                                                         </div>
                                                         <div class="col-6">
-                                                            <input type="text" class="form-control" id="customer-name-selected" value="{{ $dpo_out->FullName }}" readonly>
+                                                            <input type="text" class="form-control" id="customer-name-selected" value="{{ $dpo_palit_deets->FullName }}" readonly>
                                                             <input type="hidden" class="form-control" id="customer-id-selected" name="customer-id-selected" value="" readonly>
                                                             <input type="hidden" class="form-control" id="customer-no-selected" name="customer-no-selected" value="" readonly>
                                                             <input type="hidden" class="form-control" id="customer-entry-id" name="customer-entry-id" value="" readonly>
@@ -96,8 +96,8 @@
                                                             </strong>
                                                         </div>
                                                         <div class="col-9">
-                                                            <input class="form-control" name="customer-name" type="text" value="{{ $dpo_out->FullName }}" readonly>
-                                                            <input type="hidden" class="form-control" name="transact-customer-id" value="{{ $dpo_out->CustomerID }}">
+                                                            <input class="form-control" name="customer-name" type="text" value="{{ $dpo_palit_deets->FullName }}" readonly>
+                                                            <input type="hidden" class="form-control" name="transact-customer-id" value="{{ $dpo_palit_deets->CustomerID }}">
                                                         </div>
                                                     </div>
                                                 {{-- Buying Transaction - Customer Details --}}
@@ -109,7 +109,7 @@
                                                         </strong>
                                                     </div>
                                                     <div class="col-9">
-                                                        <textarea class="form-control" id="remarks" name="remarks" @if ($dpo_out->Remarks == null) rows="1" placeholder="N/A" @else rows="3" @endif readonly>{{ $dpo_out->Remarks }}</textarea>
+                                                        <textarea class="form-control" id="remarks" name="remarks" @if ($dpo_palit_deets->Remarks == null) rows="1" placeholder="N/A" @else rows="3" @endif readonly>{{ $dpo_palit_deets->Remarks }}</textarea>
                                                     </div>
                                                 </div>
 
@@ -120,7 +120,7 @@
                                                         </strong>
                                                     </div>
                                                     <div class="col-9">
-                                                        <input class="form-control" name="dollar-amount" type="text" value="{{ number_format($dpo_out->DollarAmount, 2, '.', ',') }}" readonly>
+                                                        <input class="form-control" name="dollar-amount" type="text" value="{{ number_format($dpo_palit_deets->DollarAmount, 2, '.', ',') }}" readonly>
                                                     </div>
                                                 </div>
 
@@ -131,7 +131,7 @@
                                                         </strong>
                                                     </div>
                                                     <div class="col-9">
-                                                        <input class="form-control" name="selling-rate" type="text" value="{{ number_format($dpo_out->SellingRate, 2, '.', ',') }}" readonly>
+                                                        <input class="form-control" name="selling-rate" type="text" value="{{ number_format($dpo_palit_deets->SellingRate, 2, '.', ',') }}" readonly>
                                                     </div>
                                                 </div> --}}
 
@@ -142,7 +142,7 @@
                                                         </strong>
                                                     </div>
                                                     <div class="col-9">
-                                                        <input class="form-control text-right" name="exchange-amount" type="text" value="{{ number_format($dpo_out->TotalExchangeAmount, 2, '.', ',') }}" readonly>
+                                                        <input class="form-control text-right" name="exchange-amount" type="text" value="{{ number_format($dpo_palit_deets->TotalExchangeAmount, 2, '.', ',') }}" readonly>
                                                         <input name="true-exchange-amount" type="hidden" value="0">
                                                     </div>
                                                 </div>
@@ -154,7 +154,7 @@
                                                         </strong>
                                                     </div>
                                                     <div class="col-9">
-                                                        <input class="form-control text-right" name="principal" type="text" value="{{ number_format($dpo_out->TotalPrincipal, 2, '.', ',') }}" data-actualprincipal="{{ $dpo_out->TotalPrincipal }}" readonly>
+                                                        <input class="form-control text-right" name="principal" type="text" value="{{ number_format($dpo_palit_deets->TotalPrincipal, 2, '.', ',') }}" data-actualprincipal="{{ $dpo_palit_deets->TotalPrincipal }}" readonly>
                                                     </div>
                                                 </div>
 
@@ -166,13 +166,13 @@
                                                     </div>
                                                     <div class="col-4 offset-5 text-right">
                                                         @php
-                                                            $gain_loss = $dpo_out->TotalGainLoss;
+                                                            $gain_loss = $dpo_palit_deets->TotalGainLoss;
                                                         @endphp
 
                                                         <strong>
                                                             <input class="form-control text-white text-right py-1 @if ($gain_loss >= 0) success-badge-custom @else danger-badge-custom @endif" name="transact-total-gain-loss" id="total-gain-loss" value="{!! $gain_loss >= 0 ? trans('labels.gain_symbol') . number_format($gain_loss, 2, '.', ',') . ' ▲' : number_format($gain_loss, 2, '.', ',') . ' ▼' !!}" readonly>
                                                             <input type="hidden" name="true-total-gain-loss" value="0">
-                                                            <input type="hidden" id="DPODOID" value="{{ $dpo_out->DPODOID }}">
+                                                            <input type="hidden" id="DPODOID" value="{{ $dpo_palit_deets->DPODOID }}">
                                                         </strong>
                                                     </div>
                                                 </div>
@@ -197,84 +197,110 @@
 
                             {{-- Transact Breakdown --}}
                             <div class="col-6">
-                                <div class="col mb-3">
-                                    <div class="card">
-                                        <div class="col-12 p-2 border border-gray-300 rounded-tl rounded-tr">
-                                            <div class="row align-items-center ps-2">
-                                                <div class="col-6">
-                                                    <span class="text-lg text-black">
-                                                        <strong>
-                                                            {{-- {{ $result['fc_form_series']->CompanyName }} --}}
-                                                        </strong>
-                                                    </span>
-                                                </div>
-                                                <div class="col-2 text-end">
-                                                    <span class="text-sm">
-                                                        <strong class="text-red-500">
-                                                            No.
-                                                        </strong>
-                                                    </span>
-                                                    <span class="text-md">
-                                                        <strong class="text-red-500">
-                                                            {{-- {{ str_pad($result['fc_form_series']->FormSeries, 6, '0', STR_PAD_LEFT) }} --}}
-                                                        </strong>
-                                                    </span>
-                                                </div>
-                                                <div class="col-4 text-end">
-                                                    {{-- @can('print-permission', $menu_id)
-                                                        <button class="btn btn-primary btn-sm print-dpofx-receipt ps-2" data-dpooid="{{ $result['dpo_out'][0]->DPODOID }}" data-companyid="{{ $result['fc_form_series']->CompanyID }}">
-                                                            <i class='bx bxs-printer'></i>&nbsp;&nbsp;{{ trans('labels.selling_admin_print_receipt') }}
-                                                        </button>
-                                                    @endcan --}}
+                                @forelse ($result['dpo_out'] as $dpo_out)
+                                    <div class="col mb-3">
+                                        <div class="card">
+                                            <div class="col-12 p-2 border border-gray-300 rounded-tl rounded-tr">
+                                                <div class="row align-items-center ps-2">
+                                                    <div class="col-6">
+                                                        <span class="text-lg text-black">
+                                                            <strong>
+                                                                {{ $dpo_out->CompanyName }}
+                                                            </strong>
+                                                        </span>
+                                                    </div>
+                                                    <div class="col-2 text-end">
+                                                        <span class="text-sm">
+                                                            <strong class="text-red-500">
+                                                                No.
+                                                            </strong>
+                                                        </span>
+                                                        <span class="text-md">
+                                                            <strong class="text-red-500">
+                                                                {{ str_pad($dpo_out->FormSeries, 6, '0', STR_PAD_LEFT) }}
+                                                            </strong>
+                                                        </span>
+                                                    </div>
+                                                    <div class="col-4 text-end">
+                                                        @can('print-permission', $menu_id)
+                                                            <button class="btn btn-primary btn-sm print-dpofx-receipt ps-2" data-dpooid="{{ $dpo_out->DPODOID }}" data-companyid="{{ $dpo_out->CompanyID }}">
+                                                                <i class='bx bxs-printer'></i>&nbsp;&nbsp;{{ trans('labels.selling_admin_print_receipt') }}
+                                                            </button>
+                                                        @endcan
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        {{-- <table class="table table-bordered table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Currency</th>
-                                                    <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Amount</th>
-                                                    <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Selling Rate</th>
-                                                    <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Total (PESO)</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td class="text-center text-sm p-1">
-                                                        US DOLLAR
-                                                    </td>
-                                                    <td class="text-right text-sm py-1 px-3">
-                                                        {{ number_format($dpo_out->DollarAmount, 2, '.', ',') }}
-                                                    </td>
-                                                    <td class="text-right text-sm py-1 px-3">
-                                                        {{ number_format($dpo_out->SellingRate, 2, '.', ',') }}
-                                                    </td>
-                                                    <td class="text-right text-sm py-1 px-3">
-                                                        <strong>
-                                                            {{ number_format($dpo_out->ExchangeAmount, 2, '.', ',') }}
-                                                        </strong>
-                                                    </td>
-                                                </tr>
-                                            <tfoot>
-                                                <tr>
-                                                    <td colspan="3">
-                                                    </td>
-                                                    <td class="text-right text-sm py-1 px-3" colspan="1">
-                                                        <strong>
-                                                            {{ number_format($dpo_out->ExchangeAmount, 2, '.', ',') }}
-                                                        </strong>
-                                                    </td>
-                                                </tr>
-                                            </tfoot>
-                                        </table> --}}
+                                            <table class="table table-bordered table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Currency</th>
+                                                        <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Amount</th>
+                                                        <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Selling Rate</th>
+                                                        <th class="text-center text-xs font-extrabold text-black p-1 whitespace-nowrap">Total (PESO)</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @php
+                                                        $sum_php_amnt = 0;
+                                                    @endphp
 
-                                        <div class="col-12 p-1 border border-gray-300 rounded-bl rounded-br">
-                                            <div class="row align-items-center ps-2">
+                                                    @foreach ($dpo_out->Currency as $currency_id)
+                                                        @php
+                                                            $total_php_amnt = $currency_id->total_curr_amount * $currency_id->CMRUsed;
+                                                        @endphp
+
+                                                        <tr>
+                                                            <td class="text-center text-sm p-1">
+                                                                {{ $currency_id->Currency }}
+                                                            </td>
+                                                            <td class="text-right text-sm py-1 px-3">
+                                                                {{ number_format($currency_id->total_curr_amount, 2, '.', ',') }}
+                                                            </td>
+                                                            <td class="text-right text-sm py-1 px-3">
+                                                                {{ number_format($currency_id->CMRUsed, 2, '.', ',') }}
+                                                            </td>
+                                                            <td class="text-right text-sm py-1 px-3">
+                                                                <strong>
+                                                                    {{ number_format($total_php_amnt, 2, '.', ',') }}
+                                                                </strong>
+                                                            </td>
+                                                        </tr>
+
+                                                        @php
+                                                            $sum_php_amnt += $total_php_amnt;
+                                                        @endphp
+                                                    @endforeach
+                                                <tfoot>
+                                                    <tr>
+                                                        <td colspan="3">
+                                                        </td>
+                                                        <td class="text-right text-sm py-1 px-3" colspan="1">
+                                                            <strong>
+                                                                {{ number_format($sum_php_amnt, 2, '.', ',') }}
+                                                            </strong>
+                                                        </td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+
+                                            <div class="col-12 p-1 border border-gray-300 rounded-bl rounded-br">
+                                                <div class="row align-items-center ps-2">
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                @empty
+                                    <div class="col">
+                                        <div class="card">
+                                            <div class="col-12 p-2 border border-gray-300 rounded-tl rounded-tr">
+                                                <div class="row align-items-center">
+                                                    Tite
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforelse
                             </div>
                         </div>
                     </div>

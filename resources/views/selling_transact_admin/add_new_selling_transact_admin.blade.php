@@ -66,7 +66,7 @@
                                                         {{ $bills_sold_to_mnl->FullName }}
                                                     </td>
                                                     <td class="text-sm text-center p-1 text-black">
-                                                        {{ $bills_sold_to_mnl->RSet }}
+                                                        {{ $bills_sold_to_mnl->Rset }}
                                                     </td>
                                                     {{-- <td class="text-sm text-center p-1 text-black">
                                                         {{ $bills_sold_to_mnl->TimeSold }}
