@@ -426,7 +426,7 @@
                                                             <td class="text-end text-sm py-1 px-3">
                                                                 <div class="col-12 read-only-rate" id="read-only-rate">
                                                                     <strong>
-                                                                        {{ number_format(floor($denom_details->SinagRateBuying * 10000) / 10000, 4, '.', ',') }}
+                                                                        {{ number_format(floor($denom_details->SinagRateBuying * 100000) / 100000, 4, '.', ',') }}
                                                                     </strong>
                                                                 </div>
     
