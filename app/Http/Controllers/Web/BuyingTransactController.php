@@ -899,6 +899,8 @@ class BuyingTransactController extends Controller{
         $result['denom_details'] = $query->clone()
             ->get();
 
+        // dd($result['denom_details']);
+
         $currency_id = $request->input('currency-name');
 
         if ($result['transact_details'][0]->TTID != 4) {
