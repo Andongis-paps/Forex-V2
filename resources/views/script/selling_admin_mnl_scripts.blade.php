@@ -27,7 +27,7 @@
         $('#get-bills').click(function() {
             var r_set = $('input[name="radio-rset"]:checked').val();
 
-            console.log(r_set);
+            loader();
 
             $.ajax({
                 url: "{{ route('admin_transactions.bulk_selling.queued') }}",
@@ -45,6 +45,8 @@
                         clearData();
                         clearFooter();
 
+                        $('#container-test').fadeOut("fast");
+
                         Swal.fire({
                             icon: 'error',
                             text: 'No bills consolidated.',
@@ -52,6 +54,8 @@
                     } else if (data.no_rates == 1) {
                         clearData();
                         clearFooter();
+
+                        $('#container-test').fadeOut("fast");
 
                         Swal.fire({
                             icon: 'error',
@@ -69,8 +73,7 @@
                         from_admin_ids = [];
                         from_branch_ids = [];
 
-                        $('#container-test').fadeIn("slow");
-                        $('#container-test').css('display', 'block');
+                        loader();
                         $('#confirm-selling-to-mnl').removeAttr('disabled');
                         $('#empty-selling-to-manila-table').fadeOut("fast");
 
@@ -104,13 +107,18 @@
                         });
 
                         setTimeout(function() {
-                            $('#container-test').fadeOut("slow");
+                            $('#container-test').fadeOut("fast");
                             $('#confirm-selling-to-mnl').removeAttr('disabled');
                         }, 1000);
                     }
                 }
             });
         });
+
+        function loader() {
+            $('#container-test').fadeIn("fast");
+            $('#container-test').css('display', 'block');
+        }
 
         function billForSelling(CompanyID, CompanyName, Currency, CurrencyID, CMRUsed, SinagRateBuying, total_bill_amount, total_exchange_amount, total_principal, All_FSIDs, All_AFSIDs, gain_loss, Buffer, BufferType) {
             var gain_loss_formatted = gain_loss.toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 });

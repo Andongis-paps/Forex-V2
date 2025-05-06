@@ -82,7 +82,7 @@ class ActiveDirectoryHelper
      * @param  int  $accountExpires
      * @return bool
      */
-    public static function isAccountExpired(int $accountExpires): bool
+    public static function isAccountExpired($accountExpires)
     {
         // If accountExpires is null, the account never expires but if accountExpires is 0 or 9223372036854775807, the account is not expired
         if (is_null($accountExpires) || $accountExpires == 0 || $accountExpires == 9223372036854775807) {
@@ -102,7 +102,7 @@ class ActiveDirectoryHelper
      * @param  int  $lockoutTime
      * @return bool
      */
-    public static function isAccountLockedOut(int $lockoutTime): bool
+    public static function isAccountLockedOut($lockoutTime)
     {
         // If lockoutTime is 0, the account is not locked
         if ($lockoutTime == 0) {
@@ -122,7 +122,7 @@ class ActiveDirectoryHelper
      * @param  int  $pwdLastSet
      * @return bool
      */
-    public static function isAccountPasswordExpired(?int $userAccountControl, ?int $pwdLastSet): bool
+    public static function isAccountPasswordExpired($userAccountControl, $pwdLastSet)
     {
         // If pwdLastSet is null or 0, assume the password is not set (not expired)
         if (empty($pwdLastSet)) {

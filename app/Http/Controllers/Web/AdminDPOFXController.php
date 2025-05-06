@@ -1,18 +1,19 @@
 <?php
 
 namespace App\Http\Controllers\Web;
-use App\Http\Controllers\Controller;
-use Validator;
-use App;
-use Lang;
-use App\Admin;
-use App\Models\User;
 use DB;
-use Illuminate\Support\Carbon;
-use Hash;
-use Session;
-use Illuminate\Http\Request;
+use App;
 use Auth;
+use Hash;
+use Lang;
+use Session;
+use App\Admin;
+use Validator;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use App\Helpers\CustomerManagement;
+use App\Http\Controllers\Controller;
 
 class AdminDPOFXController extends Controller {
     protected $MenuID;
@@ -248,7 +249,13 @@ class AdminDPOFXController extends Controller {
         $this->MenuID = $request->attributes->get('MenuID');
         $menu_id = $this->MenuID;
 
-        return view('DPOFX.dpo_out_transact', compact('menu_id'));
+        $customerid = $request->query('customerid');
+
+        $result = '';
+
+        if ($customerid) $result = CustomerManagement::customerInfo($customerid);
+
+        return view('DPOFX.dpo_out_transact', compact('result', 'menu_id'));
     }
 
     public function DPOFXINS(Request $request) {
@@ -434,19 +441,41 @@ class AdminDPOFXController extends Controller {
         $this->MenuID = $request->attributes->get('MenuID');
         $menu_id = $this->MenuID;
 
-        $result['dpo_out'] = DB::connection('forex')->table('tbldpooutdetails as dod')
-            ->selectRaw('dod.DPODOID, dod.DPOSellingNo, tc.FullName, dod.DollarAmount, dod.TotalPrincipal, dod.TotalExchangeAmount, dod.TotalGainLoss, tbx.Name, dod.DateSold, dod.Remarks, dod.Rset, dod.CustomerID')
+        $query = DB::connection('forex')->table('tbldpooutdetails as dod')
+            ->join('tbldpoout as dop', 'dod.DPODOID', 'dop.DPODOID')
+            ->join('tblcurrency as tcr', 'dop.CurrencyID', 'tcr.CurrencyID')
             ->join('pawnshop.tblxcustomer as tc', 'dod.CustomerID', 'tc.CustomerID')
             ->join('pawnshop.tblxusers as tbx', 'dod.UserID', 'tbx.UserID')
-            ->where('dod.DPODOID', $request->id)
-            ->groupBy('dod.DPODOID', 'dod.DPOSellingNo', 'tc.FullName', 'dod.DollarAmount', 'dod.TotalPrincipal', 'dod.TotalExchangeAmount', 'dod.TotalGainLoss', 'tbx.Name', 'dod.DateSold', 'dod.Remarks', 'dod.Rset', 'dod.CustomerID')
+            ->where('dod.DPODOID', $request->id);
+
+        $result['dpo_out'] = $query->clone()
+            ->selectRaw('dod.DPODOID, dod.DPOSellingNo, tc.FullName, dod.DollarAmount, dod.TotalPrincipal, dod.TotalExchangeAmount, dod.TotalGainLoss, tbx.Name, dod.DateSold, dod.Remarks, dod.Rset, dod.CustomerID, tc.CompanyID')
+            ->join('accounting.tblcompany as tc', 'dop.CompanyID', 'tc.CompanyID')
+            ->groupBy('dod.DPODOID', 'dod.DPOSellingNo', 'tc.FullName', 'dod.DollarAmount', 'dod.TotalPrincipal', 'dod.TotalExchangeAmount', 'dod.TotalGainLoss', 'tbx.Name', 'dod.DateSold', 'dod.Remarks', 'dod.Rset', 'dod.CustomerID', 'tc.CompanyID')
             ->get();
 
-        $result['fc_form_series'] = DB::connection('forex')->table('tblfcformseries')
-            ->join('accounting.tblcompany', 'tblfcformseries.CompanyID', 'accounting.tblcompany.CompanyID')
-            ->where('tblfcformseries.CompanyID', 1)
-            ->where('tblfcformseries.Rset', $result['dpo_out'][0]->Rset)
-            ->first();
+        $sales = [];
+
+        foreach ($result['dpo_out'] as $index => $dpo_out) {
+            $get_currencies_query = $query->clone()
+                ->where('dop.CompanyID', $dpo_out->CompanyID)
+                ->selectRaw('dop.CurrencyID, tcr.Currency, dop.CMRUsed, SUM(dop.DollarAmount) as total_curr_amount')
+                ->groupBy('dop.CurrencyID', 'tcr.Currency', 'dop.CMRUsed')
+                ->orderBy('tcr.Currency', 'ASC')
+                ->get();
+
+            $currency_ids = [];
+
+            foreach ($get_currencies_query as $get_currency_ids) {
+                $currency_ids[] = $get_currency_ids;
+            }
+
+            $dpo_out->Currency = $currency_ids;
+
+            $sales[] = $dpo_out;
+        }
+
+        
 
         return view('DPOFX.dpo_out_details', compact('result', 'menu_id'));
     }

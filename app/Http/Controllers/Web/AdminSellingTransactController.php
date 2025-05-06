@@ -1,18 +1,19 @@
 <?php
 
 namespace App\Http\Controllers\Web;
-use App\Http\Controllers\Controller;
-use Validator;
-use App;
-use Lang;
-use App\Admin;
-use App\Models\User;
 use DB;
-use Illuminate\Support\Carbon;
-use Hash;
+use App;
 use Auth;
+use Hash;
+use Lang;
 use Session;
+use App\Admin;
+use Validator;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use App\Helpers\CustomerManagement;
+use App\Http\Controllers\Controller;
 
 class AdminSellingTransactController extends Controller {
     protected $MenuID;
@@ -600,8 +601,13 @@ class AdminSellingTransactController extends Controller {
     public function sell(Request $request) {
         $this->MenuID = $request->attributes->get('MenuID');
         $menu_id = $this->MenuID;
+        $customerid = $request->query('customerid');
 
-        return view('selling_transact_admin.selling_transact_admin', compact('menu_id'));
+        $result = '';
+
+        if ($customerid) $result = CustomerManagement::customerInfo($customerid);
+
+        return view('selling_transact_admin.selling_transact_admin', compact('result', 'menu_id'));
     }
 
     public function queued(Request $request) {
@@ -1212,23 +1218,22 @@ class AdminSellingTransactController extends Controller {
         $this->MenuID = $request->attributes->get('MenuID');
         $menu_id = $this->MenuID;
 
-        $result['selling_trans_details'] = DB::connection('forex')->table('tblsoldtomaniladetails')
+        $query = DB::connection('forex')->table('tblsoldtomaniladetails')
             ->join('tblsoldbillstomanila', 'tblsoldtomaniladetails.STMDID', 'tblsoldbillstomanila.STMDID')
-            ->join('accounting.tblcompany', 'tblsoldbillstomanila.CompanyID', 'accounting.tblcompany.CompanyID')
             ->join('tblcurrency', 'tblsoldbillstomanila.CurrencyID', 'tblcurrency.CurrencyID')
-            ->where('tblsoldbillstomanila.STMDID', '=', $request->id)
+            ->where('tblsoldbillstomanila.STMDID', $request->id);
+        
+        $result['selling_trans_details'] = $query->clone()
             ->selectRaw('accounting.tblcompany.CompanyID, accounting.tblcompany.CompanyName, tblsoldbillstomanila.FormSeries')
+            ->join('accounting.tblcompany', 'tblsoldbillstomanila.CompanyID', 'accounting.tblcompany.CompanyID')
             ->groupBy('accounting.tblcompany.CompanyID', 'accounting.tblcompany.CompanyName', 'tblsoldbillstomanila.FormSeries')
             ->get();
 
         $STMDIDs = [];
 
         foreach ($result['selling_trans_details'] as $index => $selling_trans_details) {
-            $get_currencies_query = DB::connection('forex')->table('tblsoldtomaniladetails')
-                ->join('tblsoldbillstomanila', 'tblsoldtomaniladetails.STMDID', 'tblsoldbillstomanila.STMDID')
-                ->join('tblcurrency', 'tblsoldbillstomanila.CurrencyID', 'tblcurrency.CurrencyID')
-                ->where('tblsoldbillstomanila.STMDID', '=', $request->id)
-                ->where('tblsoldbillstomanila.CompanyID', '=', $selling_trans_details->CompanyID)
+            $get_currencies_query = $query->clone()
+                ->where('tblsoldbillstomanila.CompanyID', $selling_trans_details->CompanyID)
                 ->selectRaw('tblsoldbillstomanila.CurrencyID, tblcurrency.Currency, tblsoldbillstomanila.CMRUsed, SUM(tblsoldbillstomanila.CurrAmount) as total_curr_amount')
                 ->groupBy('tblsoldbillstomanila.CurrencyID', 'tblcurrency.Currency', 'tblsoldbillstomanila.CMRUsed')
                 ->orderBy('tblcurrency.Currency', 'ASC')
@@ -1260,6 +1265,8 @@ class AdminSellingTransactController extends Controller {
                 'tblsoldtomaniladetails.TotalGainLoss',
             )
             ->get();
+
+        dd($result['bills_sold_to_mnl']);
 
         $STMDID = $request->id;
 

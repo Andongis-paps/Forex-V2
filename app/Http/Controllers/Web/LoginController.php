@@ -745,7 +745,6 @@ class LoginController extends Controller {
             ]);
         }
     }
-    
 
     public function logout(Request $request) {
         $current_datetime   = Carbon::now();
@@ -838,8 +837,7 @@ class LoginController extends Controller {
         return response()->json(['message' => 'Email sent successfully']);
     }
 
-    public function authenticate(AuthenticateRequest $request)
-    {
+    public function authenticate(AuthenticateRequest $request){
         // Validate the incoming request data
         $data = $request->validated();
 
@@ -874,6 +872,7 @@ class LoginController extends Controller {
             $lockoutTime        = $adUser->getFirstAttribute('lockoutTime');
             $pwdLastSet         = $adUser->getFirstAttribute('pwdLastSet');
             $badPwdCount        = $adUser->getFirstAttribute('badPwdCount');
+
 
             // Check if AD account is disabled
             $isDisabled = ActiveDirectoryHelper::isAccountDisabled($userAccountControl);
@@ -1304,8 +1303,7 @@ class LoginController extends Controller {
         }
     }
 
-    private function getRemainingTime($fromDateTime, $toDateTime): string
-    {
+    private function getRemainingTime($fromDateTime, $toDateTime) {
         // Ensure the input is a Carbon instance
         $from = $fromDateTime instanceof Carbon ? $fromDateTime : Carbon::parse($fromDateTime);
         $to = $toDateTime instanceof Carbon ? $toDateTime : Carbon::parse($toDateTime);
@@ -1334,10 +1332,7 @@ class LoginController extends Controller {
         return $remainingTime;
     }
 
-    private function formatTime(int $value, string $unit): string
-    {
+    private function formatTime($value, $unit) {
         return $value . ' ' . Str::plural($unit, $value);
     }
-
-
 }

@@ -12,7 +12,7 @@ class ServerAddressHelper
      *
      * @return string
      */
-    public static function getCurrentServerAddress(): string
+    public static function getCurrentServerAddress()
     {
         return $_SERVER['SERVER_ADDR'] ?? '127.0.0.1';
     }
@@ -44,7 +44,7 @@ class ServerAddressHelper
      * @param string|null $appUrlName
      * @return string
      */
-    public static function getAppUrl(string $appUrlName = null): string
+    public static function getAppUrl($appUrlName = null)
     {
         // Use the provided appUrlName or get the default from the config
         $appUrlName = $appUrlName ?? config('main.app_url_name');

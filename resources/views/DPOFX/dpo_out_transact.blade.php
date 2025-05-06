@@ -43,16 +43,12 @@
                                     <div class="row align-items-center justify-content-center mt-2">
                                         <div class="col-12">
                                             <div class="input-group">
-                                                <input type="text" class="form-control" id="customer-name-selected" value="" readonly>
-        
-                                                <button class="btn btn-primary !text-sm" id="cuomster-detail" type="button" data-bs-toggle="modal" data-bs-target="#customerDeetsModal">
-                                                    Customer
-                                                </button>
+                                                <input type="text" class="form-control" id="customer-name-selected" value="{{ !empty($result->FullName) ? $result->FullName : '' }}" readonly>
+                                                <input type="hidden" class="form-control" id="customer-id-selected" name="customer-id-selected" value="{{ !empty($result->CustomerID) ? $result->CustomerID : '' }}" readonly>
+                                                <input type="hidden" class="form-control" id="customer-no-selected" name="customer-no-selected" value="{{ !empty($result->CustomerNo) ? $result->CustomerNo : '' }}" readonly>
+                                                <input type="hidden" class="form-control" id="customer-entry-id" name="customer-entry-id" value="{{ !empty($result->CustomerID) ? $result->CustomerID : '' }}" readonly>
+                                                <button class="btn btn-primary" id="customer-detail" type="button" data-bs-toggle="modal" data-bs-target="#customerDeetsModal">Customer</button>
                                             </div>
-        
-                                            <input type="hidden" class="form-control" id="customer-id-selected" name="customer-id-selected" value="" readonly>
-                                            <input type="hidden" class="form-control" id="customer-no-selected" name="customer-no-selected" value="" readonly>
-                                            <input type="hidden" class="form-control" id="customer-entry-id" name="customer-entry-id" value="" readonly>
                                         </div>
                                     </div>
         
@@ -60,12 +56,12 @@
                                         <div class="col-12">
                                             <div class="row">
                                                 <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                                                    <input type="radio" class="btn-check" name="radio-rset" id="r-set-o" value="{{ trans('labels.buying_rset_o') }}" @if(session('time_toggle_status') == 1) @endif disabled="true">
+                                                    <input type="radio" class="btn-check" name="radio-rset" id="r-set-o" value="{{ trans('labels.buying_rset_o') }}" @if(session('time_toggle_status') == 1) @endif @if (empty($result->CustomerID)) disabled @else @endif>
                                                     <label class="btn btn-outline-primary" for="r-set-o">
                                                         <strong>{{ trans('labels.buying_rset_o') }}</strong>
                                                     </label>
         
-                                                    <input type="radio" class="btn-check" name="radio-rset" id="r-set-b" value="{{ trans('labels.buying_rset_b') }}" disabled="true">
+                                                    <input type="radio" class="btn-check" name="radio-rset" id="r-set-b" value="{{ trans('labels.buying_rset_b') }}" @if (empty($result->CustomerID)) disabled @else @endif>
                                                     <label class="btn btn-outline-primary" for="r-set-b">
                                                         <strong>{{ trans('labels.buying_rset_b') }}</strong>
                                                     </label>
@@ -76,7 +72,7 @@
         
                                     <div class="row align-items-center justify-content-center mt-2">
                                         <div class="col-12">
-                                            <textarea class="form-control" id="remarks" name="remarks" rows="2" disabled placeholder="Remarks"></textarea>
+                                            <textarea class="form-control" id="remarks" name="remarks" rows="2" placeholder="Remarks" @if (empty($result->CustomerID)) disabled @else @endif ></textarea>
                                         </div>
                                     </div>
 
