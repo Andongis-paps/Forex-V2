@@ -89,8 +89,6 @@
         var _token = $('input[name="_token"]').val();
         var on_page_final_printing = $('#queued-print-security-code').val();
 
-        console.log(on_page_final_printing);
-
         $.ajax({
             url: "{{ route('user_info') }}",
             type: "GET",

@@ -13,34 +13,36 @@
                 DPODOID: $(this).attr('data-dpooid'),
                 receipt_set: $('#transact-rset').val()
             },
-            // beforeSend: function() {
-            //     adminSellingTransDetails();
-            // },
             success: function(gar) {
                 var_test = gar.html;
 
-                $('#selling-trans-details-body').html(var_test);
-                $('#security-code-modal').modal("show");
+                if (gar.test.length <= 0) {
+                    Swal.fire({
+                        icon: 'warning',
+                        html:  `<div><span class="text-sm text-black">An error occuredwhile printing.</span></div>`,
+                        showConfirmButton: true,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                    });
+                } else {
+                    $('#selling-trans-details-body').html(var_test);
+                    $('#security-code-modal').modal("show");
+                }
             },
-            // complete: function() {
-            //     setTimeout(function() {
-            //         adminSellingTransDetails();
-            //     }, 1000);
-            // }
         });
     });
 
     $('#proceed-transaction').click(function() {
         var user_id_array = [];
         var sec_code_array = [];
-        var _token = $('input[name="_token"]').val();
         var on_page_final_printing = $('#security-code').val();
+        $('#proceed-transaction').prop('disabled', true);
 
         $.ajax({
             url: "{{ route('user_info') }}",
             type: "GET",
             data: {
-                _token: _token,
+                _token: "{{ csrf_token() }}",
             },
             // beforeSend: function() {
             //     adminSellingTransDetails();
@@ -64,6 +66,12 @@
                     Swal.fire({
                         title: "Printing...",
                         timer: 3000,
+                        focusConfirm: false,
+                        focusCancel: false,
+                        focusDeny: false,
+                        customClass: {
+                            popup: 'my-swal-popup',
+                        },
                         didOpen: () => {
                             Swal.showLoading();
                                 const timer = Swal.getPopup().querySelector("b");
@@ -71,28 +79,27 @@
                                 timer.textContent = `${Swal.getTimerLeft()}`;
                             }, 100);
 
-                            setTimeout(function() {
-                                adminSellingTransDetails();
-                            }, 200);
+                            adminSellingTransDetails();
+
                         },
                         willClose: () => {
                             clearInterval(timerInterval);
                         }
                     }).then((result) => {
-                        adminSellingTransDetails();
-
                         Swal.fire({
                             icon: 'success',
-                            title: 'Receipt printed!',
-                            text: 'Transfer forex successfully printed.',
-                            customClass: {
-                                popup: 'my-swal-popup',
-                            }
+                            text: 'Receipt printed!',
+                            // text: 'Transfer forex successfully printed.',
+                            showClass: {
+                                popup: 'swal2-zoom-in'
+                            },
                         }).then(() => {
+                            adminSellingTransDetails();
+
                             setTimeout(function() {
                                 $('#final-print-receipt-modal').modal('hide');
                                 window.location.reload();
-                            }, 200);
+                            }, 1000);
                         });
                     });
                 } else {
@@ -102,6 +109,8 @@
                         customClass: {
                             popup: 'my-swal-popup',
                         }
+                    }).then(() => {
+                        $('#proceed-transaction').prop('disabled', false);
                     });
                 }
             }

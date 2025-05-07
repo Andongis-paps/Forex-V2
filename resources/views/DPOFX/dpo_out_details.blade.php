@@ -314,8 +314,11 @@
     @include('UI.UX.update_dpo_out_details_modal')
 @endsection
 
+@section('dpo_scripts')
+    @include('script.dpo_out_details_scripts')
+@endsection
+
 @section('qz_tray_scripts')
-    @include('script.dpo_out_transact_scripts')
     @include('script.qz_tray_dpo_out_receipt_scripts')
 @endsection
 

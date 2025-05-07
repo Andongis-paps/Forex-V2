@@ -302,7 +302,7 @@ class AdminDPOFXController extends Controller {
                 'UserID' => $request->input('matched_user_id'),
                 'CustomerID' => $request->input('customer-id-selected'),
                 'TransactionDate' => $raw_date->toDateTimeString(),
-                'Rset' => $request->get('recept_set'),
+                'Rset' => $request->get('receipt_set'),
                 'Remarks' => $request->get('remarks'),
                 'DateSold' => $raw_date->toDateString(),
                 'TimeSold' => $raw_date->toTimeString(),
@@ -397,7 +397,7 @@ class AdminDPOFXController extends Controller {
 
         DB::connection('forex')->table('tblfcformseries')
             ->where('tblfcformseries.CompanyID', 1)
-            ->where('tblfcformseries.RSet', $request->get('recept_set'))
+            ->where('tblfcformseries.RSet', $request->get('receipt_set'))
             ->update([
                 'FormSeries' => $latest_series + 1
             ]);
@@ -492,9 +492,9 @@ class AdminDPOFXController extends Controller {
 
         $data_updated = array(
             'CustomerID' => $customer_id,
-            'SellingRate' => $rate_used,
-            'ExchangeAmount' => $exchange_amount,
-            'GainLoss' => $gain_loss,
+            // 'CMRUsed' => $rate_used,
+            // 'TotalExchangeAmount' => $exchange_amount,
+            // 'TotalGainLoss' => $gain_loss,
             'Remarks' => $remarks,
         );
 
@@ -513,14 +513,16 @@ class AdminDPOFXController extends Controller {
 
     public function print(Request $request) {
         $dpo_out = DB::connection('forex')->table('tbldpooutdetails as dod')
-            ->select('pawnshop.tblxcustomer.Nameofemployer', 'pawnshop.tblxcustomer.Address2', 'accounting.tblcompany.CompanyName', 'tblfcformseries.FormSeries', 'tbldpooutdetails.DPODOID', 'tbldpooutdetails.DPOSellingNo', 'pawnshop.tblxcustomer.FullName', 'tbldpooutdetails.DollarAmount', 'tbldpooutdetails.SellingRate', 'tbldpooutdetails.Principal', 'tbldpooutdetails.ExchangeAmount', 'tbldpooutdetails.GainLoss', 'pawnshop.tblxusers.Name', 'tbldpooutdetails.EntryDate', 'tbldpooutdetails.Rset')
-            ->join('pawnshop.tblxcustomer', 'tbldpooutdetails.CustomerID', 'pawnshop.tblxcustomer.CustomerID')
-            ->join('pawnshop.tblxusers', 'tbldpooutdetails.UserID', 'pawnshop.tblxusers.UserID')
-            // ->join('tblfcformseries', 'tbldpooutdetails.CompanyID', 'tblfcformseries.CompanyID')
-            ->join('accounting.tblcompany', 'tbldpooutdetails.CompanyID', 'accounting.tblcompany.CompanyID')
-            ->where('tbldpooutdetails.DPODOID', $request->get('DPODOID'))
+            ->selectRaw('tcx.Nameofemployer, tcx.Address2, tc.CompanyName, fc.FormSeries, dod.DPODOID, dod.DPOSellingNo, tcx.FullName, dod.DollarAmount, dop.CMRUsed, dod.TotalPrincipal, dod.TotalExchangeAmount, dod.TotalGainLoss, tbx.Name, dod.DateSold, dod.Rset')
+            ->join('tbldpoout as dop', 'dod.DPODOID', 'dop.DPODOID')
+            ->join('pawnshop.tblxcustomer as tcx', 'dod.CustomerID', 'tcx.CustomerID')
+            ->join('pawnshop.tblxusers as tbx', 'dod.UserID', 'tbx.UserID')
+            ->join('tblfcformseries as fc', 'dop.CompanyID', 'fc.CompanyID')
+            ->join('accounting.tblcompany as tc', 'dop.CompanyID', 'tc.CompanyID')
+            ->where('dod.DPODOID', $request->get('DPODOID'))
             // ->where('tblfcformseries.CompanyID', 1)
-            ->where('tblfcformseries.Rset', $request->get('receipt_set'))
+            ->where('fc.Rset', $request->get('receipt_set'))
+            ->groupBy('tcx.Nameofemployer', 'tcx.Address2', 'tc.CompanyName', 'fc.FormSeries', 'dod.DPODOID', 'dod.DPOSellingNo', 'tcx.FullName', 'dod.DollarAmount', 'dop.CMRUsed', 'dod.TotalPrincipal', 'dod.TotalExchangeAmount', 'dod.TotalGainLoss', 'tbx.Name', 'dod.DateSold', 'dod.Rset')
             ->get();
 
         if ($request->ajax()) {

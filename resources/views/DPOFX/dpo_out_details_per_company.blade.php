@@ -16,7 +16,7 @@
                 </tr>
                 <tr class="pt-0" style="text-align: left;">
                     <td class="p-0" style="font-size: 9pt; text-align: left;" colspan="1"><tt>{{ trans('labels.selling_admin_date') }}:</tt></td>
-                    <td class="p-0" style="font-size: 9pt; text-align: left;" colspan="3"><tt>{{ \Carbon\Carbon::parse($test[0]->EntryDate)->format('Y-m-d') }}</tt></td>
+                    <td class="p-0" style="font-size: 9pt; text-align: left;" colspan="3"><tt>{{ \Carbon\Carbon::parse($test[0]->DateSold)->format('Y-m-d') }}</tt></td>
                 </tr>
                 <tr class="pt-0" style="text-align: left;">
                     <td class="p-0" style="font-size: 9pt; text-align: left;" colspan="1"><tt>{{ trans('labels.selling_admin_sold_to') }}:</tt></td>
@@ -49,13 +49,13 @@
                 <tr>
                     <td style="font-size: 8pt; text-align: center; padding: 0px;"><tt>US DOLLAR</tt></td>
                     <td style="font-size: 8pt; text-align: center; padding: 0px;"><tt>{{ number_format($test[0]->DollarAmount, 2,'.',',') }}</tt></td>
-                    <td style="font-size: 8pt; text-align: center; padding: 0px;"><tt>{{ number_format($test[0]->SellingRate, 2,'.',',') }}</tt></td>
-                    <td style="font-size: 8pt; text-align: right; padding-right: 5px;"><tt>{{ number_format($test[0]->ExchangeAmount, 2,'.',',') }}</tt></td>
+                    <td style="font-size: 8pt; text-align: center; padding: 0px;"><tt>{{ number_format($test[0]->CMRUsed, 2,'.',',') }}</tt></td>
+                    <td style="font-size: 8pt; text-align: right; padding-right: 5px;"><tt>{{ number_format($test[0]->TotalExchangeAmount, 2,'.',',') }}</tt></td>
                 </tr>
 
                 <tr>
                     <td class="p-0" style="font-size: 8pt; text-align: right; padding-right: 5px;" colspan="3"><tt><b>Total</b></td>
-                    <td class="p-0" style="font-size: 8pt; text-align: right; padding-right: 5px;" colspan="1"><tt><b>{{ number_format($test[0]->ExchangeAmount, 2,'.',',') }}</b></tt></td>
+                    <td class="p-0" style="font-size: 8pt; text-align: right; padding-right: 5px;" colspan="1"><tt><b>{{ number_format($test[0]->TotalExchangeAmount, 2,'.',',') }}</b></tt></td>
                 </tr>
             </tbody>
         </table>
@@ -65,7 +65,7 @@
                     <td class="p-0" style="font-size: 8pt;" colspan="1"><tt>{{ trans('labels.selling_admin_prep_by') }}:</tt></td>
                     <td class="p-0" style="font-size: 8pt; text-decoration: overline; text-align: center;" colspan="2"><tt>{{ Str::title($test[0]->Name) }}</tt></td>
                     <td class="p-0" style="font-size: 8pt;" colspan="1"><tt>{{ trans('labels.selling_admin_date') }}:</tt></td>
-                    <td class="p-0" style="font-size: 8pt; text-align: center;" colspan="1"><tt>{{ \Carbon\Carbon::parse($test[0]->EntryDate)->format('Y-m-d') }}</tt></td>
+                    <td class="p-0" style="font-size: 8pt; text-align: center;" colspan="1"><tt>{{ \Carbon\Carbon::parse($test[0]->DateSold)->format('Y-m-d') }}</tt></td>
                 </tr>
                 <tr class="pt-0" style="text-align: left;">
                     <td class="p-0" style="font-size: 8pt;" colspan="1"></td>
