@@ -27,13 +27,13 @@ class CSSReportController extends Controller {
             case ENV('B_BUYING_TRANS'):
                 $css_concerns = $query->select('SConcernID','SConcern')
                     // ->whereIn('SConcernID', [277, 487, 486, 265, 485, 276, 266, 267, 268])
-                    ->whereIn('SConcernID', [277, 487, 486, 485, 276, 266, 267, 268])
+                    ->whereIn('SConcernID', [267, 268, 276, 277, 474])
                     ->get();
 
                 break;
             case ENV('B_SELLING_TRANS'):
                 $css_concerns = $query->select('SConcernID','SConcern')
-                    ->whereIn('SConcernID', [277, 487, 486, 485, 276, 266, 267, 268])
+                    ->whereIn('SConcernID', [267, 268, 276, 277, 474])
                     ->get();
 
                 break;
