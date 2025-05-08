@@ -163,8 +163,6 @@ class TransferForexController extends Controller {
             ->orderBy('it.itno', 'DESC')
             ->get();
 
-            
-
         $ITDIDs = [];
 
         foreach ($result['tracking_number'] as $index => $tracking_number) {
