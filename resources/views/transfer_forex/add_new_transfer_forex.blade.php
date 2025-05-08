@@ -189,13 +189,13 @@
                                                                         @endcan
                                                                     @endif
 
-                                                                    {{-- @if ($tranfer_forex->BufferTransfer === 1 || ($tranfer_forex->ITNo)) --}}
+                                                                    @if (empty($tranfer_forex->ITNo))
                                                                         @can('delete-permission', $menu_id)
                                                                             <a class="btn btn-primary button-delete button-delete-transfer btn-popover btn-delete pe-2" data-bs-toggle="modal" data-bs-target="#delete-transfer-forex" data-transferforexid="{{ $tranfer_forex->TransferForexID }}">
                                                                                 <i class='bx bx-trash text-white'></i>
                                                                             </a>
                                                                         @endcan
-                                                                    {{-- @endif --}}
+                                                                    @endif
 
                                                                     @if ($tranfer_forex->BufferTransfer === 0)
                                                                         @can('add-permission', $menu_id)
