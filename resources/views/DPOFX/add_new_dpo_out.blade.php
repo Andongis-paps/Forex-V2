@@ -57,37 +57,37 @@
 
                                                 @forelse ($result['dpo_out'] as $dpo_out)
                                                     <tr>
-                                                        <td class="text-center text-sm p-1">
+                                                        <td class="text-center text-xs p-1">
                                                             {{ \Carbon\Carbon::parse($dpo_out->TransactionDate)->format('Y-m-d') }}
                                                         </td>
-                                                        <td class="text-center text-sm p-1">
+                                                        <td class="text-center text-xs p-1">
                                                             {{ $dpo_out->DPOSellingNo }}
                                                         </td>
-                                                        <td class="text-center text-sm p-1">
+                                                        <td class="text-center text-xs p-1">
                                                             {{ $dpo_out->FullName }}
                                                         </td>
-                                                        {{-- <td class="text-center text-sm p-1">
+                                                        {{-- <td class="text-center text-xs p-1">
                                                             {{ $dpo_out->Name }}
                                                         </td> --}}
-                                                        <td class="text-center text-sm p-1 " data-bs-toggle="popover" data-bs-content="{!! $dpo_out->Remarks == null ? 'No remarks.' : $dpo_out->Remarks !!}" data-bs-placement="bottom" data-bs-custom-class="popover-dark" tabindex="0">
+                                                        <td class="text-center text-xs p-1 " data-bs-toggle="popover" data-bs-content="{!! $dpo_out->Remarks == null ? 'No remarks.' : $dpo_out->Remarks !!}" data-bs-placement="bottom" data-bs-custom-class="popover-dark" tabindex="0">
                                                             @if ($dpo_out->Remarks == null)
                                                                 -
                                                             @else
                                                                 {{ \Illuminate\Support\Str::limit($dpo_out->Remarks, 14, '...') }}
                                                             @endif
                                                         </td>
-                                                        <td class="text-right text-sm py-1 pe-2">
+                                                        <td class="text-right text-xs py-1 pe-2">
                                                             {{ number_format($dpo_out->DollarAmount, 2, '.', ',') }}
                                                         </td>
-                                                        <td class="text-right text-sm py-1 pe-2">
+                                                        <td class="text-right text-xs py-1 pe-2">
                                                             {{ number_format($dpo_out->TotalPrincipal, 2, '.', ',') }}
                                                         </td>
-                                                        <td class="text-right text-sm py-1 pe-2">
+                                                        <td class="text-right text-xs py-1 pe-2">
                                                             {{ number_format($dpo_out->TotalExchangeAmount, 2, '.', ',') }}
                                                         </td>
-                                                        <td class="text-right text-sm py-1 px-2">
+                                                        <td class="text-right text-xs py-1 px-2">
                                                             <span class="badge @if ($dpo_out->TotalGainLoss >= 0) success-badge-custom @else danger-badge-custom @endif">
-                                                                @if ($dpo_out->TotalGainLoss >= 0){{ trans('labels.gain_symbol') }}@else{{ trans('labels.loss_symbol') }}@endif{{ number_format(str_replace('-', '', $dpo_out->TotalGainLoss), 2, '.', ',') }}  @if ($dpo_out->TotalGainLoss >= 0) <i class='bx bxs-up-arrow pb-1' style="font-size: .5rem;"></i> @else <i class='bx bxs-down-arrow pb-1' style="font-size: .5rem;"></i> @endif
+                                                                @if ($dpo_out->TotalGainLoss >= 0){{ trans('labels.gain_symbol') }}@else{{ trans('labels.loss_symbol') }}@endif{{ number_format(str_replace('-', '', $dpo_out->TotalGainLoss), 2, '.', ',') }}  @if ($dpo_out->TotalGainLoss >= 0) <i class='bx bxs-up-arrow' style="font-size: .5rem;"></i> @else <i class='bx bxs-down-arrow pb-1' style="font-size: .5rem;"></i> @endif
                                                             </span>
                                                         </td>
                                                         @can('access-permission', $menu_id)
